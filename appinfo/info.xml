@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+		xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+	<id>esig</id>
+	<name>eSignatures</name>
+	<summary><![CDATA[eSignatures]]></summary>
+	<description><![CDATA[eSignatures]]></description>
+
+	<version>0.0.2</version>
+	<license>agpl</license>
+
+	<author>Joachim Bauch</author>
+	<namespace>Esig</namespace>
+
+	<settings>
+		<admin>OCA\Esig\Settings\Admin\AdminSettings</admin>
+		<admin-section>OCA\Esig\Settings\Admin\Section</admin-section>
+	</settings>
+
+</info>
