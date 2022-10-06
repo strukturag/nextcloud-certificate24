@@ -19,6 +19,9 @@
 							{{ t('esig', 'Created') }}
 						</th>
 						<th>
+							{{ t('esig', 'Signed') }}
+						</th>
+						<th>
 							{{ t('esig', 'Recipient') }}
 						</th>
 						<th>
@@ -29,10 +32,13 @@
 				<tbody>
 					<tr v-for="request in requests" :key="request.request_id">
 						<td>
-							{{ request.file_id }}
+							{{ request.filename }}
 						</td>
 						<td>
 							{{ request.created }}
+						</td>
+						<td>
+							{{ request.signed }}
 						</td>
 						<td>
 							<div v-if="request.recipient_type === 'user'">
@@ -50,6 +56,7 @@
 						</td>
 						<td>
 							<a @click="deleteRequest(request)">Delete</a>
+							<a v-if="request.signed" :href="downloadSignedUrl(request)">Download signed</a>
 						</td>
 					</tr>
 				</tbody>
@@ -64,10 +71,10 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
-import { getRequests, deleteRequest } from '../../services/apiservice.js'
+import { getRequests, deleteRequest, getSignedUrl } from '../services/apiservice.js'
 
 export default {
-	name: 'OwnShareRequests',
+	name: 'OwnSignRequests',
 
 	components: {
 		NcAvatar,
@@ -90,7 +97,7 @@ export default {
 			this.loading = true
 			let response
 			try {
-				response = await getRequests()
+				response = await getRequests(true)
 			} finally {
 				this.loading = false
 			}
@@ -121,6 +128,10 @@ export default {
 					}
 				}.bind(this)
 			)
+		},
+
+		downloadSignedUrl(request) {
+			return getSignedUrl(request.request_id)
 		},
 	},
 }

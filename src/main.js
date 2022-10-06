@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import PersonalSettings from './views/PersonalSettings.vue'
+import App from './App.vue'
 
 // Styles
 import '@nextcloud/dialogs/styles/toast.scss'
@@ -11,6 +11,6 @@ Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
 
 export default new Vue({
-	el: '#personal_settings',
-	render: h => h(PersonalSettings),
+	el: '#content',
+	render: h => h(App),
 })

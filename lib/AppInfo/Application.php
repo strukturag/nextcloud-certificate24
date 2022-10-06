@@ -25,6 +25,18 @@ class Application extends App implements IBootstrap {
 	public function boot(IBootContext $context): void {
 		$server = $context->getServerContainer();
 
+		$server->getNavigationManager()->add(function () use ($server) {
+			/** @var Config $config */
+			$user = $server->getUserSession()->getUser();
+			return [
+				'id' => self::APP_ID,
+				'name' => $server->getL10N(self::APP_ID)->t('eSignatures'),
+				'href' => $server->getURLGenerator()->linkToRouteAbsolute('esig.Page.index'),
+				'icon' => $server->getURLGenerator()->imagePath(self::APP_ID, 'app.svg'),
+				'order' => 3,
+				'type' => 'link',
+			];
+		});
 		Util::addScript('esig', 'esig-loader');
 	}
 

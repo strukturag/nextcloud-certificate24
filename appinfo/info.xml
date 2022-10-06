@@ -15,9 +15,6 @@
 	<settings>
 		<admin>OCA\Esig\Settings\Admin\AdminSettings</admin>
 		<admin-section>OCA\Esig\Settings\Admin\Section</admin-section>
-
-		<personal>OCA\Esig\Settings\PersonalSettings</personal>
-		<personal-section>OCA\Esig\Settings\Section</personal-section>
 	</settings>
 
 </info>

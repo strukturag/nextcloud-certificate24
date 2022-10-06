@@ -4,24 +4,20 @@ declare(strict_types=1);
 
 namespace OCA\Esig\Controller;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use GuzzleHttp\Exception\ConnectException;
+use OCA\Esig\Client;
 use OCA\Esig\Config;
-use OCA\Esig\Tokens;
+use OCA\Esig\Requests;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\IRootFolder;
-use OCP\Http\Client\IClientService;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\IUserSession;
-use OCP\Security\ISecureRandom;
 
 class ApiController extends OCSController {
 
@@ -34,12 +30,10 @@ class ApiController extends OCSController {
 	private IUserManager $userManager;
 	private IUserSession $userSession;
 	private IRootFolder $root;
-	private IClientService $clientService;
 	private IURLGenerator $urlGenerator;
-	private ISecureRandom $secureRandom;
-	private IDBConnection $db;
+	private Client $client;
 	private Config $config;
-	private Tokens $tokens;
+	private Requests $requests;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -48,29 +42,20 @@ class ApiController extends OCSController {
 								IUserManager $userManager,
 								IUserSession $userSession,
 								IRootFolder $root,
-								IClientService $clientService,
 								IURLGenerator $urlGenerator,
-								ISecureRandom $secureRandom,
-								IDBConnection $db,
+								Client $client,
 								Config $config,
-								Tokens $tokens) {
+								Requests $requests) {
 		parent::__construct($appName, $request);
 		$this->l10n = $l10n;
 		$this->logger = $logger;
 		$this->userManager = $userManager;
 		$this->userSession = $userSession;
 		$this->root = $root;
-		$this->clientService = $clientService;
 		$this->urlGenerator = $urlGenerator;
-		$this->secureRandom = $secureRandom;
-		$this->db = $db;
+		$this->client = $client;
 		$this->config = $config;
-		$this->tokens = $tokens;
-	}
-
-	private function newRandomId(int $length): string {
-		$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
-		return $this->secureRandom->generate($length, $chars);
+		$this->requests = $requests;
 	}
 
 	/**
@@ -125,32 +110,9 @@ class ApiController extends OCSController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$token = $this->tokens->getToken($account, $file->getName());
-
-		$client = $this->clientService->newClient();
+		$server = $this->config->getServer();
 		try {
-			$server = $this->config->getServer();
-			$headers = [
-				'X-Vinegar-Token' => $token,
-				'X-Vinegar-API' => 'true',
-			];
-			$response = $client->post($server . 'api/v1/files/' . rawurlencode($account['id']), [
-				'headers' => $headers,
-				'multipart' => [[
-					'name' => 'file',
-					'contents' => $file->getContent(),
-					'filename' => $file->getName(),
-					'headers' => [
-						'Content-Type' => $mime,
-					],
-				]],
-				'verify' => false,
-				'nextcloud' => [
-					'allow_local_address' => true,
-				],
-			]);
-			$body = $response->getBody();
-			$data = json_decode($body, true);
+			$data = $this->client->shareFile($file, $account, $server);
 		} catch (ConnectException $e) {
 			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {
@@ -162,50 +124,8 @@ class ApiController extends OCSController {
 			return new DataResponse(['error' => 'INVALID_RESPONSE'], Http::STATUS_BAD_GATEWAY);
 		}
 
-		$query = $this->db->getQueryBuilder();
-		$query->insert('esig_requests')
-			->values(
-				[
-					'id' => $query->createParameter('id'),
-					'file_id' => $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT),
-					'created' => $query->createFunction('now()'),
-					'user_id' => $query->createNamedParameter($user->getUID()),
-					'recipient' => $query->createNamedParameter($recipient),
-					'recipient_type' => $query->createNamedParameter($recipient_type),
-					'esig_account_id' => $query->createNamedParameter($account['id']),
-					'esig_server' => $query->createNamedParameter($server),
-					'esig_file_id' => $query->createNamedParameter($esig_file_id),
-				]
-			);
-
-		$id = $this->newRandomId(16);
-		while (true) {
-			$query->setParameter('id', $id);
-			try {
-				$query->executeStatement();
-			} catch (UniqueConstraintViolationException $e) {
-				// Duplicate id, generate new.
-				$id = $this->newRandomId(16);
-				continue;
-			}
-
-			break;
-		}
+		$id = $this->requests->storeRequest($file, $user, $recipient, $recipient_type, $account, $server, $esig_file_id);
 		return new DataResponse(['request_id' => $id], Http::STATUS_CREATED);
-	}
-
-	private function getOwnRequestFromRow($row, bool $include_signed): array {
-		$r = [
-			'request_id' => $row['id'],
-			'created' => $row['created'],
-			'file_id' => $row['file_id'],
-			'recipient' => $row['recipient'],
-			'recipient_type' => $row['recipient_type'],
-		];
-		if ($include_signed) {
-			$r['signed'] = $row['signed'];
-		}
-		return $r;
 	}
 
 	/**
@@ -216,24 +136,74 @@ class ApiController extends OCSController {
 	 */
 	public function getRequests(?bool $include_signed = false): DataResponse {
 		$user = $this->userSession->getUser();
-		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('esig_requests')
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($user->getUID())))
-			->orderBy('created');
+		$requests = $this->requests->getOwnRequests($user, $include_signed);
 
-		if (!$include_signed) {
-			$query->andWhere($query->expr()->isNull('signed'));
+		$root = $this->root->getUserFolder($user->getUID());
+		$response = [];
+		foreach ($requests as $request) {
+			$files = $root->getById($request['file_id']);
+			if (empty($files)) {
+				// TODO: Should not happen, requests are deleted when files are.
+				continue;
+			}
+
+			$file = $files[0];
+			$mime = $file->getMimeType();
+			if ($mime) {
+				$mime = strtolower($mime);
+			}
+
+			$request['filename'] = $file->getName();
+			$request['mimetype'] = $mime;
+			$response[] = $request;
 		}
-		$result = $query->executeQuery();
+		return new DataResponse($response);
+	}
 
-		$requests = [];
-		while ($row = $result->fetch()) {
-			$requests[] = $this->getOwnRequestFromRow($row, $include_signed);
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param bool $include_signed
+	 * @return DataResponse
+	 */
+	public function getIncomingRequests(?bool $include_signed = false): DataResponse {
+		$user = $this->userSession->getUser();
+		$requests = $this->requests->getIncomingRequests($user, $include_signed);
+
+		$response = [];
+		foreach ($requests as $request) {
+			$owner = $this->userManager->get($request['user_id']);
+			if (!$owner) {
+				// TODO: Should not happen, owned requests are deleted when users are.
+				continue;
+			}
+
+			$files = $this->root->getUserFolder($owner->getUID())->getById($request['file_id']);
+			if (empty($files)) {
+				// TODO: Should not happen, requests are deleted when files are.
+				continue;
+			}
+
+			$file = $files[0];
+			$mime = $file->getMimeType();
+			if ($mime) {
+				$mime = strtolower($mime);
+			}
+			$r = [
+				'request_id' => $request['request_id'],
+				'created' => $request['created'],
+				'user_id' => $request['user_id'],
+				'display_name' => $owner ? $owner->getDisplayName() : null,
+				'filename' => $file->getName(),
+				'mimetype' => $mime,
+			];
+			if ($include_signed) {
+				$r['signed'] = $request['signed'];
+			}
+			$response[] = $r;
 		}
-		$result->closeCursor();
 
-		return new DataResponse($requests);
+		return new DataResponse($response);
 	}
 
 	/**
@@ -244,20 +214,72 @@ class ApiController extends OCSController {
 	 */
 	public function getRequest(string $id): DataResponse {
 		$user = $this->userSession->getUser();
-		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('esig_requests')
-			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
-			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($user->getUID())));
-		$result = $query->executeQuery();
-		$row = $result->fetch();
-		$result->closeCursor();
-		if ($row === false) {
+		$request = $this->requests->getOwnRequestById($user, $id);
+		if (!$request) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$r = $this->getOwnRequestFromRow($row, true);
-		return new DataResponse($r);
+		$files = $this->root->getUserFolder($user->getUID())->getById($request['file_id']);
+		if (empty($files)) {
+			// TODO: Should not happen, requests are deleted when files are.
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$file = $files[0];
+		$mime = $file->getMimeType();
+		if ($mime) {
+			$mime = strtolower($mime);
+		}
+
+		$request['filename'] = $file->getName();
+		$request['mimetype'] = $mime;
+		return new DataResponse($request);
+	}
+
+	/**
+	 * @PublicPage
+	 *
+	 * @param string $id
+	 * @return DataResponse
+	 */
+	public function getIncomingRequest(string $id): DataResponse {
+		$request = $this->requests->getRequestById($id);
+		if (!$request) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$user = $this->userSession->getUser();
+		if (!$this->requests->mayAccess($user, $request)) {
+			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		}
+
+		$owner = $this->userManager->get($request['user_id']);
+		if (!$owner) {
+			// TODO: Should not happen, owned requests are deleted when users are.
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$files = $this->root->getUserFolder($owner->getUID())->getById($request['file_id']);
+		if (empty($files)) {
+			// TODO: Should not happen, requests are deleted when files are.
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$file = $files[0];
+		$mime = $file->getMimeType();
+		if ($mime) {
+			$mime = strtolower($mime);
+		}
+		$response = [
+			'request_id' => $id,
+			'created' => $request['created'],
+			'user_id' => $request['user_id'],
+			'display_name' => $owner ? $owner->getDisplayName() : null,
+			'filename' => $file->getName(),
+			'mimetype' => $mime,
+			'signed' => $request['signed'],
+		];
+		return new DataResponse($response);
 	}
 
 	/**
@@ -268,14 +290,8 @@ class ApiController extends OCSController {
 	 */
 	public function deleteRequest(string $id): DataResponse {
 		$user = $this->userSession->getUser();
-		$query = $this->db->getQueryBuilder();
-		$query->select('user_id', 'esig_file_id', 'esig_account_id', 'esig_server')
-			->from('esig_requests')
-			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
-		$result = $query->executeQuery();
-		$row = $result->fetch();
-		$result->closeCursor();
-		if ($row === false || $row['user_id'] !== $user->getUID()) {
+		$row = $this->requests->getRequestById($id);
+		if (!$row || $row['user_id'] !== $user->getUID()) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -286,23 +302,8 @@ class ApiController extends OCSController {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
-		$token = $this->tokens->getToken($account, $row['esig_file_id']);
-
-		$client = $this->clientService->newClient();
 		try {
-			$headers = [
-				'X-Vinegar-Token' => $token,
-				'X-Vinegar-API' => 'true',
-			];
-			$response = $client->delete($row['esig_server'] . 'api/v1/files/' . rawurlencode($row['esig_account_id']) . '/' . rawurlencode($row['esig_file_id']), [
-				'headers' => $headers,
-				'verify' => false,
-				'nextcloud' => [
-					'allow_local_address' => true,
-				],
-			]);
-			$body = $response->getBody();
-			$data = json_decode($body, true);
+			$data = $this->client->deleteFile($row['esig_file_id'], $account, $row['esig_server']);
 		} catch (ConnectException $e) {
 			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {
@@ -314,12 +315,45 @@ class ApiController extends OCSController {
 			return new DataResponse(['error' => 'INVALID_RESPONSE'], Http::STATUS_BAD_GATEWAY);
 		}
 
-		$query->delete('esig_requests')
-			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
-		$query->executeStatement();
-
+		$this->requests->deleteRequestById($id);
 		return new DataResponse([]);
 	}
 
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $id
+	 * @return DataResponse
+	 */
+	public function signRequest(string $id): DataResponse {
+		$user = $this->userSession->getUser();
+		$row = $this->requests->getRequestById($id);
+		if (!$row || $row['user_id'] !== $user->getUID()) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$account = $this->config->getAccount();
+		if (!$account['id'] || !$account['secret']) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		} else if ($account['id'] !== $row['esig_account_id']) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		try {
+			$data = $this->client->signFile($row['esig_file_id'], $account, $row['esig_server']);
+		} catch (ConnectException $e) {
+			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
+		} catch (\Exception $e) {
+			return new DataResponse(['error' => $e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		$status = $data['status'] ?? '';
+		if ($status !== 'success') {
+			return new DataResponse(['error' => 'INVALID_RESPONSE'], Http::STATUS_BAD_GATEWAY);
+		}
+
+		$this->requests->markRequestSignedById($id);
+		return new DataResponse([]);
+	}
 
 }
