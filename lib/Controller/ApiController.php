@@ -135,6 +135,11 @@ class ApiController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getRequests(?bool $include_signed = false): DataResponse {
+		$account = $this->config->getAccount();
+		if (!$account['id'] || !$account['secret']) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
 		$user = $this->userSession->getUser();
 		$requests = $this->requests->getOwnRequests($user, $include_signed);
 
@@ -153,9 +158,21 @@ class ApiController extends OCSController {
 				$mime = strtolower($mime);
 			}
 
-			$request['filename'] = $file->getName();
-			$request['mimetype'] = $mime;
-			$response[] = $request;
+			$r = [
+				'request_id' => $request['id'],
+				'created' => $request['created'],
+				'file_id' => $request['file_id'],
+				'filename' => $file->getName(),
+				'mimetype' => $mime,
+				'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
+				'recipient' => $request['recipient'],
+				'recipient_type' => $request['recipient_type'],
+				'signed' => $request['signed'],
+			];
+			if ($include_signed && $request['signed']) {
+				$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
+			}
+			$response[] = $r;
 		}
 		return new DataResponse($response);
 	}
@@ -167,6 +184,11 @@ class ApiController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getIncomingRequests(?bool $include_signed = false): DataResponse {
+		$account = $this->config->getAccount();
+		if (!$account['id'] || !$account['secret']) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
 		$user = $this->userSession->getUser();
 		$requests = $this->requests->getIncomingRequests($user, $include_signed);
 
@@ -190,15 +212,17 @@ class ApiController extends OCSController {
 				$mime = strtolower($mime);
 			}
 			$r = [
-				'request_id' => $request['request_id'],
+				'request_id' => $request['id'],
 				'created' => $request['created'],
 				'user_id' => $request['user_id'],
 				'display_name' => $owner ? $owner->getDisplayName() : null,
 				'filename' => $file->getName(),
 				'mimetype' => $mime,
+				'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
 			];
 			if ($include_signed) {
 				$r['signed'] = $request['signed'];
+				$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 			}
 			$response[] = $r;
 		}
@@ -213,6 +237,11 @@ class ApiController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getRequest(string $id): DataResponse {
+		$account = $this->config->getAccount();
+		if (!$account['id'] || !$account['secret']) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
 		$user = $this->userSession->getUser();
 		$request = $this->requests->getOwnRequestById($user, $id);
 		if (!$request) {
@@ -231,9 +260,21 @@ class ApiController extends OCSController {
 			$mime = strtolower($mime);
 		}
 
-		$request['filename'] = $file->getName();
-		$request['mimetype'] = $mime;
-		return new DataResponse($request);
+		$response = [
+			'request_id' => $request['id'],
+			'created' => $request['created'],
+			'file_id' => $request['file_id'],
+			'filename' => $file->getName(),
+			'mimetype' => $mime,
+			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
+			'recipient' => $request['recipient'],
+			'recipient_type' => $request['recipient_type'],
+			'signed' => $request['signed'],
+		];
+		if (isset($request['signed'])) {
+			$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
+		}
+		return new DataResponse($response);
 	}
 
 	/**
@@ -243,6 +284,11 @@ class ApiController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getIncomingRequest(string $id): DataResponse {
+		$account = $this->config->getAccount();
+		if (!$account['id'] || !$account['secret']) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
 		$request = $this->requests->getRequestById($id);
 		if (!$request) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -278,7 +324,11 @@ class ApiController extends OCSController {
 			'filename' => $file->getName(),
 			'mimetype' => $mime,
 			'signed' => $request['signed'],
+			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
 		];
+		if (isset($response['signed'])) {
+			$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
+		}
 		return new DataResponse($response);
 	}
 
@@ -352,8 +402,13 @@ class ApiController extends OCSController {
 			return new DataResponse(['error' => 'INVALID_RESPONSE'], Http::STATUS_BAD_GATEWAY);
 		}
 
-		$this->requests->markRequestSignedById($id);
-		return new DataResponse([]);
+		$now = new \DateTime();
+		$this->requests->markRequestSignedById($id, $now);
+		return new DataResponse([
+			'request_id' => $id,
+			'signed' => $now,
+			'signed_url' => $this->client->getSignedUrl($row['esig_file_id'], $account, $row['esig_server']),
+		]);
 	}
 
 }

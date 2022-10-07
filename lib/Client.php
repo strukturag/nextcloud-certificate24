@@ -90,13 +90,15 @@ class Client {
 
 	public function getOriginalUrl(string $id, array $account, string $server): string {
 		$url = $server . 'api/v1/files/' . rawurlencode($account['id']) . '/' . rawurlencode($id);
-		$url .= '?download=1';
+		$token = $this->tokens->getToken($account, $id);
+		$url .= '?token=' . urlencode($token);
 		return $url;
 	}
 
 	public function getSignedUrl(string $id, array $account, string $server): string {
 		$url = $server . 'api/v1/files/' . rawurlencode($account['id']) . '/sign/' . rawurlencode($id);
-		$url .= '?download=1';
+		$token = $this->tokens->getToken($account, $id);
+		$url .= '?token=' . urlencode($token);
 		return $url;
 	}
 

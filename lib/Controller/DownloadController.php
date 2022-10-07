@@ -62,6 +62,8 @@ class DownloadController extends Controller {
 		}
 
 		$url = $this->client->getOriginalUrl($req['esig_file_id'], $account, $req['esig_server']);
+		$url .= (strpos($url, '?') === false) ? '?' : '&';
+		$url .= 'download=1';
 		return new RedirectResponse($url);
 	}
 
@@ -93,6 +95,8 @@ class DownloadController extends Controller {
 		}
 
 		$url = $this->client->getSignedUrl($req['esig_file_id'], $account, $req['esig_server']);
+		$url .= (strpos($url, '?') === false) ? '?' : '&';
+		$url .= 'download=1';
 		return new RedirectResponse($url);
 	}
 

@@ -82,20 +82,6 @@ class Requests {
 		return $row;
 	}
 
-	private function getOwnRequestFromRow($row, bool $include_signed): array {
-		$r = [
-			'request_id' => $row['id'],
-			'created' => $row['created'],
-			'file_id' => $row['file_id'],
-			'recipient' => $row['recipient'],
-			'recipient_type' => $row['recipient_type'],
-		];
-		if ($include_signed) {
-			$r['signed'] = $row['signed'];
-		}
-		return $r;
-	}
-
 	public function getOwnRequests(IUser $user, bool $include_signed): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
@@ -110,7 +96,7 @@ class Requests {
 
 		$requests = [];
 		while ($row = $result->fetch()) {
-			$requests[] = $this->getOwnRequestFromRow($row, $include_signed);
+			$requests[] = $row;
 		}
 		$result->closeCursor();
 
@@ -130,20 +116,7 @@ class Requests {
 			return null;
 		}
 
-		return $this->getOwnRequestFromRow($row, true);
-	}
-
-	private function getIncomingRequestFromRow($row, bool $include_signed): array {
-		$r = [
-			'request_id' => $row['id'],
-			'created' => $row['created'],
-			'file_id' => $row['file_id'],
-			'user_id' => $row['user_id'],
-		];
-		if ($include_signed) {
-			$r['signed'] = $row['signed'];
-		}
-		return $r;
+		return $row;
 	}
 
 	public function getIncomingRequests(IUser $user, bool $include_signed): array {
@@ -161,17 +134,17 @@ class Requests {
 
 		$requests = [];
 		while ($row = $result->fetch()) {
-			$requests[] = $this->getIncomingRequestFromRow($row, $include_signed);
+			$requests[] = $row;
 		}
 		$result->closeCursor();
 
 		return $requests;
 	}
 
-	public function markRequestSignedById(string $id) {
+	public function markRequestSignedById(string $id, \DateTime $now) {
 		$query = $this->db->getQueryBuilder();
 		$query->update('esig_requests')
-			->set('signed', $query->createFunction('now()'))
+			->set('signed', $query->createNamedParameter($now, 'datetimetz'))
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
 		$query->executeStatement();
 	}
