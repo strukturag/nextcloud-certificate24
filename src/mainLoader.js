@@ -24,6 +24,8 @@ import { shareFile } from './services/apiservice.js'
 
 import '@nextcloud/dialogs/styles/toast.scss'
 
+import './styles/loader.scss'
+
 (function(OCA) {
 	OCA.Esig = OCA.Esig || {}
 
@@ -40,7 +42,7 @@ import '@nextcloud/dialogs/styles/toast.scss'
 
 			fileList.fileActions.registerAction({
 				displayName: t('esig', 'Request signature'),
-				iconClass: 'icon-sign',
+				iconClass: 'icon-esig-sign',
 				name: 'Sign',
 				mime: 'application/pdf',
 				permissions: OC.PERMISSION_READ | OC.PERMISSION_WRITE,
