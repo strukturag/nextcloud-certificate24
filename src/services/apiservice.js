@@ -1,3 +1,4 @@
+/* eslint camelcase:0 */
 import axios from '@nextcloud/axios'
 import { generateUrl, generateOcsUrl } from '@nextcloud/router'
 
