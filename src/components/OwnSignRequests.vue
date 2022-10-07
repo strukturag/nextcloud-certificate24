@@ -55,8 +55,17 @@
 							</div>
 						</td>
 						<td>
-							<a @click="deleteRequest(request)">Delete</a>
-							<a v-if="request.signed" :href="downloadSignedUrl(request)">Download signed</a>
+							<div class="grid">
+								<NcButton type="primary"
+									@click="deleteRequest(request)">
+									{{ t('esig', 'Delete') }}
+								</NcButton>
+								<NcButton v-if="request.signed"
+									type="primary"
+									:href="downloadSignedUrl(request)">
+									{{ t('esig', 'Download signed') }}
+								</NcButton>
+							</div>
 						</td>
 					</tr>
 				</tbody>
@@ -69,6 +78,7 @@
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import { getRequests, deleteRequest, getSignedUrl } from '../services/apiservice.js'
@@ -78,6 +88,7 @@ export default {
 
 	components: {
 		NcAvatar,
+		NcButton,
 		NcLoadingIcon,
 	},
 
@@ -136,3 +147,13 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+	grid-template-rows: repeat(auto-fill, auto);
+	position: relative;
+	margin: 12px 0;
+}
+</style>

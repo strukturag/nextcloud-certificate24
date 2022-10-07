@@ -48,8 +48,18 @@
 								:show-user-status-compact="false" />
 						</td>
 						<td>
-							<a v-if="!request.signed" @click="signRequest(request)">Sign</a>
-							<a v-if="request.signed" :href="downloadSignedUrl(request)">Download signed</a>
+							<div class="grid">
+								<NcButton v-if="!request.signed"
+									type="primary"
+									@click="signRequest(request)">
+									{{ t('esig', 'Sign') }}
+								</NcButton>
+								<NcButton v-if="request.signed"
+									type="primary"
+									:href="downloadSignedUrl(request)">
+									{{ t('esig', 'Download signed') }}
+								</NcButton>
+							</div>
 						</td>
 					</tr>
 				</tbody>
@@ -62,6 +72,7 @@
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 
 import { getIncomingRequests, signRequest, getOriginalUrl, getSignedUrl } from '../services/apiservice.js'
@@ -71,6 +82,7 @@ export default {
 
 	components: {
 		NcAvatar,
+		NcButton,
 		NcLoadingIcon,
 	},
 
