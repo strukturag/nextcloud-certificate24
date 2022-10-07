@@ -19,7 +19,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { showSuccess, showError } from '@nextcloud/dialogs'
 import { shareFile } from './services/apiservice.js'
+
+import '@nextcloud/dialogs/styles/toast.scss'
 
 (function(OCA) {
 	OCA.Esig = OCA.Esig || {}
@@ -49,7 +52,13 @@ import { shareFile } from './services/apiservice.js'
 		},
 
 		async show(id) {
-			return shareFile(id, 'admin', 'user')
+			try {
+				await shareFile(id, 'admin', 'user')
+				showSuccess(t('esig', 'Requested signature.'))
+			} catch (error) {
+				console.error('Could not request signature', id, error)
+				showError(t('esig', 'Error while requesting signature.'))
+			}
 		},
 	}
 })(OCA)
