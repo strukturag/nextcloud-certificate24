@@ -185,25 +185,3 @@ an email address.
 
 This method can also be accessed by anonymous users if file was shared with
 an email address.
-
-
-# Regular APIs
-
-## Download original file
-
-* Method: `GET`
-* Endpoint: `/download/<request_id>`
-
-Usually a redirect to the actual storage will be returned. If the current user
-is not allowed to access the file, a redirect to the login page of Nextcloud
-will be returned.
-
-
-## Download signed file
-
-* Method: `GET`
-* Endpoint: `/download/signed/<request_id>`
-
-Usually a redirect to the actual storage will be returned. If the current user
-is not allowed to access the file, a redirect to the login page of Nextcloud
-will be returned.
