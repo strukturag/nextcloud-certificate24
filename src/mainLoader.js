@@ -65,4 +65,6 @@ import './styles/loader.scss'
 	}
 })(OCA)
 
-OC.Plugins.register('OCA.Files.FileList', OCA.Esig.SignPlugin)
+window.addEventListener('DOMContentLoaded', () => {
+	OC.Plugins.register('OCA.Files.FileList', OCA.Esig.SignPlugin)
+})
