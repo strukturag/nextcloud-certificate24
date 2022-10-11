@@ -19,67 +19,70 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import Vue from 'vue'
-
-import ShareDialogView from './views/ShareDialogView.vue'
-
 import VueObserveVisibility from 'vue-observe-visibility'
-
 import '@nextcloud/dialogs/styles/toast.scss'
 
+import ShareDialogView from './views/ShareDialogView.vue'
 import './styles/loader.scss'
 
-(function(OCA) {
-	OCA.Esig = OCA.Esig || {}
+Vue.prototype.t = t
+Vue.prototype.n = n
+Vue.prototype.OC = OC
+Vue.prototype.OCA = OCA
+Vue.prototype.OCP = OCP
 
-	/**
-	 * @namespace OCA.Esig.SignPlugin
-	 */
-	OCA.Esig.SignPlugin = {
+Vue.use(VueObserveVisibility)
 
-		attach(fileList) {
-			if (fileList.$el && fileList.$el.attr('id') === 'app-content-trashbin') {
-				// Don't add action to files in trashbin.
-				return
-			}
+const el = document.createElement('div')
+document.body.appendChild(el)
 
-			fileList.fileActions.registerAction({
-				displayName: t('esig', 'Request signature'),
-				iconClass: 'icon-esig-sign',
-				name: 'Sign',
-				mime: 'application/pdf',
-				permissions: OC.PERMISSION_READ | OC.PERMISSION_WRITE,
-				actionHandler: function(fileName, context) {
-					const fileInfoModel = context.fileInfoModel || context.fileList.getModelForFile(fileName)
-					this.show(fileInfoModel.id)
-				}.bind(this),
-			})
-		},
+const app = new Vue({
+	el,
+	data: {
+		fileId: null,
+	},
+	render: h => h(ShareDialogView),
+})
 
-		async show(id) {
-			const el = document.createElement('div')
-			el.id = 'esig-sign-dialog'
-			document.body.appendChild(el)
+app.$on('dialog:open', (id) => {
+	app.$data.fileId = id
+})
 
-			const tmp = new Vue({
-				el: '#esig-sign-dialog',
-				data: {
-					fileId: id,
-				},
-				render: h => h(ShareDialogView),
-			})
-			console.error('XXX', tmp)
-		},
-	}
-})(OCA)
+app.$on('dialog:closed', () => {
+	app.$data.fileId = null
+})
+
+OCA.Esig = OCA.Esig || {}
+
+/**
+ * @namespace OCA.Esig.SignPlugin
+ */
+OCA.Esig.SignPlugin = {
+
+	attach(fileList) {
+		if (fileList.$el && fileList.$el.attr('id') === 'app-content-trashbin') {
+			// Don't add action to files in trashbin.
+			return
+		}
+
+		fileList.fileActions.registerAction({
+			displayName: t('esig', 'Request signature'),
+			iconClass: 'icon-esig-sign',
+			name: 'Sign',
+			mime: 'application/pdf',
+			permissions: OC.PERMISSION_READ | OC.PERMISSION_WRITE,
+			actionHandler: function(fileName, context) {
+				const fileInfoModel = context.fileInfoModel || context.fileList.getModelForFile(fileName)
+				this.show(fileInfoModel.id)
+			}.bind(this),
+		})
+	},
+
+	show(id) {
+		app.$emit('dialog:open', id)
+	},
+}
 
 window.addEventListener('DOMContentLoaded', () => {
-	Vue.prototype.t = t
-	Vue.prototype.n = n
-	Vue.prototype.OC = OC
-	Vue.prototype.OCA = OCA
-	Vue.prototype.OCP = OCP
-
-	Vue.use(VueObserveVisibility)
-
 	OC.Plugins.register('OCA.Files.FileList', OCA.Esig.SignPlugin)
 })

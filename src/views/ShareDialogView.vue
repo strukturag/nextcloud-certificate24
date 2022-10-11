@@ -123,7 +123,7 @@ export default {
 
 	data() {
 		return {
-			showDialog: true,
+			fileId: null,
 			error: '',
 			recipient_type: 'user',
 			noUserResults: false,
@@ -138,6 +138,9 @@ export default {
 	},
 
 	computed: {
+		showDialog() {
+			return !!this.fileId
+		},
 		userSelected() {
 			return this.recipient_type === 'user'
 		},
@@ -165,8 +168,10 @@ export default {
 		},
 	},
 
-	async mounted() {
-		this.focusUserInput()
+	created() {
+		this.$root.$watch('fileId', (newValue) => {
+			this.fileId = newValue
+		})
 	},
 
 	methods: {
@@ -262,7 +267,7 @@ export default {
 		},
 
 		closeModal() {
-			this.showDialog = false
+			this.$root.$emit('dialog:closed')
 		},
 
 		selectUser(item) {
@@ -285,8 +290,7 @@ export default {
 		},
 
 		async requestSignature() {
-			const id = this.$root.$data.fileId
-			if (!id) {
+			if (!this.fileId) {
 				showError(t('esig', 'No file selected.'))
 				return
 			}
@@ -306,11 +310,11 @@ export default {
 			}
 
 			try {
-				await shareFile(id, recipient, this.recipient_type)
+				await shareFile(this.fileId, recipient, this.recipient_type)
 				this.showDialog = false
 				showSuccess(t('esig', 'Requested signature.'))
 			} catch (error) {
-				console.error('Could not request signature', id, error)
+				console.error('Could not request signature', this.fileId, error)
 				const response = error.response
 				const data = response.data.ocs?.data || {}
 				switch (data.error) {
