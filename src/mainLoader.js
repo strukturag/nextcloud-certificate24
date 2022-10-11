@@ -18,9 +18,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import Vue from 'vue'
 
-import { showSuccess, showError } from '@nextcloud/dialogs'
-import { shareFile } from './services/apiservice.js'
+import ShareDialogView from './views/ShareDialogView.vue'
+
+import VueObserveVisibility from 'vue-observe-visibility'
 
 import '@nextcloud/dialogs/styles/toast.scss'
 
@@ -54,17 +56,30 @@ import './styles/loader.scss'
 		},
 
 		async show(id) {
-			try {
-				await shareFile(id, 'admin', 'user')
-				showSuccess(t('esig', 'Requested signature.'))
-			} catch (error) {
-				console.error('Could not request signature', id, error)
-				showError(t('esig', 'Error while requesting signature.'))
-			}
+			const el = document.createElement('div')
+			el.id = 'esig-sign-dialog'
+			document.body.appendChild(el)
+
+			const tmp = new Vue({
+				el: '#esig-sign-dialog',
+				data: {
+					fileId: id,
+				},
+				render: h => h(ShareDialogView),
+			})
+			console.error('XXX', tmp)
 		},
 	}
 })(OCA)
 
 window.addEventListener('DOMContentLoaded', () => {
+	Vue.prototype.t = t
+	Vue.prototype.n = n
+	Vue.prototype.OC = OC
+	Vue.prototype.OCA = OCA
+	Vue.prototype.OCP = OCP
+
+	Vue.use(VueObserveVisibility)
+
 	OC.Plugins.register('OCA.Files.FileList', OCA.Esig.SignPlugin)
 })

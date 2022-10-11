@@ -67,5 +67,11 @@ return [
       'verb' => 'POST',
       'requirements' => $requirements,
     ],
+		[
+      'name' => 'Api#search',
+      'url' => '/api/{apiVersion}/search',
+      'verb' => 'POST',
+      'requirements' => $requirements,
+    ],
   ],
 ];

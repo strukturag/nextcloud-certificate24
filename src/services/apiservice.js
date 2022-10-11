@@ -42,6 +42,13 @@ const getSignedUrl = (id) => {
 	return generateUrl('apps/esig/download/signed/' + id)
 }
 
+const search = async (search, type) => {
+	return await axios.post(generateOcsUrl('apps/esig/api/v1/search'), {
+		search,
+		type,
+	})
+}
+
 export {
 	shareFile,
 	getRequests,
@@ -50,4 +57,5 @@ export {
 	signRequest,
 	getOriginalUrl,
 	getSignedUrl,
+	search,
 }

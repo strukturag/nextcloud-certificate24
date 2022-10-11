@@ -19,6 +19,8 @@
     "debounce": "^1.2.1",
     "jquery": "3.6.1",
     "vue": "2.7.10",
+		"vue-material-design-icons": "^5.1.2",
+		"vue-observe-visibility": "^1.0.0",
     "vue-router": "3.6.5"
   },
   "devDependencies": {

@@ -11,6 +11,7 @@ use OCA\Esig\Requests;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Collaboration\Collaborators\ISearch;
 use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -18,6 +19,7 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\Share\IShare;
 
 class ApiController extends OCSController {
 
@@ -31,6 +33,7 @@ class ApiController extends OCSController {
 	private IUserSession $userSession;
 	private IRootFolder $root;
 	private IURLGenerator $urlGenerator;
+	private ISearch $search;
 	private Client $client;
 	private Config $config;
 	private Requests $requests;
@@ -43,6 +46,7 @@ class ApiController extends OCSController {
 								IUserSession $userSession,
 								IRootFolder $root,
 								IURLGenerator $urlGenerator,
+								ISearch $search,
 								Client $client,
 								Config $config,
 								Requests $requests) {
@@ -53,6 +57,7 @@ class ApiController extends OCSController {
 		$this->userSession = $userSession;
 		$this->root = $root;
 		$this->urlGenerator = $urlGenerator;
+		$this->search = $search;
 		$this->client = $client;
 		$this->config = $config;
 		$this->requests = $requests;
@@ -409,6 +414,39 @@ class ApiController extends OCSController {
 			'signed' => $now,
 			'signed_url' => $this->client->getSignedUrl($row['esig_file_id'], $account, $row['esig_server']),
 		]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $search
+	 * @return DataResponse
+	 */
+	public function search(string $search = '', string $type = ''): DataResponse {
+		$shareTypes = [];
+		switch ($type) {
+			case 'user':
+				$shareTypes[] = IShare::TYPE_USER;
+				break;
+			case 'email':
+				$shareTypes[] = IShare::TYPE_EMAIL;
+				break;
+		}
+		if (empty($shareTypes)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$minLength = 3;
+		if (strlen($search) < $minLength) {
+			return new DataResponse([]);
+		}
+
+		$limit = 10;
+		$offset = 0;
+		$lookup = false;  // Don't use lookup server.
+		[$result, $hasMoreResults] = $this->search->search($search, $shareTypes, $lookup, $limit, $offset);
+		$response = new DataResponse($result);
+		return $response;
 	}
 
 }
