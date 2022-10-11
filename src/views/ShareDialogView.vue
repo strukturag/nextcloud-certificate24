@@ -6,6 +6,9 @@
 			@close="closeModal">
 			<div class="modal__content">
 				<h1>{{ t('esig', 'Request signature') }}</h1>
+				<div v-if="error" class="error">
+					{{ error }}
+				</div>
 				<div>
 					<NcCheckboxRadioSwitch :checked.sync="recipient_type"
 						value="user"
@@ -121,6 +124,7 @@ export default {
 	data() {
 		return {
 			showDialog: true,
+			error: '',
 			recipient_type: 'user',
 			noUserResults: false,
 			usersLoading: false,
@@ -148,12 +152,26 @@ export default {
 		},
 	},
 
+	watch: {
+		'recipient_type'(newValue) {
+			this.error = ''
+			this.$nextTick(() => {
+				if (newValue === 'user') {
+					this.abortUserSearch()
+				} else if (newValue === 'email') {
+					this.abortEmailSearch()
+				}
+			})
+		},
+	},
+
 	async mounted() {
 		this.focusUserInput()
 	},
 
 	methods: {
 		handleUserInput() {
+			this.error = ''
 			this.noUserResults = false
 			this.usersLoading = true
 			this.userResults = {}
@@ -201,6 +219,7 @@ export default {
 		},
 
 		handleEmailInput() {
+			this.error = ''
 			this.noEmailResults = false
 			this.emailsLoading = true
 			this.emailResults = {}
@@ -253,13 +272,14 @@ export default {
 		},
 
 		selectEmail(item) {
-			if (item.value && item.value.shareType === 0) {
+			if (item.value && item.value.shareType === OC.Share.SHARE_TYPE_USER) {
 				this.recipient_type = 'user'
 				this.selectUser(item)
 				return
 			}
 
-			console.error('email', item)
+			const shareWith = item.value?.shareWith || ''
+			this.email = shareWith
 			this.emailResults = {}
 			this.noEmailResults = false
 		},
@@ -281,7 +301,7 @@ export default {
 				break
 			}
 			if (!recipient) {
-				showError(t('esig', 'Please enter a recipient.'))
+				this.error = t('esig', 'Please select a recipient.')
 				return
 			}
 
@@ -291,7 +311,21 @@ export default {
 				showSuccess(t('esig', 'Requested signature.'))
 			} catch (error) {
 				console.error('Could not request signature', id, error)
-				showError(t('esig', 'Error while requesting signature.'))
+				const response = error.response
+				const data = response.data.ocs?.data || {}
+				switch (data.error) {
+				case 'unknown_user':
+					this.error = t('esig', 'Unknown user.')
+					break
+				case 'invalid_email':
+					this.error = t('esig', 'Invalid email address.')
+					break
+				case 'error_connecting':
+					this.error = t('esig', 'Error connecting to esig service.')
+					break
+				default:
+					this.error = t('esig', 'Error while requesting signature.')
+				}
 			}
 		},
 	},
@@ -301,9 +335,18 @@ export default {
 h1 {
 	font-size: 150%;
 	font-weight: bold;
+	margin-bottom: 1em;
 }
 .modal__content {
 	margin: 50px;
+}
+
+.error {
+	color: red;
+	border: 1px solid red;
+	border-radius: 4px;
+	padding: 6px 10px;
+	margin-bottom: 1em;
 }
 .search {
 	position: relative;

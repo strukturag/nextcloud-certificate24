@@ -1,10 +1,18 @@
 <template>
 	<li class="row"
 		@click="handleClick">
-		<NcAvatar v-if="item.value.shareType === 0"
+		<NcAvatar v-if="item.value.shareType === OC.Share.SHARE_TYPE_USER"
 			:user="item.value.shareWith"
 			:display-name="itemName(item)"
 			:size="44"
+			:disable-menu="true"
+			:show-user-status="false"
+			:show-user-status-compact="false" />
+
+		<NcAvatar v-if="item.value.shareType === OC.Share.SHARE_TYPE_EMAIL"
+			:display-name="itemName(item)"
+			:size="44"
+			:is-no-user="true"
 			:disable-menu="true"
 			:show-user-status="false"
 			:show-user-status-compact="false" />
@@ -18,7 +26,7 @@
 				</span>
 			</div>
 			<div>
-				<NcHighlight :text="item.shareWithDisplayNameUnique"
+				<NcHighlight :text="itemEmail(item)"
 					:search="searchText" />
 			</div>
 		</div>
@@ -59,7 +67,32 @@ export default {
 		},
 
 		itemIcon(item) {
-			return item.icon || 'icon-user'
+			if (item.icon) {
+				return item.icon
+			}
+
+			const shareType = item.value?.shareType || null
+			switch (shareType) {
+			case OC.Share.SHARE_TYPE_USER:
+				return 'icon-user'
+			case OC.Share.SHARE_TYPE_EMAIL:
+				return 'icon-mail'
+			}
+			return ''
+		},
+
+		itemEmail(item) {
+			if (item.shareWithDisplayNameUnique) {
+				return item.shareWithDisplayNameUnique
+			}
+
+			const shareType = item.value?.shareType || null
+			const shareWith = item.value?.shareWith || ''
+			switch (shareType) {
+			case OC.Share.SHARE_TYPE_EMAIL:
+				return shareWith
+			}
+			return ''
 		},
 
 		handleClick() {

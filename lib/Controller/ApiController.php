@@ -19,6 +19,7 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\Mail\IMailer;
 use OCP\Share\IShare;
 
 class ApiController extends OCSController {
@@ -34,6 +35,7 @@ class ApiController extends OCSController {
 	private IRootFolder $root;
 	private IURLGenerator $urlGenerator;
 	private ISearch $search;
+	private IMailer $mailer;
 	private Client $client;
 	private Config $config;
 	private Requests $requests;
@@ -47,6 +49,7 @@ class ApiController extends OCSController {
 								IRootFolder $root,
 								IURLGenerator $urlGenerator,
 								ISearch $search,
+								IMailer $mailer,
 								Client $client,
 								Config $config,
 								Requests $requests) {
@@ -58,6 +61,7 @@ class ApiController extends OCSController {
 		$this->root = $root;
 		$this->urlGenerator = $urlGenerator;
 		$this->search = $search;
+		$this->mailer = $mailer;
 		$this->client = $client;
 		$this->config = $config;
 		$this->requests = $requests;
@@ -74,21 +78,32 @@ class ApiController extends OCSController {
 	public function shareFile(int $file_id, string $recipient, string $recipient_type): DataResponse {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([
+				'error' => 'unconfigured',
+			], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		switch ($recipient_type) {
 			case 'email':
+				if (!$this->mailer->validateMailAddress($recipient)) {
+					return new DataResponse([
+						'error' => 'invalid_email',
+					], Http::STATUS_BAD_REQUEST);
+				}
 				$recipientUser = null;
 				break;
 			case 'user':
 				$recipientUser = $this->userManager->get($recipient);
 				if (!$recipientUser) {
-					return new DataResponse([], Http::STATUS_NOT_FOUND);
+					return new DataResponse([
+						'error' => 'unknown_user',
+					], Http::STATUS_NOT_FOUND);
 				}
 				break;
 			default:
-				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+				return new DataResponse([
+					'error' => 'invalid_recipient_type',
+				], Http::STATUS_BAD_REQUEST);
 		}
 
 		$user = $this->userSession->getUser();
@@ -99,12 +114,16 @@ class ApiController extends OCSController {
 		}
 
 		if (empty($files)) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([
+				'error' => 'unknown_file',
+			], Http::STATUS_NOT_FOUND);
 		}
 
 		$file = $files[0];
 		if (!$file->isReadable() || !$file->isUpdateable()) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
+			return new DataResponse([
+				'error' => 'error_accessing_file',
+			], Http::STATUS_FORBIDDEN);
 		}
 
 		$mime = $file->getMimeType();
@@ -112,21 +131,23 @@ class ApiController extends OCSController {
 			$mime = strtolower($mime);
 		}
 		if (!in_array($mime, self::PDF_MIME_TYPES)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse([
+				'error' => 'invalid_filetype',
+			], Http::STATUS_BAD_REQUEST);
 		}
 
 		$server = $this->config->getServer();
 		try {
 			$data = $this->client->shareFile($file, $account, $server);
 		} catch (ConnectException $e) {
-			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
+			return new DataResponse(['error' => 'error_connecting'], Http::STATUS_BAD_GATEWAY);
 		} catch (\Exception $e) {
-			return new DataResponse(['error' => $e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
+			return new DataResponse(['error' => $e->getCode()], Http::STATUS_BAD_GATEWAY);
 		}
 
 		$esig_file_id = $data['file_id'] ?? '';
 		if (empty($esig_file_id)) {
-			return new DataResponse(['error' => 'INVALID_RESPONSE'], Http::STATUS_BAD_GATEWAY);
+			return new DataResponse(['error' => 'invalid_response'], Http::STATUS_BAD_GATEWAY);
 		}
 
 		$id = $this->requests->storeRequest($file, $user, $recipient, $recipient_type, $account, $server, $esig_file_id);
