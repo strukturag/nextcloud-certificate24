@@ -98,7 +98,7 @@ export default {
 		handleClick() {
 			this.$emit('click-item', this.item)
 		},
-	}
+	},
 }
 </script>
 

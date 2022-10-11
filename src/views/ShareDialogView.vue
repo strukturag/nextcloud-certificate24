@@ -9,7 +9,7 @@
 				<div v-if="error" class="error">
 					{{ error }}
 				</div>
-				<div>
+				<div class="recipient_section">
 					<NcCheckboxRadioSwitch :checked.sync="recipient_type"
 						value="user"
 						name="recipient_type"
@@ -44,7 +44,7 @@
 							@click="selectUser" />
 					</div>
 				</div>
-				<div>
+				<div class="recipient_section">
 					<NcCheckboxRadioSwitch :checked.sync="recipient_type"
 						value="email"
 						name="recipient_type"
@@ -301,7 +301,7 @@ export default {
 				break
 			}
 			if (!recipient) {
-				this.error = t('esig', 'Please select a recipient.')
+				this.error = t('esig', 'Please select a recipient first.')
 				return
 			}
 
@@ -337,8 +337,13 @@ h1 {
 	font-weight: bold;
 	margin-bottom: 1em;
 }
+
 .modal__content {
 	margin: 50px;
+}
+
+.recipient_section {
+	margin-bottom: 1em;
 }
 
 .error {
@@ -348,6 +353,7 @@ h1 {
 	padding: 6px 10px;
 	margin-bottom: 1em;
 }
+
 .search {
 	position: relative;
 	height: 100%;
