@@ -44,6 +44,7 @@
 							<div v-if="request.recipient_type === 'user'">
 								<NcAvatar :user="request.recipient"
 									:display-name="request.recipient"
+									:disable-menu="true"
 									:show-user-status="false"
 									:show-user-status-compact="false" />
 							</div>

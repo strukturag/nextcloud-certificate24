@@ -44,6 +44,7 @@
 						<td>
 							<NcAvatar :user="request.user_id"
 								:display-name="request.display_name"
+								:disable-menu="true"
 								:show-user-status="false"
 								:show-user-status-compact="false" />
 						</td>
