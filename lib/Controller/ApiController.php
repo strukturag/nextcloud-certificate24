@@ -396,7 +396,7 @@ class ApiController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 *
 	 * @param string $id
 	 * @return DataResponse
@@ -404,7 +404,9 @@ class ApiController extends OCSController {
 	public function signRequest(string $id): DataResponse {
 		$user = $this->userSession->getUser();
 		$row = $this->requests->getRequestById($id);
-		if (!$row || $row['user_id'] !== $user->getUID()) {
+		if (!$row) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} else if ($row['recipient_type'] === 'user' && !$user || $row['recipient'] !== $user->getUID()) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
