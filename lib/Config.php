@@ -8,7 +8,7 @@ use OCP\IConfig;
 
 class Config {
 
-	public const DEFAULT_SERVER = "https://api.esig.struktur.de/";
+	public const DEFAULT_SERVER = "https://api.certificate24.com/";
 
 	private IConfig $config;
 
