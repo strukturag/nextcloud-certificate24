@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Esig\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
+use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Client;
 use OCA\Esig\Config;
 use OCA\Esig\Requests;
@@ -23,6 +24,8 @@ use OCP\Mail\IMailer;
 use OCP\Share\IShare;
 
 class ApiController extends OCSController {
+
+	const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
 
 	const PDF_MIME_TYPES = [
 		'application/pdf',
@@ -65,6 +68,49 @@ class ApiController extends OCSController {
 		$this->client = $client;
 		$this->config = $config;
 		$this->requests = $requests;
+	}
+
+	private function parseDateTime($s) {
+		if (!$s) {
+			return null;
+		}
+		if ($s[strlen($s) - 1] === 'Z') {
+			$s = substr($s, 0, strlen($s) - 1) . '+00:00';
+		}
+		if ($s[strlen($s) - 3] !== ':') {
+			$s = $s . ':00';
+		}
+		if ($s[10] === ' ') {
+			$s[10] = 'T';
+		}
+		if (strlen($s) === 19) {
+			// SQLite backend stores without timezone, e.g. "2022-10-12 06:54:54".
+			$s .= '+00:00';
+		}
+		$dt = \DateTime::createFromFormat(\DateTime::ISO8601, $s);
+		if (!$dt) {
+			$dt = \DateTime::createFromFormat(self::ISO8601_EXTENDED, $s);
+		}
+		if (!$dt) {
+			$this->logger->error('Could not convert ' . $s . ' to datetime', [
+				'app' => Application::APP_ID,
+			]);
+			$dt = null;
+		}
+		return $dt;
+	}
+
+	private function formatDateTime($dt) {
+		if (!$dt) {
+			return null;
+		}
+		if (is_string($dt)) {
+			$dt = $this->parseDateTime($dt);
+			if (!$dt) {
+				return null;
+			}
+		}
+		return $dt->format(\DateTime::RFC3339);
 	}
 
 	/**
@@ -186,16 +232,16 @@ class ApiController extends OCSController {
 
 			$r = [
 				'request_id' => $request['id'],
-				'created' => $request['created'],
+				'created' => $this->formatDateTime($request['created']),
 				'file_id' => $request['file_id'],
 				'filename' => $file->getName(),
 				'mimetype' => $mime,
 				'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
 				'recipient' => $request['recipient'],
 				'recipient_type' => $request['recipient_type'],
-				'signed' => $request['signed'],
 			];
 			if ($include_signed && $request['signed']) {
+				$r['signed'] = $this->formatDateTime($request['signed']);
 				$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 			}
 			$response[] = $r;
@@ -239,15 +285,15 @@ class ApiController extends OCSController {
 			}
 			$r = [
 				'request_id' => $request['id'],
-				'created' => $request['created'],
+				'created' => $this->formatDateTime($request['created']),
 				'user_id' => $request['user_id'],
 				'display_name' => $owner ? $owner->getDisplayName() : null,
 				'filename' => $file->getName(),
 				'mimetype' => $mime,
 				'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
 			];
-			if ($include_signed) {
-				$r['signed'] = $request['signed'];
+			if ($include_signed && $request['signed']) {
+				$r['signed'] = $this->formatDateTime($request['signed']);
 				$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 			}
 			$response[] = $r;
@@ -288,16 +334,16 @@ class ApiController extends OCSController {
 
 		$response = [
 			'request_id' => $request['id'],
-			'created' => $request['created'],
+			'created' => $this->formatDateTime($request['created']),
 			'file_id' => $request['file_id'],
 			'filename' => $file->getName(),
 			'mimetype' => $mime,
 			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
 			'recipient' => $request['recipient'],
 			'recipient_type' => $request['recipient_type'],
-			'signed' => $request['signed'],
 		];
-		if (isset($request['signed'])) {
+		if (isset($request['signed']) && $request['signed']) {
+			$response['signed'] = $this->formatDateTime($request['signed']);
 			$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 		}
 		return new DataResponse($response);
@@ -344,15 +390,15 @@ class ApiController extends OCSController {
 		}
 		$response = [
 			'request_id' => $id,
-			'created' => $request['created'],
+			'created' => $this->formatDateTime($request['created']),
 			'user_id' => $request['user_id'],
 			'display_name' => $owner ? $owner->getDisplayName() : null,
 			'filename' => $file->getName(),
 			'mimetype' => $mime,
-			'signed' => $request['signed'],
 			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
 		];
-		if (isset($response['signed'])) {
+		if (isset($response['signed']) && $request['signed']) {
+			$response['signed'] = $this->formatDateTime($request['signed']);
 			$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 		}
 		return new DataResponse($response);
@@ -430,11 +476,18 @@ class ApiController extends OCSController {
 			return new DataResponse(['error' => 'INVALID_RESPONSE'], Http::STATUS_BAD_GATEWAY);
 		}
 
-		$now = new \DateTime();
-		$this->requests->markRequestSignedById($id, $now);
+		$signed = $data['signed'] ?? null;
+		if (is_string($signed)) {
+			$signed = $this->parseDateTime($signed);
+		}
+		if (!$signed) {
+			$signed = new \DateTime();
+		}
+
+		$this->requests->markRequestSignedById($id, $signed);
 		return new DataResponse([
 			'request_id' => $id,
-			'signed' => $now,
+			'signed' => $this->formatDateTime($signed),
 			'signed_url' => $this->client->getSignedUrl($row['esig_file_id'], $account, $row['esig_server']),
 		]);
 	}

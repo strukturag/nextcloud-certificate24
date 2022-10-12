@@ -121,8 +121,9 @@ export default {
 
 					this.loading = true
 					try {
-						await signRequest(request.request_id)
-						request.signed = new Date()
+						const response = await signRequest(request.request_id)
+						const data = response.data.ocs?.data || {}
+						request.signed = data.signed
 						showSuccess(t('esig', 'Request signed.'))
 					} catch (error) {
 						console.error('Could not sign request', request, error)
