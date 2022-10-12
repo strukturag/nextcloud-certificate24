@@ -311,7 +311,7 @@ export default {
 
 			try {
 				await shareFile(this.fileId, recipient, this.recipient_type)
-				this.showDialog = false
+				this.closeModal()
 				showSuccess(t('esig', 'Requested signature.'))
 			} catch (error) {
 				console.error('Could not request signature', this.fileId, error)
