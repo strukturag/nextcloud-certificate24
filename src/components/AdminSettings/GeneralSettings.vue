@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { showSuccess } from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
 
@@ -78,6 +78,11 @@ export default {
 			}), {
 				success() {
 					showSuccess(t('esig', 'Account settings saved'))
+					self.loading = false
+					self.toggleSave()
+				},
+				error() {
+					showError(t('esig', 'Could not save account settings'))
 					self.loading = false
 					self.toggleSave()
 				},
