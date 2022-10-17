@@ -11,6 +11,7 @@
 				</div>
 				<div class="recipient_section">
 					<NcCheckboxRadioSwitch :checked.sync="recipient_type"
+						:disabled="shareLoading"
 						value="user"
 						name="recipient_type"
 						type="radio">
@@ -19,6 +20,7 @@
 					<div v-if="userSelected" class="search">
 						<NcTextField ref="userField"
 							v-observe-visibility="userVisibilityChanged"
+							:disabled="shareLoading"
 							:value.sync="user"
 							type="text"
 							:placeholder="t('esig', 'Search users')"
@@ -46,6 +48,7 @@
 				</div>
 				<div class="recipient_section">
 					<NcCheckboxRadioSwitch :checked.sync="recipient_type"
+						:disabled="shareLoading"
 						value="email"
 						name="recipient_type"
 						type="radio">
@@ -54,6 +57,7 @@
 					<div v-if="!userSelected" class="search">
 						<NcTextField ref="emailField"
 							v-observe-visibility="emailVisibilityChanged"
+							:disabled="shareLoading"
 							:value.sync="email"
 							type="text"
 							:placeholder="t('esig', 'E-mail address')"
@@ -81,6 +85,7 @@
 				</div>
 				<div>
 					<NcButton type="primary"
+						:disabled="shareLoading"
 						@click="requestSignature">
 						<template #icon>
 							<FileSign />
@@ -134,6 +139,7 @@ export default {
 			emailsLoading: false,
 			email: '',
 			emailResults: {},
+			shareLoading: false,
 		}
 	},
 
@@ -171,6 +177,16 @@ export default {
 	created() {
 		this.$root.$watch('fileId', (newValue) => {
 			this.fileId = newValue
+			this.recipient_type = 'user'
+			this.noUserResults = false
+			this.usersLoading = false
+			this.user = ''
+			this.userResults = {}
+			this.noEmailResults = false
+			this.emailsLoading = false
+			this.email = ''
+			this.emailResults = {}
+			this.shareLoading = false
 		})
 	},
 
@@ -309,11 +325,14 @@ export default {
 				return
 			}
 
+			this.shareLoading = true
 			try {
 				await shareFile(this.fileId, recipient, this.recipient_type)
+				this.shareLoading = false
 				this.closeModal()
 				showSuccess(t('esig', 'Requested signature.'))
 			} catch (error) {
+				this.shareLoading = false
 				console.error('Could not request signature', this.fileId, error)
 				const response = error.response
 				const data = response.data.ocs?.data || {}
