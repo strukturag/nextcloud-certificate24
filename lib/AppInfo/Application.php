@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace OCA\Esig\AppInfo;
 
+use OCA\Esig\Activity\Listener as ActivityListener;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Util;
 
 class Application extends App implements IBootstrap {
@@ -38,6 +40,11 @@ class Application extends App implements IBootstrap {
 			];
 		});
 		Util::addScript('esig', 'esig-loader');
+
+		/** @var IEventDispatcher $dispatcher */
+		$dispatcher = $server->get(IEventDispatcher::class);
+
+		ActivityListener::register($dispatcher);
 	}
 
 }

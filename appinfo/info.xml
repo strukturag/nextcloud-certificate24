@@ -21,4 +21,13 @@
 		<admin-section>OCA\Esig\Settings\Admin\Section</admin-section>
 	</settings>
 
+        <activity>
+                <settings>
+                        <setting>OCA\Esig\Activity\Setting</setting>
+                </settings>
+
+                <providers>
+                        <provider>OCA\Esig\Activity\Provider\Share</provider>
+                </providers>
+        </activity>
 </info>

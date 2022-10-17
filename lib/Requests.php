@@ -6,7 +6,9 @@ namespace OCA\Esig;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCA\Esig\Config;
+use OCA\Esig\Events\ShareEvent;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\IDBConnection;
 use OCP\ILogger;
@@ -19,13 +21,16 @@ class Requests {
 	private ILogger $logger;
 	private ISecureRandom $secureRandom;
 	private IDBConnection $db;
+	private IEventDispatcher $dispatcher;
 
 	public function __construct(ILogger $logger,
 								ISecureRandom $secureRandom,
-								IDBConnection $db) {
+								IDBConnection $db,
+								IEventDispatcher $dispatcher) {
 		$this->logger = $logger;
 		$this->secureRandom = $secureRandom;
 		$this->db = $db;
+		$this->dispatcher = $dispatcher;
 	}
 
   private function newRandomId(int $length): string {
@@ -64,6 +69,8 @@ class Requests {
 			break;
 		}
 
+		$event = new ShareEvent($file, $user, $recipient, $recipient_type, $id);
+		$this->dispatcher->dispatch(ShareEvent::class, $event);
 		return $id;
   }
 
