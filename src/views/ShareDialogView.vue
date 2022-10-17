@@ -325,6 +325,7 @@ export default {
 				return
 			}
 
+			this.error = ''
 			this.shareLoading = true
 			try {
 				await shareFile(this.fileId, recipient, this.recipient_type)
