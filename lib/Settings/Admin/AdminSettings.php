@@ -9,6 +9,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IL10N;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
@@ -21,17 +22,20 @@ class AdminSettings implements ISettings {
 	private ?IUser $currentUser = null;
 	private IL10N $l10n;
 	private IFactory $l10nFactory;
+	private IURLGenerator $urlGenerator;
 
 	public function __construct(Config $config,
 								IInitialState $initialState,
 								IUserSession $userSession,
 								IL10N $l10n,
-								IFactory $l10nFactory) {
+								IFactory $l10nFactory,
+								IURLGenerator $urlGenerator) {
 		$this->config = $config;
 		$this->initialState = $initialState;
 		$this->currentUser = $userSession->getUser();
 		$this->l10n = $l10n;
 		$this->l10nFactory = $l10nFactory;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
@@ -42,6 +46,9 @@ class AdminSettings implements ISettings {
 		$server = $this->config->getServer();
 		$account['server'] = $server;
 		$this->initialState->provideInitialState('account', $account);
+		$this->initialState->provideInitialState('nextcloud', [
+			'url' => $this->urlGenerator->getAbsoluteURL(''),
+		]);
 
 		Util::addScript('esig', 'esig-admin-settings');
 

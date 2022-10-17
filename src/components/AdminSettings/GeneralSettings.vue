@@ -6,7 +6,7 @@
 
 		<div>
 			<h4>{{ t('esig', 'Server') }}</h4>
-			<div>{{ server }}</div>
+			<div><a :href="server" target="_blank">{{ server }}</a></div>
 		</div>
 
 		<div>
@@ -32,6 +32,10 @@
 				:aria-label="t('esig', 'Account Secret')"
 				@input="debounceUpdateAccount">
 		</div>
+
+		<div>{{ t('esig', 'If you don\'t have an account on the esig service yet, please login to {server} and create an account with the following data:', {'server': server}) }}</div>
+		<div>{{ t('esig', 'Name: {theme}', {'theme': theme.name}) }}</div>
+		<div>{{ t('esig', 'Nextcloud Url: {url}', {'url': nextcloud.url}) }}</div>
 	</div>
 </template>
 
@@ -53,6 +57,8 @@ export default {
 			server: '',
 			loading: false,
 			saved: false,
+			nextcloud: {},
+			theme: OC.theme,
 		}
 	},
 
@@ -61,6 +67,7 @@ export default {
 		this.account_id = state.id
 		this.account_secret = state.secret
 		this.server = state.server
+		this.nextcloud = loadState('esig', 'nextcloud')
 	},
 
 	methods: {
