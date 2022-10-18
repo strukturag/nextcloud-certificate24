@@ -39,12 +39,19 @@ class Requests {
 	}
 
   public function storeRequest(File $file, IUser $user, string $recipient, string $recipient_type, array $account, string $server, string $esig_file_id): string {
+		$mime = $file->getMimeType();
+		if ($mime) {
+			$mime = strtolower($mime);
+		}
 		$query = $this->db->getQueryBuilder();
 		$query->insert('esig_requests')
 			->values(
 				[
 					'id' => $query->createParameter('id'),
 					'file_id' => $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT),
+					'filename' => $query->createNamedParameter($file->getName()),
+					'mimetype' => $query->createNamedParameter($mime),
+					'size' => $query->createNamedParameter($file->getSize()),
 					'created' => $query->createFunction('now()'),
 					'user_id' => $query->createNamedParameter($user->getUID()),
 					'recipient' => $query->createNamedParameter($recipient),
