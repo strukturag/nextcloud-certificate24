@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace OCA\Esig\AppInfo;
 
 use OCA\Esig\Activity\Listener as ActivityListener;
+use OCA\Esig\Notification\Listener as NotificationListener;
+use OCA\Esig\Notification\Notifier;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -45,6 +47,10 @@ class Application extends App implements IBootstrap {
 		$dispatcher = $server->get(IEventDispatcher::class);
 
 		ActivityListener::register($dispatcher);
+		NotificationListener::register($dispatcher);
+
+		$manager = $server->getNotificationManager();
+		$manager->registerNotifierService(Notifier::class);
 	}
 
 }
