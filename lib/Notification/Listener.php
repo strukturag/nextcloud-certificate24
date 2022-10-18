@@ -6,6 +6,7 @@ namespace OCA\Esig\Notification;
 
 use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Events\ShareEvent;
+use OCA\Esig\Events\SignEvent;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -37,6 +38,12 @@ class Listener implements IEventListener {
 			$listener->onShareEvent($event);
 		};
 		$dispatcher->addListener(ShareEvent::class, $listener);
+
+		$listener = static function (SignEvent $event): void {
+			$listener = Server::get(self::class);
+			$listener->onSignEvent($event);
+		};
+		$dispatcher->addListener(SignEvent::class, $listener);
 	}
 
 	/**
@@ -75,9 +82,43 @@ class Listener implements IEventListener {
 		}
 	}
 
+	/**
+	 * "The file "{filename}" was signed by {user}"
+	 *
+	 * @param ShareEvent $event
+	 */
+	public function onSignEvent(SignEvent $event): void {
+		$request = $event->getRequest();
+		$user = $event->getUser();
+
+		$notification = $this->notificationManager->createNotification();
+		$shouldFlush = $this->notificationManager->defer();
+		$dateTime = $this->timeFactory->getDateTime();
+		try {
+			$notification->setApp(Application::APP_ID)
+				->setDateTime($dateTime)
+				->setUser($request['user_id'])
+				->setObject('request', $event->getRequestId())
+				->setSubject('sign', [
+					'request' => $request,
+					'request_id' => $event->getRequestId(),
+					'user' => $user ? $user->getUID() : null,
+				]);
+			$this->notificationManager->notify($notification);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
+			if ($shouldFlush) {
+				$this->notificationManager->flush();
+			}
+		}
+	}
+
 	public function handle(Event $event): void {
 		if ($event instanceof ShareEvent) {
 			$this->onShareEvent($event);
+		}
+		if ($event instanceof SignEvent) {
+			$this->onSignEvent($event);
 		}
 	}
 

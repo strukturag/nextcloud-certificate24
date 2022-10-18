@@ -27,7 +27,7 @@ class Setting extends ActivitySettings {
 	 * @since 11.0.0
 	 */
 	public function getName(): string {
-		return $this->l->t('A file was shared with you for signing');
+		return $this->l->t('A file was shared with you for signing or a file was signed');
 	}
 
 	/**

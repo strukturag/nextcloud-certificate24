@@ -80,20 +80,15 @@ class Notifier implements INotifier {
 			throw new AlreadyProcessedException();
 		}
 
-		$l = $this->lFactory->get(Application::APP_ID, $languageCode);
-		$parameters = $notification->getSubjectParameters();
-
-		$request = $this->requests->getRequestById($parameters['request_id']);
-		if (!$request) {
-			// Request no longer exists.
-			throw new AlreadyProcessedException();
-		}
-
 		$notification->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')));
-		$subject = $notification->getSubject();
-		if ($subject === 'share') {
-			return $this->parseShare($notification, $l);
-		}
+
+		$l = $this->lFactory->get(Application::APP_ID, $languageCode);
+		switch ($notification->getSubject()) {
+			case 'share':
+				return $this->parseShare($notification, $l);
+			case 'sign':
+				return $this->parseSign($notification, $l);
+			}
 
 		$this->notificationManager->markProcessed($notification);
 		throw new \InvalidArgumentException('Unknown subject');
@@ -104,6 +99,12 @@ class Notifier implements INotifier {
 	 */
 	protected function parseShare(INotification $notification, IL10N $l): INotification {
 		$parameters = $notification->getSubjectParameters();
+		$request = $this->requests->getRequestById($parameters['request_id']);
+		if (!$request) {
+			// Request no longer exists.
+			throw new AlreadyProcessedException();
+		}
+
 		$notification
 			->setLink($this->url->linkToRouteAbsolute('esig.Page.index') . '#incoming-' . $parameters['request_id']);
 
@@ -122,6 +123,58 @@ class Notifier implements INotifier {
 				'name' => $parameters['filename'],
 			],
 		];
+
+		$placeholders = $replacements = [];
+		foreach ($rosParameters as $placeholder => $parameter) {
+			$placeholders[] = '{' . $placeholder .'}';
+			if ($parameter['type'] === 'user') {
+				$replacements[] = '@' . $parameter['name'];
+			} else {
+				$replacements[] = $parameter['name'];
+			}
+		}
+
+		$notification->setParsedSubject(str_replace($placeholders, $replacements, $message));
+		$notification->setRichSubject($message, $rosParameters);
+
+		return $notification;
+	}
+
+	/**
+	 * @throws HintException
+	 */
+	protected function parseSign(INotification $notification, IL10N $l): INotification {
+		$parameters = $notification->getSubjectParameters();
+		$notification
+			->setLink($this->url->linkToRouteAbsolute('esig.Page.index') . '#outgoing-' . $parameters['request_id']);
+
+		$message = $l->t('The file "{filename}" was signed by {user}');
+
+		$request = $parameters['request'];
+		$rosParameters = [
+			'filename' => [
+				'type' => 'highlight',
+				'id' => $request['filename'],
+				'name' => $request['filename'],
+			],
+		];
+		$recipient = $request['recipient'];
+		switch ($request['recipient_type']) {
+			case 'user':
+				$rosParameters['user'] = [
+					'type' => 'user',
+					'id' => $recipient,
+					'name' => $this->userManager->getDisplayName($recipient) ?? $recipient,
+				];
+				break;
+			case 'email':
+				$rosParameters['user'] = [
+					'type' => 'highlight',
+					'id' => $recipient,
+					'name' => $recipient,
+				];
+				break;
+		}
 
 		$placeholders = $replacements = [];
 		foreach ($rosParameters as $placeholder => $parameter) {

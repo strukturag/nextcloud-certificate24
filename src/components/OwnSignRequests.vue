@@ -32,6 +32,7 @@
 				<tbody>
 					<tr v-for="request in requests" :key="request.request_id">
 						<td>
+							<a :id="getLinkName(request)" />
 							{{ request.filename }}
 						</td>
 						<td>
@@ -144,6 +145,10 @@ export default {
 
 		downloadSignedUrl(request) {
 			return getSignedUrl(request.request_id)
+		},
+
+		getLinkName(request) {
+			return 'outgoing-' + request.request_id
 		},
 	},
 }

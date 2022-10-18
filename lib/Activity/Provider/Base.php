@@ -78,4 +78,12 @@ abstract class Base implements IProvider {
 			'name' => $this->userManager->getDisplayName($uid) ?? $uid,
 		];
 	}
+
+	protected function getHighlight(string $text): array {
+		return [
+			'type' => 'highlight',
+			'id' => $text,
+			'name' => $text,
+		];
+	}
 }

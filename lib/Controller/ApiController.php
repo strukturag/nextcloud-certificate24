@@ -8,11 +8,13 @@ use GuzzleHttp\Exception\ConnectException;
 use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Client;
 use OCA\Esig\Config;
+use OCA\Esig\Events\SignEvent;
 use OCA\Esig\Requests;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Collaboration\Collaborators\ISearch;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -39,6 +41,7 @@ class ApiController extends OCSController {
 	private IURLGenerator $urlGenerator;
 	private ISearch $search;
 	private IMailer $mailer;
+	private IEventDispatcher $dispatcher;
 	private Client $client;
 	private Config $config;
 	private Requests $requests;
@@ -53,6 +56,7 @@ class ApiController extends OCSController {
 								IURLGenerator $urlGenerator,
 								ISearch $search,
 								IMailer $mailer,
+								IEventDispatcher $dispatcher,
 								Client $client,
 								Config $config,
 								Requests $requests) {
@@ -65,6 +69,7 @@ class ApiController extends OCSController {
 		$this->urlGenerator = $urlGenerator;
 		$this->search = $search;
 		$this->mailer = $mailer;
+		$this->dispatcher = $dispatcher;
 		$this->client = $client;
 		$this->config = $config;
 		$this->requests = $requests;
@@ -485,6 +490,10 @@ class ApiController extends OCSController {
 		}
 
 		$this->requests->markRequestSignedById($id, $signed);
+
+		$event = new SignEvent($id, $row, $user);
+		$this->dispatcher->dispatch(SignEvent::class, $event);
+
 		return new DataResponse([
 			'request_id' => $id,
 			'signed' => $this->formatDateTime($signed),
