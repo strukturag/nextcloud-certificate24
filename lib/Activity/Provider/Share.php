@@ -38,9 +38,8 @@ class Share extends Base {
 		$subject = $l->t('{user} requested your signature of "{filename}"');
 		$params = [
 			'user' => $this->getUser($parameters['sender']),
+			'filename' => $this->getHighlight($parameters['filename']),
 		];
-		// TODO: Use richtext file object instead.
-		$subject = str_replace('{filename}', $parameters['filename'], $subject);
 
 		return [
 			'subject' => $subject,
