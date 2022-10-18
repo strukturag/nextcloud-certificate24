@@ -236,7 +236,9 @@ export default {
 			}
 		},
 		focusUserInput() {
-			this.$refs.userField.$el.focus()
+			if (this.$refs.userField && this.$refs.userField.$el) {
+				this.$refs.userField.$el.focus()
+			}
 		},
 
 		handleEmailInput() {
@@ -279,7 +281,9 @@ export default {
 			}
 		},
 		focusEmailInput() {
-			this.$refs.emailField.$el.focus()
+			if (this.$refs.emailField && this.$refs.emailField.$el) {
+				this.$refs.emailField.$el.focus()
+			}
 		},
 
 		closeModal() {
