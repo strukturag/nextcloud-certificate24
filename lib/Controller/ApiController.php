@@ -10,10 +10,12 @@ use OCA\Esig\Client;
 use OCA\Esig\Config;
 use OCA\Esig\Events\SignEvent;
 use OCA\Esig\Requests;
+use OCA\Esig\TranslatedTemplate;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Collaboration\Collaborators\ISearch;
+use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\IL10N;
@@ -22,8 +24,10 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\L10N\IFactory;
 use OCP\Mail\IMailer;
 use OCP\Share\IShare;
+use OCP\Util;
 
 class ApiController extends OCSController {
 
@@ -34,6 +38,7 @@ class ApiController extends OCSController {
 	];
 
 	private IL10N $l10n;
+	private IFactory $l10nFactory;
 	private ILogger $logger;
 	private IUserManager $userManager;
 	private IUserSession $userSession;
@@ -49,6 +54,7 @@ class ApiController extends OCSController {
 	public function __construct(string $appName,
 								IRequest $request,
 								IL10N $l10n,
+								IFactory $l10nFactory,
 								ILogger $logger,
 								IUserManager $userManager,
 								IUserSession $userSession,
@@ -62,6 +68,7 @@ class ApiController extends OCSController {
 								Requests $requests) {
 		parent::__construct($appName, $request);
 		$this->l10n = $l10n;
+		$this->l10nFactory = $l10nFactory;
 		$this->logger = $logger;
 		$this->userManager = $userManager;
 		$this->userSession = $userSession;
@@ -116,6 +123,21 @@ class ApiController extends OCSController {
 			}
 		}
 		return $dt->format(\DateTime::RFC3339);
+	}
+
+	private function renderTemplate(string $templateId, array $options, string $lang): string {
+		$l10n = $this->l10nFactory->get(Application::APP_ID, $lang);
+		try {
+			$template = new TranslatedTemplate(Application::APP_ID, $templateId . '_' . $lang, $l10n);
+		} catch (\Exception $e) {
+			// Fallback to default template
+			$template = new TranslatedTemplate(Application::APP_ID, $templateId, $l10n);
+		}
+		foreach ($options as $key => $value) {
+			$template->assign($key, $value);
+		}
+		$result = $template->fetchPage();
+		return trim($result);
 	}
 
 	/**
@@ -202,6 +224,32 @@ class ApiController extends OCSController {
 		}
 
 		$id = $this->requests->storeRequest($file, $user, $recipient, $recipient_type, $account, $server, $esig_file_id);
+		if ($recipient_type === 'email') {
+			$lang = $this->l10n->getLanguageCode();
+			$templateOptions = [
+				'file' => $file,
+				'user' => $user,
+				'recipient' => $recipient,
+				'request_id' => $id,
+				'url' => $this->urlGenerator->linkToRouteAbsolute('esig.Page.sign', ['id' => $id]),
+			];
+			$body = $this->renderTemplate('email.share.body', $templateOptions, $lang);
+			$subject = $this->renderTemplate('email.share.subject', $templateOptions, $lang);
+
+			$from = Util::getDefaultEmailAddress('noreply');
+			$defaults = \OC::$server->query(Defaults::class);
+			$message = $this->mailer->createMessage();
+			$message->setFrom([$from => $defaults->getName()]);
+			$message->setTo([$recipient]);
+			$message->setSubject($subject);
+			$message->setPlainBody($body);
+			$failed_recipients = $this->mailer->send($message);
+			if (!empty($failed_recipients)) {
+				// TODO: Should we delete the request?
+				return new DataResponse(['error' => 'error_sending_email'], Http::STATUS_INTERNAL_ERROR);
+			}
+		}
+
 		return new DataResponse(['request_id' => $id], Http::STATUS_CREATED);
 	}
 

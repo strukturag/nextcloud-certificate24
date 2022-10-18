@@ -46,4 +46,25 @@ class PageController extends Controller {
 		return $response;
 	}
 
+		/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @return TemplateResponse
+	 * @throws HintException
+	 */
+	public function sign(string $id): Response {
+		$response = new TemplateResponse('esig', 'sign', [
+			'app' => Application::APP_ID,
+		], 'blank');
+
+		$server = $this->config->getServer();
+		if ($server) {
+			$csp = new ContentSecurityPolicy();
+			$csp->addAllowedConnectDomain($server);
+			$response->setContentSecurityPolicy($csp);
+		}
+		return $response;
+	}
+
 }
