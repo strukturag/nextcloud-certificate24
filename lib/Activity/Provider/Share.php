@@ -26,7 +26,6 @@ class Share extends Base {
 
 			$result = $this->parseShare($event, $l);
 			$this->setSubjects($event, $result['subject'], $result['params']);
-			$event->setLink($this->urlGenerator->linkToRoute('esig.Page.index') . '#incoming-' . $parameters['request_id']);
 		} else {
 			throw new \InvalidArgumentException('Wrong subject');
 		}
