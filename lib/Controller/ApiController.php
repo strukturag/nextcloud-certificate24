@@ -457,7 +457,7 @@ class ApiController extends OCSController {
 		$row = $this->requests->getRequestById($id);
 		if (!$row) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} else if ($row['recipient_type'] === 'user' && !$user || $row['recipient'] !== $user->getUID()) {
+		} else if ($row['recipient_type'] === 'user' && (!$user || $row['recipient'] !== $user->getUID())) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
