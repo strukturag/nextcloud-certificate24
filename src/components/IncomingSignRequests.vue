@@ -55,12 +55,21 @@
 									type="primary"
 									@click="signRequest(request)">
 									{{ t('esig', 'Sign') }}
+									<template #icon>
+										<FileSign :size="20" />
+									</template>
 								</NcButton>
 								<NcButton v-if="request.signed"
 									type="primary"
 									:href="downloadSignedUrl(request)">
 									{{ t('esig', 'Download signed') }}
+									<template #icon>
+										<Download :size="20" />
+									</template>
 								</NcButton>
+								<SignDialogModal v-if="signDialog"
+									:request="request"
+									@close="closeDialog" />
 							</div>
 						</td>
 					</tr>
@@ -71,13 +80,14 @@
 </template>
 
 <script>
-import { showSuccess, showError } from '@nextcloud/dialogs'
-
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import Download from 'vue-material-design-icons/Download.vue'
+import FileSign from 'vue-material-design-icons/FileSign.vue'
 
-import { getIncomingRequests, signRequest, getOriginalUrl, getSignedUrl } from '../services/apiservice.js'
+import SignDialogModal from './SignDialogModal.vue'
+import { getIncomingRequests, getOriginalUrl, getSignedUrl } from '../services/apiservice.js'
 
 export default {
 	name: 'IncomingSignRequests',
@@ -86,12 +96,16 @@ export default {
 		NcAvatar,
 		NcButton,
 		NcLoadingIcon,
+		Download,
+		FileSign,
+		SignDialogModal,
 	},
 
 	data() {
 		return {
 			requests: [],
 			loading: false,
+			signDialog: null,
 		}
 	},
 
@@ -112,28 +126,7 @@ export default {
 		},
 
 		async signRequest(request) {
-			OC.dialogs.confirm(
-				t('esig', 'Do you really want to sign this request?'),
-				t('esig', 'Sign request'),
-				async function(decision) {
-					if (!decision) {
-						return
-					}
-
-					this.loading = true
-					try {
-						const response = await signRequest(request.request_id)
-						const data = response.data.ocs?.data || {}
-						request.signed = data.signed
-						showSuccess(t('esig', 'Request signed.'))
-					} catch (error) {
-						console.error('Could not sign request', request, error)
-						showError(t('esig', 'Error while signing request.'))
-					} finally {
-						this.loading = false
-					}
-				}.bind(this)
-			)
+			this.signDialog = request
 		},
 
 		downloadOriginalUrl(request) {
@@ -146,6 +139,10 @@ export default {
 
 		getLinkName(request) {
 			return 'incoming-' + request.request_id
+		},
+
+		closeDialog() {
+			this.signDialog = null
 		},
 	},
 }

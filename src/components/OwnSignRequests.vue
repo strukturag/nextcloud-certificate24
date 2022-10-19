@@ -61,11 +61,17 @@
 								<NcButton type="primary"
 									@click="deleteRequest(request)">
 									{{ t('esig', 'Delete') }}
+									<template #icon>
+										<Delete :size="20" />
+									</template>
 								</NcButton>
 								<NcButton v-if="request.signed"
 									type="primary"
 									:href="downloadSignedUrl(request)">
 									{{ t('esig', 'Download signed') }}
+									<template #icon>
+										<Download :size="20" />
+									</template>
 								</NcButton>
 							</div>
 						</td>
@@ -82,6 +88,8 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import Download from 'vue-material-design-icons/Download.vue'
 
 import { getRequests, deleteRequest, getSignedUrl } from '../services/apiservice.js'
 
@@ -92,6 +100,8 @@ export default {
 		NcAvatar,
 		NcButton,
 		NcLoadingIcon,
+		Delete,
+		Download,
 	},
 
 	data() {

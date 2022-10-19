@@ -31,16 +31,18 @@ class PageController extends Controller {
 	 * @throws HintException
 	 */
 	public function index(): Response {
+		$server = $this->config->getServer();
 		$response = new TemplateResponse('esig', 'index', [
 			'app' => Application::APP_ID,
 			'id-app-content' => '#app-content-vue',
 			'id-app-navigation' => '#app-navigation-vue',
+			'vinegar-server' => $server,
 		]);
 
-		$server = $this->config->getServer();
 		if ($server) {
 			$csp = new ContentSecurityPolicy();
 			$csp->addAllowedConnectDomain($server);
+			$csp->addAllowedScriptDomain($server);
 			$response->setContentSecurityPolicy($csp);
 		}
 		return $response;
@@ -57,13 +59,6 @@ class PageController extends Controller {
 		$response = new TemplateResponse('esig', 'sign', [
 			'app' => Application::APP_ID,
 		], 'blank');
-
-		$server = $this->config->getServer();
-		if ($server) {
-			$csp = new ContentSecurityPolicy();
-			$csp->addAllowedConnectDomain($server);
-			$response->setContentSecurityPolicy($csp);
-		}
 		return $response;
 	}
 
