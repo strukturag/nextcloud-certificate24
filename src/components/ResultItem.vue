@@ -116,7 +116,7 @@ export default {
 		cursor: pointer;
 	}
 
-	div::deep img {
+	div:deep img {
 		cursor: pointer;
 	}
 
