@@ -13,7 +13,7 @@
 		<div v-if="!loadingFailed"
 			v-show="!initialLoad"
 			ref="container"
-			class="container center" />
+			class="container" />
 	</div>
 </template>
 
@@ -94,6 +94,7 @@ export default {
 				url: this.url,
 				width: this.width - scrollbarWidth,
 				height: this.height,
+				enable_select: true,
 			})
 			this.numPages = await this.doc.numPages()
 			this.renderPage(1)
@@ -159,13 +160,23 @@ canvas {
 }
 
 .container {
+	position: relative;
 	margin-bottom: 1em;
 	width: 100%;
 }
 
-.container:deep canvas {
-	border: 1px solid #888;
-	box-shadow: 2px 2px 5px #888;
+.container:deep {
+	canvas {
+		border: 1px solid #888;
+	}
+
+	canvas.pdfpage {
+		box-shadow: 2px 2px 5px #888;
+	}
+
+	canvas.pdfoverlay {
+		box-shadow: 2px 2px 5px white;
+	}
 }
 </style>
 

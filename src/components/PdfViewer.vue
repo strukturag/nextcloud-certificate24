@@ -170,7 +170,7 @@ canvas {
 	width: 100%;
 }
 
-.container:deep canvas {
+.container:deep canvas.pdfpage {
 	border: 1px solid #888;
 	box-shadow: 2px 2px 5px #888;
 }
