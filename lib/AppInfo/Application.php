@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace OCA\Esig\AppInfo;
 
 use OCA\Esig\Activity\Listener as ActivityListener;
-use OCA\Esig\Config;
+use OCA\Esig\CSPSetter;
+use OCA\Esig\FilesLoader;
 use OCA\Esig\Notification\Listener as NotificationListener;
 use OCA\Esig\Notification\Notifier;
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
-use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
-use OCP\Util;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'esig';
@@ -25,6 +25,9 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
+		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPSetter::class);
+		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesLoader::class);
+
 		// Register the composer autoloader for packages shipped by this app
 		include_once __DIR__ . '/../../vendor/autoload.php';
 	}
@@ -33,7 +36,7 @@ class Application extends App implements IBootstrap {
 		$server = $context->getServerContainer();
 
 		$server->getNavigationManager()->add(function () use ($server) {
-			/** @var Config $config */
+			/** @var IUser $user */
 			$user = $server->getUserSession()->getUser();
 			return [
 				'id' => self::APP_ID,
@@ -44,23 +47,9 @@ class Application extends App implements IBootstrap {
 				'type' => 'link',
 			];
 		});
-		Util::addScript('esig', 'esig-loader');
 
 		/** @var IEventDispatcher $dispatcher */
 		$dispatcher = $server->get(IEventDispatcher::class);
-
-		/*
-		$config = $server->get(Config::class);
-		$serverUrl = $config->getServer();
-		if ($serverUrl) {
-			$dispatcher->addListener(AddContentSecurityPolicyEvent::class, function (AddContentSecurityPolicyEvent $e) use ($serverUrl) {
-				$csp = new ContentSecurityPolicy();
-				$csp->addAllowedConnectDomain($serverUrl);
-				$csp->addAllowedScriptDomain($serverUrl);
-				$e->addPolicy($csp);
-			});
-		}
-		*/
 
 		ActivityListener::register($dispatcher);
 		NotificationListener::register($dispatcher);

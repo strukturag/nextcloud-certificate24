@@ -1,23 +1,14 @@
 <template>
-	<div class="pdfviewer">
+	<div class="pdfselector">
 		<PdfNavigtion v-if="!initialLoad && !loadingFailed"
 			:num-pages="numPages"
-			:download-url="downloadUrl"
 			@set-page="renderPage" />
 		<NcLoadingIcon v-if="loading"
 			:class="!initialLoad ? 'loader' : ''" />
 		<div v-if="loadingFailed">
 			<div>
-				{{ t('esig', 'Could not load document, please download and review manually.') }}
+				{{ t('esig', 'Could not load document, signature position is not supported.') }}
 			</div>
-			<NcButton v-if="downloadUrl"
-				:href="downloadUrl"
-				class="download">
-				{{ t('esig', 'Download') }}
-				<template #icon>
-					<Download :size="20" />
-				</template>
-			</NcButton>
 		</div>
 		<div v-if="!loadingFailed"
 			v-show="!initialLoad"
@@ -27,21 +18,17 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import Download from 'vue-material-design-icons/Download.vue'
 import { showError } from '@nextcloud/dialogs'
 
 import PdfNavigtion from './PdfNavigation.vue'
 import getVinegarApi from '../services/vinegarapi.js'
 
 export default {
-	name: 'PdfViewer',
+	name: 'PdfSelector',
 
 	components: {
-		NcButton,
 		NcLoadingIcon,
-		Download,
 		PdfNavigtion,
 	},
 
@@ -49,11 +36,6 @@ export default {
 		url: {
 			type: String,
 			required: true,
-		},
-		downloadUrl: {
-			type: String,
-			required: false,
-			default: '',
 		},
 		width: {
 			type: Number,
@@ -79,9 +61,6 @@ export default {
 			doc: null,
 			numPages: null,
 		}
-	},
-
-	computed: {
 	},
 
 	async mounted() {
@@ -120,7 +99,7 @@ export default {
 			this.renderPage(1)
 		} catch (e) {
 			console.error('Could not load document', e)
-			showError(t('esig', 'Could not load document, please download and review manually.'))
+			showError(t('esig', 'Could not load document.'))
 			this.loadingFailed = true
 		} finally {
 			this.initialLoad = false
@@ -141,16 +120,30 @@ export default {
 				this.loading--
 			}
 		},
+
+		closeModal() {
+			this.$emit('close')
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
+h1 {
+	font-size: 150%;
+	font-weight: bold;
+	margin-bottom: 1em;
+}
+
+.modal__content {
+	margin: 50px;
+}
+
 canvas {
 	display: block;
 }
 
-.pdfviewer {
+.pdfselector {
 	position: relative;
 }
 
