@@ -17,7 +17,7 @@ Nextcloud instance.
     | `file_id`           | int     | The id of the file to be signed.                                 |
     | `recipient`         | string  | User id or email address to share the document with.             |
     | `recipient_type`    | string  | Type of recipient, can be `user` or `email`.                     |
-    | `metadata`          | array   | JSON metadata to include in the request (TO BE DEFINED).         |
+    | `metadata`          | array   | JSON metadata to include in the request.                         |
 
 * Response:
   - Status code:
@@ -30,6 +30,18 @@ Nextcloud instance.
     | field               | type    | description                                                      |
     |---------------------|---------|------------------------------------------------------------------|
     | `request_id`        | string  | The id of the signing request.                                   |
+
+
+The following fields are currently defined for the request `metadata` JSON:
+
+  | field               | type    | description                                                      |
+  |---------------------|---------|------------------------------------------------------------------|
+  | `version`           | string  | Metadata version, currently `1.0`.                               |
+  | `signature_fields`  | array   | Array of objects definining the positions of signature fields.   |
+
+Signature fields objects must contain the keys `id` (unique id of the field),
+`page` (1-based page number), `left`, `top`, `right`, `bottom` with values
+based on the page viewport where the top left of the page is at `0` / `0`.
 
 
 ## Get list of files shared by current user
@@ -58,7 +70,7 @@ Nextcloud instance.
     | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
     | `recipient`         | string  | User id or email address to share the document with.             |
     | `recipient_type`    | string  | Type of recipient, can be `user` or `email`.                     |
-    | `metadata`          | array   | Optional JSON metadata.                                          |
+    | `metadata`          | array   | Optional request JSON metadata (see above).                      |
     | `signed`            | iso8601 | The timestamp when the file was signed or `null`.                |
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
@@ -91,7 +103,7 @@ the request.
     | `filename`          | string  | Filename that was shared.                                        |
     | `mimetype`          | string  | Mimetype of the shared file.                                     |
     | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
-    | `metadata`          | array   | Optional JSON metadata.                                          |
+    | `metadata`          | array   | Optional request JSON metadata (see above).                      |
     | `signed`            | iso8601 | The timestamp when the file was signed or `null`.                |
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
@@ -130,7 +142,7 @@ the request.
     | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
     | `recipient`         | string  | User id or email address to share the document with.             |
     | `recipient_type`    | string  | Type of recipient, can be `user` or `email`.                     |
-    | `metadata`          | array   | Optional JSON metadata.                                          |
+    | `metadata`          | array   | Optional request JSON metadata (see above).                      |
     | `signed`            | iso8601 | The timestamp when the file was signed (if already signed).      |
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
@@ -154,7 +166,7 @@ the request.
     | `filename`          | string  | Filename that was shared.                                        |
     | `mimetype`          | string  | Mimetype of the shared file.                                     |
     | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
-    | `metadata`          | array   | Optional JSON metadata.                                          |
+    | `metadata`          | array   | Optional JSON request metadata (see above).                      |
     | `signed`            | iso8601 | The timestamp when the file was signed (if already signed).      |
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
