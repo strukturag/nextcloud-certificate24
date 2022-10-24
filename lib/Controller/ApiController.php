@@ -146,9 +146,10 @@ class ApiController extends OCSController {
 	 * @param int $file_id
 	 * @param string $recipient
 	 * @param string $recipient_type
+	 * @pram string $metadata
 	 * @return DataResponse
 	 */
-	public function shareFile(int $file_id, string $recipient, string $recipient_type): DataResponse {
+	public function shareFile(int $file_id, string $recipient, string $recipient_type, string $metadata = ''): DataResponse {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([
@@ -178,6 +179,8 @@ class ApiController extends OCSController {
 					'error' => 'invalid_recipient_type',
 				], Http::STATUS_BAD_REQUEST);
 		}
+
+		// TODO: Validate metadata format.
 
 		$user = $this->userSession->getUser();
 		if ($user) {
@@ -223,7 +226,7 @@ class ApiController extends OCSController {
 			return new DataResponse(['error' => 'invalid_response'], Http::STATUS_BAD_GATEWAY);
 		}
 
-		$id = $this->requests->storeRequest($file, $user, $recipient, $recipient_type, $account, $server, $esig_file_id);
+		$id = $this->requests->storeRequest($file, $user, $recipient, $recipient_type, $metadata, $account, $server, $esig_file_id);
 		if ($recipient_type === 'email') {
 			$lang = $this->l10n->getLanguageCode();
 			$templateOptions = [
@@ -292,6 +295,7 @@ class ApiController extends OCSController {
 				'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
 				'recipient' => $request['recipient'],
 				'recipient_type' => $request['recipient_type'],
+				'metadata' => $request['metadata'],
 			];
 			if ($include_signed && $request['signed']) {
 				$r['signed'] = $this->formatDateTime($request['signed']);
@@ -344,6 +348,7 @@ class ApiController extends OCSController {
 				'filename' => $file->getName(),
 				'mimetype' => $mime,
 				'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
+				'metadata' => $request['metadata'],
 			];
 			if ($include_signed && $request['signed']) {
 				$r['signed'] = $this->formatDateTime($request['signed']);
@@ -394,6 +399,7 @@ class ApiController extends OCSController {
 			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
 			'recipient' => $request['recipient'],
 			'recipient_type' => $request['recipient_type'],
+			'metadata' => $request['metadata'],
 		];
 		if (isset($request['signed']) && $request['signed']) {
 			$response['signed'] = $this->formatDateTime($request['signed']);
@@ -449,6 +455,7 @@ class ApiController extends OCSController {
 			'filename' => $file->getName(),
 			'mimetype' => $mime,
 			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
+			'metadata' => $request['metadata'],
 		];
 		if (isset($response['signed']) && $request['signed']) {
 			$response['signed'] = $this->formatDateTime($request['signed']);

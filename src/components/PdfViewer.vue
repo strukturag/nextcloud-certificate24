@@ -68,6 +68,11 @@ export default {
 			required: false,
 			default: 0,
 		},
+		signaturePositions: {
+			type: Array,
+			required: false,
+			default: null,
+		},
 	},
 
 	data() {
@@ -115,6 +120,7 @@ export default {
 				url: this.url,
 				width: this.width - scrollbarWidth,
 				height: this.height,
+				signaturePositions: this.signaturePositions,
 			})
 			this.numPages = await this.doc.numPages()
 			this.renderPage(1)
@@ -168,6 +174,7 @@ canvas {
 .container {
 	margin-bottom: 1em;
 	width: 100%;
+	position: relative;
 }
 
 .container:deep canvas.pdfpage {

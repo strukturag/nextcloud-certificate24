@@ -50,6 +50,11 @@ export default {
 			required: false,
 			default: 0,
 		},
+		signaturePositions: {
+			type: Array,
+			required: false,
+			default: null,
+		},
 	},
 
 	data() {
@@ -95,6 +100,7 @@ export default {
 				width: this.width - scrollbarWidth,
 				height: this.height,
 				enable_select: true,
+				signaturePositions: this.signaturePositions,
 			})
 			this.numPages = await this.doc.numPages()
 			this.renderPage(1)
@@ -120,6 +126,10 @@ export default {
 			} finally {
 				this.loading--
 			}
+		},
+
+		getSignaturePositions() {
+			return this.doc.getSignaturePositions()
 		},
 
 		closeModal() {

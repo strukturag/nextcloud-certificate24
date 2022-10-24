@@ -83,6 +83,9 @@
 							@click="selectEmail" />
 					</div>
 				</div>
+				<div v-if="signaturePositions && signaturePositions.length">
+					{{ n('esig', '%n signature field positioned', '%n signature fields positioned', signaturePositions.length) }}
+				</div>
 				<div class="buttons">
 					<NcButton v-if="fileModel && fileModel.canDownload()"
 						type="secondary"
@@ -104,6 +107,7 @@
 			</div>
 			<SelectorDialogModal v-if="showSelectModal"
 				:url="getFileUrl(fileModel)"
+				:signature-positions="signaturePositions"
 				@close="closeSelectModal" />
 		</NcModal>
 	</div>
@@ -155,6 +159,7 @@ export default {
 			email: '',
 			emailResults: {},
 			shareLoading: false,
+			signaturePositions: [],
 		}
 	},
 
@@ -202,6 +207,7 @@ export default {
 			this.email = ''
 			this.emailResults = {}
 			this.shareLoading = false
+			this.signaturePositions = []
 		})
 	},
 
@@ -347,7 +353,14 @@ export default {
 			this.error = ''
 			this.shareLoading = true
 			try {
-				await shareFile(this.fileModel.id, recipient, this.recipient_type)
+				let metadata
+				if (this.signaturePositions && this.signaturePositions.length) {
+					metadata = {
+						version: '1.0',
+						fields: this.signaturePositions,
+					}
+				}
+				await shareFile(this.fileModel.id, recipient, this.recipient_type, metadata)
 				this.shareLoading = false
 				this.closeModal()
 				showSuccess(t('esig', 'Requested signature.'))
@@ -376,8 +389,9 @@ export default {
 			this.showSelectModal = true
 		},
 
-		closeSelectModal() {
+		closeSelectModal(positions) {
 			this.showSelectModal = false
+			this.signaturePositions = positions
 		},
 
 		getFileUrl(model) {

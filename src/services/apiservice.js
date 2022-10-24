@@ -2,11 +2,12 @@
 import axios from '@nextcloud/axios'
 import { generateUrl, generateOcsUrl } from '@nextcloud/router'
 
-const shareFile = async (file_id, recipient, recipient_type) => {
+const shareFile = async (file_id, recipient, recipient_type, metadata) => {
 	return await axios.post(generateOcsUrl('apps/esig/api/v1/share'), {
 		file_id,
 		recipient,
 		recipient_type,
+		metadata: metadata ? JSON.stringify(metadata) : '',
 	})
 }
 

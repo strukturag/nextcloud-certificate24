@@ -11,6 +11,7 @@
 					:max-height="400"
 					:url="downloadOriginalUrl(request)"
 					:download-url="downloadOriginalUrl(request)"
+					:signature-positions="request.metadata?.fields || null"
 					@init:start="loading = true"
 					@init:done="loading = false" />
 			</div>

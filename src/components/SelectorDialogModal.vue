@@ -6,16 +6,18 @@
 		<div class="modal__content">
 			<h1>{{ t('esig', 'Select signature position') }}</h1>
 			<div class="document">
-				<PdfSelector :width="800"
+				<PdfSelector ref="selector"
+					:width="800"
 					:height="1132"
 					:max-height="400"
 					:url="url"
+					:signature-positions="signaturePositions"
 					@init:start="loading = true"
 					@init:done="loading = false" />
 			</div>
 			<NcButton type="primary"
 				:disabled="loading"
-				@click="savePositions(request)">
+				@click="savePositions()">
 				{{ t('esig', 'Save') }}
 				<template #icon>
 					<Check :size="20" />
@@ -47,6 +49,11 @@ export default {
 			type: String,
 			required: true,
 		},
+		signaturePositions: {
+			type: Array,
+			required: false,
+			default: null,
+		},
 	},
 
 	data() {
@@ -61,8 +68,13 @@ export default {
 	},
 
 	methods: {
+		savePositions() {
+			this.closeModal()
+		},
+
 		closeModal() {
-			this.$emit('close')
+			const positions = this.$refs.selector.getSignaturePositions()
+			this.$emit('close', positions)
 		},
 	},
 }
