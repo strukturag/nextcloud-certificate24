@@ -23,7 +23,7 @@ class Client {
 		$this->tokens = $tokens;
 	}
 
-	public function shareFile(File $file, array $account, string $server): array {
+	public function shareFile(File $file, string $metadata, array $account, string $server): array {
 		$token = $this->tokens->getToken($account, $file->getName());
 
 		$client = $this->clientService->newClient();
@@ -31,16 +31,27 @@ class Client {
 			'X-Vinegar-Token' => $token,
 			'X-Vinegar-API' => 'true',
 		];
+		$multipart = [[
+			'name' => 'file',
+			'contents' => $file->getContent(),
+			'filename' => $file->getName(),
+			'headers' => [
+				'Content-Type' => strtolower($file->getMimeType()),
+			],
+		]];
+		if ($metadata) {
+			$multipart[] = [
+				'name' => 'metadata',
+				'contents' => $metadata,
+				'filename' => 'metadata.json',
+				'headers' => [
+					'Content-Type' => 'application/json; charset=UTF-8',
+				],
+			];
+		}
 		$response = $client->post($server . 'api/v1/files/' . rawurlencode($account['id']), [
 			'headers' => $headers,
-			'multipart' => [[
-				'name' => 'file',
-				'contents' => $file->getContent(),
-				'filename' => $file->getName(),
-				'headers' => [
-					'Content-Type' => strtolower($file->getMimeType()),
-				],
-			]],
+			'multipart' => $multipart,
 			'verify' => false,
 			'nextcloud' => [
 				'allow_local_address' => true,

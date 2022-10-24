@@ -146,7 +146,7 @@ class ApiController extends OCSController {
 	 * @param int $file_id
 	 * @param string $recipient
 	 * @param string $recipient_type
-	 * @pram string $metadata
+	 * @param string $metadata
 	 * @return DataResponse
 	 */
 	public function shareFile(int $file_id, string $recipient, string $recipient_type, string $metadata = ''): DataResponse {
@@ -214,7 +214,7 @@ class ApiController extends OCSController {
 
 		$server = $this->config->getServer();
 		try {
-			$data = $this->client->shareFile($file, $account, $server);
+			$data = $this->client->shareFile($file, $metadata, $account, $server);
 		} catch (ConnectException $e) {
 			return new DataResponse(['error' => 'error_connecting'], Http::STATUS_BAD_GATEWAY);
 		} catch (\Exception $e) {
