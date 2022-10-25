@@ -357,7 +357,7 @@ export default {
 				if (this.signaturePositions && this.signaturePositions.length) {
 					metadata = {
 						version: '1.0',
-						fields: this.signaturePositions,
+						signature_fields: this.signaturePositions,
 					}
 				}
 				await shareFile(this.fileModel.id, recipient, this.recipient_type, metadata)
