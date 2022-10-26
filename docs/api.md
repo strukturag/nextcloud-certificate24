@@ -40,7 +40,7 @@ The following fields are currently defined for the request `metadata` JSON:
   | `signature_fields`  | array   | Array of objects definining the positions of signature fields.   |
 
 Signature fields objects must contain the keys `id` (unique id of the field),
-`page` (1-based page number), `left`, `top`, `right`, `bottom` with values
+`page` (1-based page number), `x`, `y`, `width`, `height` with values
 based on the page viewport where the top left of the page is at `0` / `0`.
 
 
