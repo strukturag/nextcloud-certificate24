@@ -83,7 +83,9 @@ export default {
 
 					this.loading = true
 					try {
-						const response = await signRequest(request.request_id)
+						const response = await signRequest(request.request_id, {
+							embed_user_signature: true,
+						})
 						const data = response.data.ocs?.data || {}
 						request.signed = data.signed
 						showSuccess(t('esig', 'Request signed.'))

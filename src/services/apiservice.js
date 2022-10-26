@@ -31,8 +31,12 @@ const getIncomingRequests = async (include_signed) => {
 	})
 }
 
-const signRequest = async (id) => {
-	return await axios.post(generateOcsUrl('apps/esig/api/v1/share/' + id + '/sign'))
+const signRequest = async (id, options) => {
+	const form = new FormData()
+	if (options) {
+		form.append('options', JSON.stringify(options))
+	}
+	return await axios.postForm(generateOcsUrl('apps/esig/api/v1/share/' + id + '/sign'), form)
 }
 
 const getOriginalUrl = (id) => {

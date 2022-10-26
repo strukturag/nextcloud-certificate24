@@ -29,6 +29,13 @@ use OCP\Mail\IMailer;
 use OCP\Share\IShare;
 use OCP\Util;
 
+function str_to_stream(string $string) {
+	$stream = fopen('php://memory','r+');
+	fwrite($stream, $string);
+	rewind($stream);
+	return $stream;
+}
+
 class ApiController extends OCSController {
 
 	const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
@@ -36,6 +43,8 @@ class ApiController extends OCSController {
 	const PDF_MIME_TYPES = [
 		'application/pdf',
 	];
+
+	const MAX_SIGN_OPTIONS_SIZE = 8 * 1024;
 
 	private IL10N $l10n;
 	private IFactory $l10nFactory;
@@ -523,8 +532,47 @@ class ApiController extends OCSController {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
+		$options = [];
+		$optionsData = $this->request->getParam('options');
+		if ($optionsData) {
+			$options = json_decode($optionsData, true);
+			if (json_last_error() !== JSON_ERROR_NONE) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
+		$signatureImages = [];
+
+		$metadata = $row['metadata'] ?? [];
+		$fields = $metadata['signature_fields'] ?? [];
+		$embed = $options['embed_user_signature'] ?? false;
+		if ($user && !empty($fields) && $embed) {
+			$imageFile = $this->config->getSignatureImage($user);
+			if ($imageFile) {
+				$content = $imageFile->getContent();
+				$mime = $imageFile->getMimetype();
+				if (!$mime || $mime === 'application/octet-stream') {
+					$mime = mime_content_type(str_to_stream($content));
+					if (!$mime) {
+						$mime = 'application/octet-stream';
+					}
+				}
+
+				foreach ($fields as $field) {
+					$signatureImages[] = [
+						'name' => $field['id'],
+						'filename' => $field['id'],
+						'contents' => $content,
+						'headers' => [
+							'Content-Type' => $mime,
+						],
+					];
+				};
+			}
+		}
+
 		try {
-			$data = $this->client->signFile($row['esig_file_id'], $account, $row['esig_server']);
+			$data = $this->client->signFile($row['esig_file_id'], $signatureImages, $account, $row['esig_server']);
 		} catch (ConnectException $e) {
 			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {

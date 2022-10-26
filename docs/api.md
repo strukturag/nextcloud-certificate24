@@ -179,6 +179,7 @@ an email address.
 * Method: `POST`
 * Endpoint: `/api/v1/sign/<request_id>`
 * Data:
+  - options: JSON options for the signature.
   - metadata: JSON metadata to include in the signature (TO BE DEFINED).
   - signature: Optional image containing written signature (TO BE DEFINED).
 * Response:
@@ -197,3 +198,9 @@ an email address.
 
 This method can also be accessed by anonymous users if file was shared with
 an email address.
+
+The following fields are currently defined for the `options` JSON:
+
+  | field                  | type    | description                                                      |
+  |------------------------|---------|------------------------------------------------------------------|
+  | `embed_user_signature` | bool    | Embed the personal signature image in all fields.                |
