@@ -28,6 +28,21 @@ return [
       'url' => '/download/signed/{id}',
       'verb' => 'GET',
     ],
+		[
+      'name' => 'Download#downloadSignatureImage',
+      'url' => '/settings/signature',
+      'verb' => 'GET',
+    ],
+		[
+      'name' => 'Download#uploadSignatureImage',
+      'url' => '/settings/signature',
+      'verb' => 'POST',
+    ],
+		[
+      'name' => 'Download#deleteSignatureImage',
+      'url' => '/settings/signature',
+      'verb' => 'DELETE',
+    ],
   ],
 	'ocs' => [
 		[

@@ -50,6 +50,17 @@ const search = async (search, type) => {
 	})
 }
 
+const resetSignatureImage = async () => {
+	return await axios.delete(generateUrl('apps/esig/settings/signature'))
+}
+
+const uploadSignatureImage = async (image) => {
+	const form = new FormData()
+	form.append('image', image)
+
+	return await axios.postForm(generateUrl('apps/esig/settings/signature'), form)
+}
+
 export {
 	shareFile,
 	getRequests,
@@ -59,4 +70,6 @@ export {
 	getOriginalUrl,
 	getSignedUrl,
 	search,
+	resetSignatureImage,
+	uploadSignatureImage,
 }

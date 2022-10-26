@@ -4,20 +4,38 @@ declare(strict_types=1);
 
 namespace OCA\Esig\Controller;
 
+use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Client;
 use OCA\Esig\Config;
 use OCA\Esig\Requests;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
+use OCP\Image;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\Util;
 
+function str_to_stream(string $string) {
+	$stream = fopen('php://memory','r+');
+	fwrite($stream, $string);
+	rewind($stream);
+	return $stream;
+}
+
 class DownloadController extends Controller {
+
+	const MAX_IMAGE_SIZE = 1024 * 1024;
+
+	protected IUserSession $userSession;
+	protected IURLGenerator $urlGenerator;
+	protected Client $client;
+	protected Config $config;
+	protected Requests $requests;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -98,6 +116,75 @@ class DownloadController extends Controller {
 		$url .= (strpos($url, '?') === false) ? '?' : '&';
 		$url .= 'download=1';
 		return new RedirectResponse($url);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function downloadSignatureImage() {
+		$user = $this->userSession->getUser();
+		$file = $this->config->getSignatureImage($user);
+		if (!$file) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$content = $file->getContent();
+		$mime = $file->getMimetype();
+		if (!$mime || $mime === 'application/octet-stream') {
+			$mime = mime_content_type(str_to_stream($content));
+			if (!$mime) {
+				$mime = 'application/octet-stream';
+			}
+		}
+
+		$response = new DataDisplayResponse($content, HTTP::STATUS_OK, [
+			'Content-Type' => $mime,
+		]);
+		$response->addHeader('Content-Disposition', null);
+		$response->setETag($file->getEtag());
+		$lastModified = new \DateTime();
+		$lastModified->setTimestamp($file->getMTime());
+		$response->setLastModified($lastModified);
+		return $response;
+	}
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function deleteSignatureImage() {
+		$user = $this->userSession->getUser();
+		$this->config->deleteSignatureImage($user);
+		return new DataResponse([], Http::STATUS_NO_CONTENT);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 */
+	public function uploadSignatureImage() {
+		$user = $this->userSession->getUser();
+
+		$image = $this->request->getUploadedFile('image');
+		if (!$image || !isset($image['error']) || is_array($image['error'])) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($image['error'] !== UPLOAD_ERR_OK || !is_uploaded_file($image['tmp_name'])) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+    if ($image['size'] > self::MAX_IMAGE_SIZE) {
+			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		}
+
+		$data = file_get_contents($image['tmp_name']);
+		$img = new Image();
+		if (!$img->loadFromData($data) || !$img->valid()) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$this->config->storeSignatureImage($user, $data);
+		return new DataResponse([], Http::STATUS_CREATED);
 	}
 
 }

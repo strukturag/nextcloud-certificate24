@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace OCA\Esig;
 
+use OCP\Files\IAppData;
+use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
+use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IConfig;
+use OCP\IUser;
 
 class Config {
 
 	public const DEFAULT_SERVER = "https://api.certificate24.com/";
 
 	private IConfig $config;
+	protected IAppData $appData;
 
-	public function __construct(IConfig $config) {
+	public function __construct(IConfig $config,
+								IAppData $appData) {
 		$this->config = $config;
+		$this->appData = $appData;
 	}
 
 	public function getServer(): string {
@@ -39,6 +47,54 @@ class Config {
 			$account = json_decode($account, true);
 		}
 		return $account;
+	}
+
+	public function getSignatureImage(IUser $user): ?ISimpleFile {
+		try {
+			$folder = $this->appData->getFolder($user->getUID());
+			return $folder->getFile('signature-image');
+		} catch (NotFoundException $e) {
+			return null;
+		}
+	}
+
+	public function deleteSignatureImage(IUser $user) {
+		try {
+			$folder = $this->appData->getFolder($user->getUID());
+			$file = $folder->getFile('signature-image');
+		} catch (NotFoundException $e) {
+			return;
+		}
+
+		try {
+			$file->delete();
+		} catch (NotPermittedException $e) {
+			return null;
+		}
+	}
+
+	public function storeSignatureImage(IUser $user, string $data): ?ISimpleFile {
+		try {
+			$folder = $this->appData->getFolder($user->getUID());
+		} catch (NotFoundException $e) {
+			try {
+				$folder = $this->appData->newFolder($user->getUID());
+			} catch (NotPermittedException $e) {
+				return null;
+			}
+		}
+
+		try {
+			try {
+				$file = $folder->getFile('signature-image');
+				$file->putContent($data);
+				return $file;
+			} catch (NotFoundException $e) {
+				return $folder->newFile('signature-image', $data);
+			}
+		} catch (NotPermittedException $e) {
+			return null;
+		}
 	}
 
 }
