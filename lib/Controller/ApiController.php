@@ -21,6 +21,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\ILogger;
+use OCP\Image;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
@@ -46,6 +47,7 @@ class ApiController extends OCSController {
 	];
 
 	const MAX_SIGN_OPTIONS_SIZE = 8 * 1024;
+	const MAX_IMAGE_SIZE = 1024 * 1024;
 
 	private IL10N $l10n;
 	private IFactory $l10nFactory;
@@ -581,40 +583,88 @@ class ApiController extends OCSController {
 
 		$metadata = $row['metadata'] ?? [];
 		$fields = $metadata['signature_fields'] ?? [];
-		$embed = $options['embed_user_signature'] ?? false;
-		if ($user && !empty($fields) && $embed) {
-			$imageFile = $this->config->getSignatureImage($user);
-			if ($imageFile) {
-				$content = $imageFile->getContent();
-				$mime = $imageFile->getMimetype();
-				if (!$mime || $mime === 'application/octet-stream') {
-					$mime = mime_content_type(str_to_stream($content));
-					if (!$mime) {
-						$mime = 'application/octet-stream';
-					}
+		if (!empty($fields)) {
+			$embed = $options['embed_user_signature'] ?? false;
+			if ($user && $embed) {
+				$imageFile = $this->config->getSignatureImage($user);
+			} else {
+				$imageFile = null;
+			}
+
+			$imageId = null;
+			foreach ($fields as $field) {
+				$fieldId = $field['id'];
+
+				$ref = $this->request->getParam($fieldId);
+				if ($ref) {
+					// Reference another image from the request.
+					$signatureImages[] = [
+						'name' => $fieldId,
+						'contents' => $ref,
+					];
+					continue;
 				}
 
-				$imageId = null;
-				foreach ($fields as $field) {
-					if ($imageId) {
-						// Reference image.
-						$signatureImages[] = [
-							'name' => $field['id'],
-							'contents' => $imageId,
-						];
-					} else {
-						$imageId = $field['id'];
-						$signatureImages[] = [
-							'name' => $field['id'],
-							'filename' => $field['id'],
-							'contents' => $content,
-							'headers' => [
-								'Content-Type' => $mime,
-							],
-						];
+				$image = $this->request->getUploadedFile($fieldId);
+				if ($image) {
+					if (!isset($image['error']) || is_array($image['error'])) {
+						return new DataResponse([], Http::STATUS_BAD_REQUEST);
 					}
-				};
-			}
+
+					if ($image['error'] !== UPLOAD_ERR_OK || !is_uploaded_file($image['tmp_name'])) {
+						return new DataResponse([], Http::STATUS_BAD_REQUEST);
+					}
+
+					if ($image['size'] > self::MAX_IMAGE_SIZE) {
+						return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+					}
+
+					$data = file_get_contents($image['tmp_name']);
+					$img = new Image();
+					if (!$img->loadFromData($data) || !$img->valid()) {
+						return new DataResponse([], Http::STATUS_BAD_REQUEST);
+					}
+
+					// Use uploaded image.
+					$signatureImages[] = [
+						'name' => $fieldId,
+						'filename' => $fieldId,
+						'contents' => $data,
+						'headers' => [
+							'Content-Type' => $img->mimeType(),
+						],
+					];
+					continue;
+				}
+
+				if ($imageId) {
+					// Reference configured personal signature image.
+					$signatureImages[] = [
+						'name' => $fieldId,
+						'contents' => $imageId,
+					];
+				} else if ($imageFile) {
+					// Use configured personal signature image.
+					$content = $imageFile->getContent();
+					$mime = $imageFile->getMimetype();
+					if (!$mime || $mime === 'application/octet-stream') {
+						$mime = mime_content_type(str_to_stream($content));
+						if (!$mime) {
+							$mime = 'application/octet-stream';
+						}
+					}
+
+					$imageId = $fieldId;
+					$signatureImages[] = [
+						'name' => $fieldId,
+						'filename' => $fieldId,
+						'contents' => $content,
+						'headers' => [
+							'Content-Type' => $mime,
+						],
+					];
+				}
+			};
 		}
 
 		try {
