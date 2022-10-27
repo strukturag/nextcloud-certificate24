@@ -2,11 +2,16 @@
 import axios from '@nextcloud/axios'
 import { generateUrl, generateOcsUrl } from '@nextcloud/router'
 
-const shareFile = async (file_id, recipient, recipient_type) => {
+const isEmpty = (obj) => {
+	return !obj || Object.keys(obj).length === 0
+}
+
+const shareFile = async (file_id, recipient, recipient_type, metadata) => {
 	return await axios.post(generateOcsUrl('apps/esig/api/v1/share'), {
 		file_id,
 		recipient,
 		recipient_type,
+		metadata: !isEmpty(metadata) ? metadata : null,
 	})
 }
 
@@ -30,8 +35,12 @@ const getIncomingRequests = async (include_signed) => {
 	})
 }
 
-const signRequest = async (id) => {
-	return await axios.post(generateOcsUrl('apps/esig/api/v1/share/' + id + '/sign'))
+const signRequest = async (id, options) => {
+	const form = new FormData()
+	if (options) {
+		form.append('options', JSON.stringify(options))
+	}
+	return await axios.postForm(generateOcsUrl('apps/esig/api/v1/share/' + id + '/sign'), form)
 }
 
 const getOriginalUrl = (id) => {
@@ -49,6 +58,17 @@ const search = async (search, type) => {
 	})
 }
 
+const resetSignatureImage = async () => {
+	return await axios.delete(generateUrl('apps/esig/settings/signature'))
+}
+
+const uploadSignatureImage = async (image) => {
+	const form = new FormData()
+	form.append('image', image)
+
+	return await axios.postForm(generateUrl('apps/esig/settings/signature'), form)
+}
+
 export {
 	shareFile,
 	getRequests,
@@ -58,4 +78,6 @@ export {
 	getOriginalUrl,
 	getSignedUrl,
 	search,
+	resetSignatureImage,
+	uploadSignatureImage,
 }

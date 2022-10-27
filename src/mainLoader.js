@@ -20,6 +20,8 @@
  */
 import Vue from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
+import { Tooltip } from '@nextcloud/vue'
+
 import '@nextcloud/dialogs/styles/toast.scss'
 
 import ShareDialogView from './views/ShareDialogView.vue'
@@ -31,6 +33,8 @@ Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
 
+Vue.directive('tooltip', Tooltip)
+
 Vue.use(VueObserveVisibility)
 
 const el = document.createElement('div')
@@ -39,17 +43,17 @@ document.body.appendChild(el)
 const app = new Vue({
 	el,
 	data: {
-		fileId: null,
+		fileModel: null,
 	},
 	render: h => h(ShareDialogView),
 })
 
-app.$on('dialog:open', (id) => {
-	app.$data.fileId = id
+app.$on('dialog:open', (model) => {
+	app.$data.fileModel = model
 })
 
 app.$on('dialog:closed', () => {
-	app.$data.fileId = null
+	app.$data.fileModel = null
 })
 
 OCA.Esig = OCA.Esig || {}
@@ -73,7 +77,7 @@ OCA.Esig.SignPlugin = {
 			permissions: OC.PERMISSION_READ | OC.PERMISSION_WRITE,
 			actionHandler: function(fileName, context) {
 				const fileInfoModel = context.fileInfoModel || context.fileList.getModelForFile(fileName)
-				this.show(fileInfoModel.id)
+				this.show(fileInfoModel)
 			}.bind(this),
 		})
 	},

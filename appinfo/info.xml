@@ -6,7 +6,7 @@
 	<summary><![CDATA[eSignatures]]></summary>
 	<description><![CDATA[eSignatures]]></description>
 
-	<version>0.0.3</version>
+	<version>0.0.4</version>
 	<license>agpl</license>
 
 	<author>Joachim Bauch</author>
@@ -19,6 +19,8 @@
 	<settings>
 		<admin>OCA\Esig\Settings\Admin\AdminSettings</admin>
 		<admin-section>OCA\Esig\Settings\Admin\Section</admin-section>
+		<personal>OCA\Esig\Settings\PersonalSettings</personal>
+		<personal-section>OCA\Esig\Settings\Section</personal-section>
 	</settings>
 
         <activity>

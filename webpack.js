@@ -5,7 +5,8 @@ const BabelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-m
 
 webpackConfig.entry = {
 	'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
-	'main': path.join(__dirname, 'src', 'main.js'),
+	'personal-settings': path.join(__dirname, 'src', 'mainPersonalSettings.js'),
+	main: path.join(__dirname, 'src', 'main.js'),
 	loader: path.join(__dirname, 'src', 'mainLoader.js'),
 }
 

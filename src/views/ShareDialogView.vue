@@ -83,7 +83,18 @@
 							@click="selectEmail" />
 					</div>
 				</div>
-				<div>
+				<div v-if="signaturePositions && signaturePositions.length">
+					{{ n('esig', '%n signature field positioned', '%n signature fields positioned', signaturePositions.length) }}
+				</div>
+				<div class="buttons">
+					<NcButton v-if="fileModel && fileModel.canDownload()"
+						type="secondary"
+						@click="openSelectModal">
+						<template #icon>
+							<FileSign />
+						</template>
+						{{ t('esig', 'Select signature position') }}
+					</NcButton>
 					<NcButton type="primary"
 						:disabled="shareLoading"
 						@click="requestSignature">
@@ -94,6 +105,10 @@
 					</NcButton>
 				</div>
 			</div>
+			<SelectorDialogModal v-if="showSelectModal"
+				:url="getFileUrl(fileModel)"
+				:signature-positions="signaturePositions"
+				@close="closeSelectModal" />
 		</NcModal>
 	</div>
 </template>
@@ -108,8 +123,10 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import debounce from 'debounce'
 import { showSuccess, showError } from '@nextcloud/dialogs'
+import { generateRemoteUrl } from '@nextcloud/router'
 
 import { shareFile, search } from '../services/apiservice.js'
+import SelectorDialogModal from '../components/SelectorDialogModal.vue'
 import SearchResults from '../components/SearchResults.vue'
 
 export default {
@@ -123,12 +140,14 @@ export default {
 		NcCheckboxRadioSwitch,
 		NcModal,
 		NcTextField,
+		SelectorDialogModal,
 		SearchResults,
 	},
 
 	data() {
 		return {
-			fileId: null,
+			fileModel: null,
+			showSelectModal: false,
 			error: '',
 			recipient_type: 'user',
 			noUserResults: false,
@@ -140,12 +159,13 @@ export default {
 			email: '',
 			emailResults: {},
 			shareLoading: false,
+			signaturePositions: [],
 		}
 	},
 
 	computed: {
 		showDialog() {
-			return !!this.fileId
+			return !!this.fileModel
 		},
 		userSelected() {
 			return this.recipient_type === 'user'
@@ -175,8 +195,8 @@ export default {
 	},
 
 	created() {
-		this.$root.$watch('fileId', (newValue) => {
-			this.fileId = newValue
+		this.$root.$watch('fileModel', (newValue) => {
+			this.fileModel = newValue
 			this.recipient_type = 'user'
 			this.noUserResults = false
 			this.usersLoading = false
@@ -187,6 +207,7 @@ export default {
 			this.email = ''
 			this.emailResults = {}
 			this.shareLoading = false
+			this.signaturePositions = []
 		})
 	},
 
@@ -310,7 +331,7 @@ export default {
 		},
 
 		async requestSignature() {
-			if (!this.fileId) {
+			if (!this.fileModel) {
 				showError(t('esig', 'No file selected.'))
 				return
 			}
@@ -332,13 +353,20 @@ export default {
 			this.error = ''
 			this.shareLoading = true
 			try {
-				await shareFile(this.fileId, recipient, this.recipient_type)
+				let metadata
+				if (this.signaturePositions && this.signaturePositions.length) {
+					metadata = {
+						version: '1.0',
+						signature_fields: this.signaturePositions,
+					}
+				}
+				await shareFile(this.fileModel.id, recipient, this.recipient_type, metadata)
 				this.shareLoading = false
 				this.closeModal()
 				showSuccess(t('esig', 'Requested signature.'))
 			} catch (error) {
 				this.shareLoading = false
-				console.error('Could not request signature', this.fileId, error)
+				console.error('Could not request signature', this.fileModel, error)
 				const response = error.response
 				const data = response.data.ocs?.data || {}
 				switch (data.error) {
@@ -355,6 +383,19 @@ export default {
 					this.error = t('esig', 'Error while requesting signature.')
 				}
 			}
+		},
+
+		openSelectModal() {
+			this.showSelectModal = true
+		},
+
+		closeSelectModal(positions) {
+			this.showSelectModal = false
+			this.signaturePositions = positions
+		},
+
+		getFileUrl(model) {
+			return generateRemoteUrl('webdav') + model.getFullPath()
 		},
 	},
 }
@@ -394,5 +435,10 @@ h1 {
 		top: -2px;
 		z-index: 2;
 	}
+}
+
+.buttons {
+	display: flex;
+	justify-content: space-between;
 }
 </style>

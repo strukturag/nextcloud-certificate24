@@ -38,7 +38,7 @@ class Requests {
 		return $this->secureRandom->generate($length, $chars);
 	}
 
-  public function storeRequest(File $file, IUser $user, string $recipient, string $recipient_type, array $account, string $server, string $esig_file_id): string {
+  public function storeRequest(File $file, IUser $user, string $recipient, string $recipient_type, ?array $metadata, array $account, string $server, string $esig_file_id): string {
 		$mime = $file->getMimeType();
 		if ($mime) {
 			$mime = strtolower($mime);
@@ -56,6 +56,7 @@ class Requests {
 					'user_id' => $query->createNamedParameter($user->getUID()),
 					'recipient' => $query->createNamedParameter($recipient),
 					'recipient_type' => $query->createNamedParameter($recipient_type),
+					'metadata' => $query->createNamedParameter(!empty($metadata) ? json_encode($metadata) : null),
 					'esig_account_id' => $query->createNamedParameter($account['id']),
 					'esig_server' => $query->createNamedParameter($server),
 					'esig_file_id' => $query->createNamedParameter($esig_file_id),
@@ -93,6 +94,9 @@ class Requests {
 			return null;
 		}
 
+		if ($row['metadata']) {
+			$row['metadata'] = json_decode($row['metadata'], true);
+		}
 		return $row;
 	}
 
@@ -110,6 +114,10 @@ class Requests {
 
 		$requests = [];
 		while ($row = $result->fetch()) {
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+
 			$requests[] = $row;
 		}
 		$result->closeCursor();
@@ -130,6 +138,9 @@ class Requests {
 			return null;
 		}
 
+		if ($row['metadata']) {
+			$row['metadata'] = json_decode($row['metadata'], true);
+		}
 		return $row;
 	}
 
@@ -148,6 +159,10 @@ class Requests {
 
 		$requests = [];
 		while ($row = $result->fetch()) {
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+
 			$requests[] = $row;
 		}
 		$result->closeCursor();

@@ -1,10 +1,15 @@
+import { loadState } from '@nextcloud/initial-state'
+
 let api
 
 const getVinegarApi = async () => {
 	if (!api) {
 		const ts = (new Date()).getTime()
-		// eslint-disable-next-line no-undef, camelcase
-		let base = vinegar_server
+		let base = loadState('esig', 'vinegar_server')
+		if (!base) {
+			throw new Error('No server configured')
+		}
+
 		if (base[base.length - 1] !== '/') {
 			base += '/'
 		}

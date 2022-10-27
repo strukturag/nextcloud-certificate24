@@ -29,6 +29,13 @@ use OCP\Mail\IMailer;
 use OCP\Share\IShare;
 use OCP\Util;
 
+function str_to_stream(string $string) {
+	$stream = fopen('php://memory','r+');
+	fwrite($stream, $string);
+	rewind($stream);
+	return $stream;
+}
+
 class ApiController extends OCSController {
 
 	const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
@@ -36,6 +43,8 @@ class ApiController extends OCSController {
 	const PDF_MIME_TYPES = [
 		'application/pdf',
 	];
+
+	const MAX_SIGN_OPTIONS_SIZE = 8 * 1024;
 
 	private IL10N $l10n;
 	private IFactory $l10nFactory;
@@ -146,9 +155,10 @@ class ApiController extends OCSController {
 	 * @param int $file_id
 	 * @param string $recipient
 	 * @param string $recipient_type
+	 * @param ?array $metadata
 	 * @return DataResponse
 	 */
-	public function shareFile(int $file_id, string $recipient, string $recipient_type): DataResponse {
+	public function shareFile(int $file_id, string $recipient, string $recipient_type, ?array $metadata = null): DataResponse {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([
@@ -178,6 +188,8 @@ class ApiController extends OCSController {
 					'error' => 'invalid_recipient_type',
 				], Http::STATUS_BAD_REQUEST);
 		}
+
+		// TODO: Validate metadata format.
 
 		$user = $this->userSession->getUser();
 		if ($user) {
@@ -211,7 +223,7 @@ class ApiController extends OCSController {
 
 		$server = $this->config->getServer();
 		try {
-			$data = $this->client->shareFile($file, $account, $server);
+			$data = $this->client->shareFile($file, $metadata, $account, $server);
 		} catch (ConnectException $e) {
 			return new DataResponse(['error' => 'error_connecting'], Http::STATUS_BAD_GATEWAY);
 		} catch (\Exception $e) {
@@ -223,7 +235,7 @@ class ApiController extends OCSController {
 			return new DataResponse(['error' => 'invalid_response'], Http::STATUS_BAD_GATEWAY);
 		}
 
-		$id = $this->requests->storeRequest($file, $user, $recipient, $recipient_type, $account, $server, $esig_file_id);
+		$id = $this->requests->storeRequest($file, $user, $recipient, $recipient_type, $metadata, $account, $server, $esig_file_id);
 		if ($recipient_type === 'email') {
 			$lang = $this->l10n->getLanguageCode();
 			$templateOptions = [
@@ -292,6 +304,7 @@ class ApiController extends OCSController {
 				'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
 				'recipient' => $request['recipient'],
 				'recipient_type' => $request['recipient_type'],
+				'metadata' => $request['metadata'],
 			];
 			if ($include_signed && $request['signed']) {
 				$r['signed'] = $this->formatDateTime($request['signed']);
@@ -344,6 +357,7 @@ class ApiController extends OCSController {
 				'filename' => $file->getName(),
 				'mimetype' => $mime,
 				'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
+				'metadata' => $request['metadata'],
 			];
 			if ($include_signed && $request['signed']) {
 				$r['signed'] = $this->formatDateTime($request['signed']);
@@ -394,6 +408,7 @@ class ApiController extends OCSController {
 			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
 			'recipient' => $request['recipient'],
 			'recipient_type' => $request['recipient_type'],
+			'metadata' => $request['metadata'],
 		];
 		if (isset($request['signed']) && $request['signed']) {
 			$response['signed'] = $this->formatDateTime($request['signed']);
@@ -449,6 +464,7 @@ class ApiController extends OCSController {
 			'filename' => $file->getName(),
 			'mimetype' => $mime,
 			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
+			'metadata' => $request['metadata'],
 		];
 		if (isset($response['signed']) && $request['signed']) {
 			$response['signed'] = $this->formatDateTime($request['signed']);
@@ -516,8 +532,57 @@ class ApiController extends OCSController {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
+		$options = [];
+		$optionsData = $this->request->getParam('options');
+		if ($optionsData) {
+			$options = json_decode($optionsData, true);
+			if (json_last_error() !== JSON_ERROR_NONE) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
+		$signatureImages = [];
+
+		$metadata = $row['metadata'] ?? [];
+		$fields = $metadata['signature_fields'] ?? [];
+		$embed = $options['embed_user_signature'] ?? false;
+		if ($user && !empty($fields) && $embed) {
+			$imageFile = $this->config->getSignatureImage($user);
+			if ($imageFile) {
+				$content = $imageFile->getContent();
+				$mime = $imageFile->getMimetype();
+				if (!$mime || $mime === 'application/octet-stream') {
+					$mime = mime_content_type(str_to_stream($content));
+					if (!$mime) {
+						$mime = 'application/octet-stream';
+					}
+				}
+
+				$imageId = null;
+				foreach ($fields as $field) {
+					if ($imageId) {
+						// Reference image.
+						$signatureImages[] = [
+							'name' => $field['id'],
+							'contents' => $imageId,
+						];
+					} else {
+						$imageId = $field['id'];
+						$signatureImages[] = [
+							'name' => $field['id'],
+							'filename' => $field['id'],
+							'contents' => $content,
+							'headers' => [
+								'Content-Type' => $mime,
+							],
+						];
+					}
+				};
+			}
+		}
+
 		try {
-			$data = $this->client->signFile($row['esig_file_id'], $account, $row['esig_server']);
+			$data = $this->client->signFile($row['esig_file_id'], $signatureImages, $account, $row['esig_server']);
 		} catch (ConnectException $e) {
 			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {
