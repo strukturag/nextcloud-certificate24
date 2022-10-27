@@ -55,11 +55,14 @@ class DownloadController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
+	 * @BruteForceProtection(action=esig_request)
 	 */
 	public function downloadOriginal(string $id): Response {
 		$req = $this->requests->getRequestById($id);
 		if (!$req) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle();
+			return $response;
 		}
 
 		$account = $this->config->getAccount();
@@ -88,11 +91,14 @@ class DownloadController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
+	 * @BruteForceProtection(action=esig_request)
 	 */
 	public function downloadSigned(string $id): Response {
 		$req = $this->requests->getRequestById($id);
 		if (!$req) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle();
+			return $response;
 		}
 
 		$account = $this->config->getAccount();

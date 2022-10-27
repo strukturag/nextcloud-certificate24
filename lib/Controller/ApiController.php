@@ -419,6 +419,7 @@ class ApiController extends OCSController {
 
 	/**
 	 * @PublicPage
+	 * @BruteForceProtection(action=esig_request)
 	 *
 	 * @param string $id
 	 * @return DataResponse
@@ -431,12 +432,16 @@ class ApiController extends OCSController {
 
 		$request = $this->requests->getRequestById($id);
 		if (!$request) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle();
+			return $response;
 		}
 
 		$user = $this->userSession->getUser();
 		if (!$this->requests->mayAccess($user, $request)) {
-			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response->throttle();
+			return $response;
 		}
 
 		$owner = $this->userManager->get($request['user_id']);
@@ -512,6 +517,7 @@ class ApiController extends OCSController {
 
 	/**
 	 * @PublicPage
+	 * @BruteForceProtection(action=esig_request)
 	 *
 	 * @param string $id
 	 * @return DataResponse
@@ -520,9 +526,13 @@ class ApiController extends OCSController {
 		$user = $this->userSession->getUser();
 		$row = $this->requests->getRequestById($id);
 		if (!$row) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle();
+			return $response;
 		} else if ($row['recipient_type'] === 'user' && (!$user || $row['recipient'] !== $user->getUID())) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle();
+			return $response;
 		}
 
 		$account = $this->config->getAccount();
