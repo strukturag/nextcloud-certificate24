@@ -23,7 +23,7 @@ class Client {
 		$this->tokens = $tokens;
 	}
 
-	public function shareFile(File $file, string $metadata, array $account, string $server): array {
+	public function shareFile(File $file, ?array $metadata, array $account, string $server): array {
 		$token = $this->tokens->getToken($account, $file->getName());
 
 		$client = $this->clientService->newClient();
@@ -39,10 +39,10 @@ class Client {
 				'Content-Type' => strtolower($file->getMimeType()),
 			],
 		]];
-		if ($metadata) {
+		if (!empty($metadata)) {
 			$multipart[] = [
 				'name' => 'metadata',
-				'contents' => $metadata,
+				'contents' => json_encode($metadata),
 				'filename' => 'metadata.json',
 				'headers' => [
 					'Content-Type' => 'application/json; charset=UTF-8',

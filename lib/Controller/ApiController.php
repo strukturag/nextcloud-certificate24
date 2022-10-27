@@ -155,10 +155,10 @@ class ApiController extends OCSController {
 	 * @param int $file_id
 	 * @param string $recipient
 	 * @param string $recipient_type
-	 * @param string $metadata
+	 * @param ?array $metadata
 	 * @return DataResponse
 	 */
-	public function shareFile(int $file_id, string $recipient, string $recipient_type, string $metadata = ''): DataResponse {
+	public function shareFile(int $file_id, string $recipient, string $recipient_type, ?array $metadata = null): DataResponse {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([
