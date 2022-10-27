@@ -67,7 +67,7 @@
 										<Download :size="20" />
 									</template>
 								</NcButton>
-								<SignDialogModal v-if="signDialog"
+								<SignDialogModal v-if="signDialog === request"
 									:request="request"
 									@close="closeDialog" />
 							</div>
