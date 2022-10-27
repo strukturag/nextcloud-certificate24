@@ -178,16 +178,19 @@ an email address.
 
 * Method: `POST`
 * Endpoint: `/api/v1/share/<request_id>/sign`
-* Data:
-  - options: JSON options for the signature.
-  - metadata: JSON metadata to include in the signature (TO BE DEFINED).
-  - signature: Optional image containing written signature (TO BE DEFINED).
+* Content-Type: `multipart/formdata`
+* Form fields:
+  - `options`: JSON options for the signature.
+  - `metadata`: JSON metadata to include in the signature (TO BE DEFINED).
+  - `<field-id>`: Image to render on the given field.
 * Response:
   - Status code:
     + `200 OK`
+    + `400 Bad Request` When the request contents are invalid.
     + `403 Forbidden` When the user is not allowed to sign the file.
-    + `409 Conflict` File was already signed.
     + `404 Not Found` When no such request exists.
+    + `409 Conflict` File was already signed.
+    + `413 Request Entity Too Large` Image is too large.
     + `504 Gateway Timeout` When the signing backend took too long.
   - Data:
     | field               | type    | description                                                      |
@@ -204,3 +207,57 @@ The following fields are currently defined for the `options` JSON:
   | field                  | type    | description                                                      |
   |------------------------|---------|------------------------------------------------------------------|
   | `embed_user_signature` | bool    | Embed the personal signature image in all fields.                |
+
+
+For every signature field defined in the request `metadata`, an image file can
+be provided in the request by setting the form field name to the `id` of the
+signature field from the request `metadata`. This will override images set by
+the `embed_user_signature` option.
+
+Make sure to include a `Content-Type` header with the correct mimetype of the
+image.
+
+Example:
+
+    POST /url HTTP/1.1
+    HOST: host.example.com
+    Cookie: some_cookies...
+    Connection: Keep-Alive
+    Content-Type: multipart/form-data; boundary=abcdefg
+    Content-Length: 12345
+
+    --abcdefg
+    Content-Disposition: form-data; name="signature-01"; filename="sig01.jpg"
+    Content-Type: image/jpeg
+
+    ...jpeg-image-data...
+    --abcdefg
+    Content-Disposition: form-data; name="signature-02"; filename="sig02.png"
+    Content-Type: image/png
+
+    ...png-image-data...
+    --abcdefg--
+
+
+If the same image should be used for multiple signature fields, the name of
+another field can be given instead of uploading the same file multiple times.
+
+Example:
+
+    POST /url HTTP/1.1
+    HOST: host.example.com
+    Cookie: some_cookies...
+    Connection: Keep-Alive
+    Content-Type: multipart/form-data; boundary=abcdefg
+    Content-Length: 12345
+
+    --abcdefg
+    Content-Disposition: form-data; name="signature-01"; filename="sig01.jpg"
+    Content-Type: image/jpeg
+
+    ...jpeg-image-data...
+    --abcdefg
+    Content-Disposition: form-data; name="signature-02"
+
+    signature-01
+    --abcdefg--
