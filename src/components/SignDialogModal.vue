@@ -11,10 +11,15 @@
 					:max-height="400"
 					:url="downloadOriginalUrl(request)"
 					:download-url="downloadOriginalUrl(request)"
-					:signature-positions="request.metadata?.signature_fields || null"
+					:signature-positions="signature_fields"
 					@init:start="loading = true"
 					@init:done="loading = false" />
 			</div>
+			<NcCheckboxRadioSwitch v-if="signature_fields && settings['has-signature-image']"
+				:disabled="loading"
+				:checked.sync="embedSignature">
+				{{ t('esig', 'Embed personal signature in fields') }}
+			</NcCheckboxRadioSwitch>
 			<!--
 				{{ request }}
 			-->
@@ -34,7 +39,9 @@
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
+import { loadState } from '@nextcloud/initial-state'
 
 import PdfViewer from './PdfViewer.vue'
 import { signRequest, getOriginalUrl } from '../services/apiservice.js'
@@ -44,6 +51,7 @@ export default {
 
 	components: {
 		NcButton,
+		NcCheckboxRadioSwitch,
 		NcModal,
 		PdfViewer,
 		FileSign,
@@ -59,7 +67,19 @@ export default {
 	data() {
 		return {
 			loading: false,
+			settings: [],
+			embedSignature: true,
 		}
+	},
+
+	computed: {
+		signature_fields() {
+			return this.request.metadata?.signature_fields || null
+		},
+	},
+
+	beforeMount() {
+		this.settings = loadState('esig', 'user-settings')
 	},
 
 	mounted() {
@@ -84,7 +104,7 @@ export default {
 					this.loading = true
 					try {
 						const response = await signRequest(request.request_id, {
-							embed_user_signature: true,
+							embed_user_signature: this.embedSignature,
 						})
 						const data = response.data.ocs?.data || {}
 						request.signed = data.signed

@@ -12,19 +12,23 @@ use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IRequest;
+use OCP\IUserSession;
 use OCP\Util;
 
 class PageController extends Controller {
 
 	private IInitialState $initialState;
+	private IUserSession $userSession;
 	private Config $config;
 
 	public function __construct(string $appName,
 								IRequest $request,
 								IInitialState $initialState,
+								IUserSession $userSession,
 								Config $config) {
 		parent::__construct($appName, $request);
 		$this->initialState = $initialState;
+		$this->userSession = $userSession;
 		$this->config = $config;
 	}
 
@@ -43,6 +47,18 @@ class PageController extends Controller {
 				$server
 			);
 		}
+
+		$userSettings = [];
+		$user = $this->userSession->getUser();
+		if ($user) {
+			if ($this->config->getSignatureImage($user)) {
+				$userSettings['has-signature-image'] = true;
+			}
+		}
+		$this->initialState->provideInitialState(
+			'user-settings',
+			$userSettings
+		);
 
 		$response = new TemplateResponse('esig', 'index', [
 			'app' => Application::APP_ID,
