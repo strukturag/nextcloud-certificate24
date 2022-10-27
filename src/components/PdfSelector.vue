@@ -129,7 +129,7 @@ export default {
 		},
 
 		getSignaturePositions() {
-			return this.doc.getSignaturePositions()
+			return this.doc ? this.doc.getSignaturePositions() : []
 		},
 
 		closeModal() {
