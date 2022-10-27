@@ -22,7 +22,7 @@
 		<div v-if="!loadingFailed"
 			v-show="!initialLoad"
 			ref="container"
-			class="container center" />
+			class="container" />
 	</div>
 </template>
 
@@ -164,11 +164,6 @@ canvas {
 	position: absolute;
 	left: 0;
 	top: 0;
-}
-
-.center {
-	display: flex;
-	justify-content: center;
 }
 
 .container {
