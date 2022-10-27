@@ -558,15 +558,25 @@ class ApiController extends OCSController {
 					}
 				}
 
+				$imageId = null;
 				foreach ($fields as $field) {
-					$signatureImages[] = [
-						'name' => $field['id'],
-						'filename' => $field['id'],
-						'contents' => $content,
-						'headers' => [
-							'Content-Type' => $mime,
-						],
-					];
+					if ($imageId) {
+						// Reference image.
+						$signatureImages[] = [
+							'name' => $field['id'],
+							'contents' => $imageId,
+						];
+					} else {
+						$imageId = $field['id'];
+						$signatureImages[] = [
+							'name' => $field['id'],
+							'filename' => $field['id'],
+							'contents' => $content,
+							'headers' => [
+								'Content-Type' => $mime,
+							],
+						];
+					}
 				};
 			}
 		}
