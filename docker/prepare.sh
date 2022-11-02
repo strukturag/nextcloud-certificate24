@@ -19,6 +19,7 @@ run_as() {
 rsync -rlDog --delete --chown www-data:www-data /usr/src/nextcloud/custom_apps/esig/ /var/www/html/custom_apps/esig/
 
 run_as 'php /var/www/html/occ app:enable esig'
+run_as 'php /var/www/html/occ app:update esig'
 
 if [ -n "$NEXTCLOUD_ADMIN_DISPLAY_NAME" ]; then
     run_as 'php /var/www/html/occ user:setting --update-only "${NEXTCLOUD_ADMIN_USER}" settings display_name "${NEXTCLOUD_ADMIN_DISPLAY_NAME}"' || true
