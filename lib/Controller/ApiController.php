@@ -11,6 +11,7 @@ use OCA\Esig\Config;
 use OCA\Esig\Events\SignEvent;
 use OCA\Esig\Requests;
 use OCA\Esig\TranslatedTemplate;
+use OCA\Esig\Validator;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -59,6 +60,7 @@ class ApiController extends OCSController {
 	private Client $client;
 	private Config $config;
 	private Requests $requests;
+	private Validator $validator;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -74,7 +76,8 @@ class ApiController extends OCSController {
 								IEventDispatcher $dispatcher,
 								Client $client,
 								Config $config,
-								Requests $requests) {
+								Requests $requests,
+								Validator $validator) {
 		parent::__construct($appName, $request);
 		$this->l10n = $l10n;
 		$this->l10nFactory = $l10nFactory;
@@ -89,6 +92,7 @@ class ApiController extends OCSController {
 		$this->client = $client;
 		$this->config = $config;
 		$this->requests = $requests;
+		$this->validator = $validator;
 	}
 
 	private function parseDateTime($s) {
@@ -189,7 +193,17 @@ class ApiController extends OCSController {
 				], Http::STATUS_BAD_REQUEST);
 		}
 
-		// TODO: Validate metadata format.
+		if (empty($metadata)) {
+			$metadata = null;
+		}
+
+		$error = $this->validator->validateShareMetadata($metadata);
+		if ($error) {
+			return new DataResponse([
+				'error' => 'invalid_metadata',
+				'details' => $error
+			], Http::STATUS_BAD_REQUEST);
+		}
 
 		$user = $this->userSession->getUser();
 		if ($user) {
