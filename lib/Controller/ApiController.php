@@ -356,7 +356,7 @@ class ApiController extends OCSController {
 		foreach ($requests as $request) {
 			$owner = $this->userManager->get($request['user_id']);
 			if (!$owner) {
-				// TODO: Should not happen, owned requests are deleted when users are.
+				// Should not happen, owned requests are deleted when users are.
 				continue;
 			}
 
@@ -468,7 +468,7 @@ class ApiController extends OCSController {
 
 		$owner = $this->userManager->get($request['user_id']);
 		if (!$owner) {
-			// TODO: Should not happen, owned requests are deleted when users are.
+			// Should not happen, owned requests are deleted when users are.
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
