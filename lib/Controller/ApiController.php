@@ -543,6 +543,10 @@ class ApiController extends OCSController {
 			return $response;
 		}
 
+		if ($row['signed']) {
+			return new DataResponse([], Http::STATUS_CONFLICT);
+		}
+
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
@@ -604,7 +608,14 @@ class ApiController extends OCSController {
 		} catch (ConnectException $e) {
 			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {
-			return new DataResponse(['error' => $e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
+			switch ($e->getCode()) {
+				case Http::STATUS_CONFLICT:
+					// Document was already signed.
+					// TODO: Mark as signed in database.
+					return new DataResponse([], Http::STATUS_CONFLICT);
+				default:
+					return new DataResponse(['error' => $e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
 		}
 
 		$status = $data['status'] ?? '';
