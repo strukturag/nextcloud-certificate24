@@ -40,8 +40,18 @@ class CSPSetter implements IEventListener {
 		}
 
 		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedChildSrcDomain($server);
+		$csp->addAllowedChildSrcDomain('blob:');
+		$csp->addAllowedChildSrcDomain("'self'");
 		$csp->addAllowedConnectDomain($server);
+		$csp->addAllowedConnectDomain('blob:');
+		$csp->addAllowedConnectDomain("'self'");
 		$csp->addAllowedScriptDomain($server);
+		$csp->addAllowedScriptDomain('blob:');
+		$csp->addAllowedScriptDomain("'self'");
+		$csp->addAllowedWorkerSrcDomain($server);
+		$csp->addAllowedWorkerSrcDomain('blob:');
+		$csp->addAllowedWorkerSrcDomain("'self'");
 		$event->addPolicy($csp);
 	}
 

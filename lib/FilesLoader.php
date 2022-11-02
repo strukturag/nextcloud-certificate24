@@ -6,12 +6,10 @@ namespace OCA\Esig;
 
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Esig\Config;
-use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
-use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Util;
 
 class FilesLoader implements IEventListener {
