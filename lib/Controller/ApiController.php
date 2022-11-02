@@ -225,8 +225,16 @@ class ApiController extends OCSController {
 		try {
 			$data = $this->client->shareFile($file, $metadata, $account, $server);
 		} catch (ConnectException $e) {
+			$this->logger->logException($e, [
+				'message' => 'Error connecting to ' . $server,
+				'app' => Application::APP_ID,
+			]);
 			return new DataResponse(['error' => 'error_connecting'], Http::STATUS_BAD_GATEWAY);
 		} catch (\Exception $e) {
+			$this->logger->logException($e, [
+				'message' => 'Error sending request to ' . $server,
+				'app' => Application::APP_ID,
+			]);
 			return new DataResponse(['error' => $e->getCode()], Http::STATUS_BAD_GATEWAY);
 		}
 
