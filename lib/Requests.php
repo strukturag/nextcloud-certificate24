@@ -174,6 +174,33 @@ class Requests {
 		return $requests;
 	}
 
+	public function getRequestsForFile(File $file, bool $include_signed): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_requests')
+			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
+			->orderBy('created');
+
+		if (!$include_signed) {
+			$query->andWhere($query->expr()->isNull('signed'));
+		}
+		$result = $query->executeQuery();
+
+		$requests = [];
+		while ($row = $result->fetch()) {
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+
+			$requests[] = $row;
+		}
+		$result->closeCursor();
+
+		return $requests;
+	}
+
+
 	public function markRequestSignedById(string $id, \DateTime $now) {
 		$query = $this->db->getQueryBuilder();
 		$query->update('esig_requests')
