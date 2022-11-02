@@ -18,6 +18,10 @@ run_as() {
 
 rsync -rlDog --delete --chown www-data:www-data /usr/src/nextcloud/custom_apps/esig/ /var/www/html/custom_apps/esig/
 
+run_as 'php /var/www/html/occ config:system:set appstoreenabled --type boolean --value false'
+run_as 'php /var/www/html/occ config:system:set integrity.check.disabled --type boolean --value true'
+
+run_as 'php /var/www/html/occ upgrade'
 run_as 'php /var/www/html/occ app:enable esig'
 run_as 'php /var/www/html/occ app:update esig'
 
