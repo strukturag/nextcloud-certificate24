@@ -1,0 +1,15 @@
+.dockerignore
+.gitignore
+docker/Dockerfile
+
+*.code-workspace
+*.md
+*.phar
+.*y*ml
+*.y*ml
+
+.git/
+.github/
+js/
+node_modules/
+vendor/
