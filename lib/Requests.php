@@ -86,7 +86,8 @@ class Requests {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('esig_requests')
-			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
+			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
 		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
@@ -105,6 +106,7 @@ class Requests {
 		$query->select('*')
 			->from('esig_requests')
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($user->getUID())))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->orderBy('created');
 
 		if (!$include_signed) {
@@ -130,7 +132,8 @@ class Requests {
 		$query->select('*')
 			->from('esig_requests')
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
-			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($user->getUID())));
+			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($user->getUID())))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
 		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
@@ -150,6 +153,7 @@ class Requests {
 			->from('esig_requests')
 			->where($query->expr()->eq('recipient', $query->createNamedParameter($user->getUID())))
 			->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter('user')))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->orderBy('created');
 
 		if (!$include_signed) {
@@ -170,10 +174,46 @@ class Requests {
 		return $requests;
 	}
 
+	public function getRequestsForFile(File $file, bool $include_signed): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_requests')
+			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
+			->orderBy('created');
+
+		if (!$include_signed) {
+			$query->andWhere($query->expr()->isNull('signed'));
+		}
+		$result = $query->executeQuery();
+
+		$requests = [];
+		while ($row = $result->fetch()) {
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+
+			$requests[] = $row;
+		}
+		$result->closeCursor();
+
+		return $requests;
+	}
+
+
 	public function markRequestSignedById(string $id, \DateTime $now) {
 		$query = $this->db->getQueryBuilder();
 		$query->update('esig_requests')
 			->set('signed', $query->createNamedParameter($now, 'datetimetz'))
+			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
+		$query->executeStatement();
+	}
+
+	public function markRequestDeletedById(string $id) {
+		$query = $this->db->getQueryBuilder();
+		$query->update('esig_requests')
+			->set('deleted', $query->createNamedParameter(true))
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
 		$query->executeStatement();
 	}

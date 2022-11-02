@@ -307,7 +307,7 @@ class ApiController extends OCSController {
 		foreach ($requests as $request) {
 			$files = $root->getById($request['file_id']);
 			if (empty($files)) {
-				// TODO: Should not happen, requests are deleted when files are.
+				// Should not happen, requests are deleted when files are.
 				continue;
 			}
 
@@ -356,13 +356,13 @@ class ApiController extends OCSController {
 		foreach ($requests as $request) {
 			$owner = $this->userManager->get($request['user_id']);
 			if (!$owner) {
-				// TODO: Should not happen, owned requests are deleted when users are.
+				// Should not happen, owned requests are deleted when users are.
 				continue;
 			}
 
 			$files = $this->root->getUserFolder($owner->getUID())->getById($request['file_id']);
 			if (empty($files)) {
-				// TODO: Should not happen, requests are deleted when files are.
+				// Should not happen, requests are deleted when files are.
 				continue;
 			}
 
@@ -411,7 +411,7 @@ class ApiController extends OCSController {
 
 		$files = $this->root->getUserFolder($user->getUID())->getById($request['file_id']);
 		if (empty($files)) {
-			// TODO: Should not happen, requests are deleted when files are.
+			// Should not happen, requests are deleted when files are.
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -468,13 +468,13 @@ class ApiController extends OCSController {
 
 		$owner = $this->userManager->get($request['user_id']);
 		if (!$owner) {
-			// TODO: Should not happen, owned requests are deleted when users are.
+			// Should not happen, owned requests are deleted when users are.
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$files = $this->root->getUserFolder($owner->getUID())->getById($request['file_id']);
 		if (empty($files)) {
-			// TODO: Should not happen, requests are deleted when files are.
+			// Should not happen, requests are deleted when files are.
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 

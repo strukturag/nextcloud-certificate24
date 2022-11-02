@@ -6,7 +6,7 @@
 	<summary><![CDATA[eSignatures]]></summary>
 	<description><![CDATA[eSignatures]]></description>
 
-	<version>0.0.4</version>
+	<version>0.0.5</version>
 	<license>agpl</license>
 
 	<author>Joachim Bauch</author>
@@ -15,6 +15,10 @@
 	<dependencies>
 		<nextcloud min-version="24" max-version="25" />
 	</dependencies>
+
+	<types>
+		<dav />
+	</types>
 
 	<settings>
 		<admin>OCA\Esig\Settings\Admin\AdminSettings</admin>
