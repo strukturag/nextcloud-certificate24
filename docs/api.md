@@ -177,7 +177,7 @@ an email address.
 ## Sign file
 
 * Method: `POST`
-* Endpoint: `/api/v1/sign/<request_id>`
+* Endpoint: `/api/v1/share/<request_id>/sign`
 * Data:
   - options: JSON options for the signature.
   - metadata: JSON metadata to include in the signature (TO BE DEFINED).
