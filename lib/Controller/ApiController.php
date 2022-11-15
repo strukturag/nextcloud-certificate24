@@ -713,6 +713,8 @@ class ApiController extends OCSController {
 				case Requests::MODE_SIGNED_REPLACE:
 					$this->replaceSignedResult($user, $id, $row, $account);
 					break;
+				case Requests::MODE_SIGNED_NONE:
+					break;
 			}
 
 			$this->requests->markRequestSavedById($id);

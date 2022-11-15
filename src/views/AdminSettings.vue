@@ -1,17 +1,20 @@
 <template>
 	<div>
-		<GeneralSettings />
+		<AccountSettings />
+		<SignatureProperties />
 	</div>
 </template>
 
 <script>
-import GeneralSettings from '../components/AdminSettings/GeneralSettings.vue'
+import AccountSettings from '../components/AdminSettings/AccountSettings.vue'
+import SignatureProperties from '../components/AdminSettings/SignatureProperties.vue'
 
 export default {
 	name: 'AdminSettings',
 
 	components: {
-		GeneralSettings,
+		AccountSettings,
+		SignatureProperties,
 	},
 }
 </script>

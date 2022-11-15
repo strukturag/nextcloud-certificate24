@@ -22,6 +22,8 @@ class Requests {
 	public const MODE_SIGNED_NEW = 'new';
 	// Update original file with signed result.
 	public const MODE_SIGNED_REPLACE = 'replace';
+	// Don't process signed result.
+	public const MODE_SIGNED_NONE = 'none';
 
 	private ILogger $logger;
 	private ISecureRandom $secureRandom;

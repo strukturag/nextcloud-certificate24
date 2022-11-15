@@ -1,9 +1,6 @@
 <template>
-	<div id="general_settings" class="esig section">
-		<h2>{{ t('esig', 'General settings') }}</h2>
-
-		<h3>{{ t('esig', 'Account settings') }}</h3>
-
+	<NcSettingsSection :title="t('esig', 'Account settings')"
+		:description="t('esig', 'The configured account will be used to request signatures and sign files.')">
 		<div>
 			<h4>{{ t('esig', 'Server') }}</h4>
 			<div><a :href="server" target="_blank">{{ server }}</a></div>
@@ -36,18 +33,20 @@
 		<div>{{ t('esig', 'If you don\'t have an account on the esig service yet, please login to {server} and create an account with the following data:', {'server': server}) }}</div>
 		<div>{{ t('esig', 'Name: {theme}', {'theme': theme.name}) }}</div>
 		<div>{{ t('esig', 'Nextcloud Url: {url}', {'url': nextcloud.url}) }}</div>
-	</div>
+	</NcSettingsSection>
 </template>
 
 <script>
+import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
 
 export default {
-	name: 'GeneralSettings',
+	name: 'AccountSettings',
 
 	components: {
+		NcSettingsSection,
 	},
 
 	data() {

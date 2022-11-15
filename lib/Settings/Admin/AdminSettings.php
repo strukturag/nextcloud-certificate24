@@ -49,6 +49,9 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('nextcloud', [
 			'url' => $this->urlGenerator->getAbsoluteURL(''),
 		]);
+		$this->initialState->provideInitialState('settings', [
+			'signed_save_mode' => $this->config->getSignedSaveMode(),
+		]);
 
 		Util::addScript('esig', 'esig-admin-settings');
 
