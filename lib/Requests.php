@@ -18,6 +18,11 @@ use OCP\Security\ISecureRandom;
 
 class Requests {
 
+	// Store signed result as new file next to the original file.
+	public const MODE_SIGNED_NEW = 'new';
+	// Update original file with signed result.
+	public const MODE_SIGNED_REPLACE = 'replace';
+
 	private ILogger $logger;
 	private ISecureRandom $secureRandom;
 	private IDBConnection $db;
@@ -206,6 +211,16 @@ class Requests {
 		$query->update('esig_requests')
 			->set('signed', $query->createNamedParameter($now, 'datetimetz'))
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
+		$query->executeStatement();
+	}
+
+	public function markRequestSavedById(string $id) {
+		$query = $this->db->getQueryBuilder();
+		$query->update('esig_requests')
+			->set('saved', $query->createFunction('now()'))
+			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->isNull('saved'))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
 		$query->executeStatement();
 	}

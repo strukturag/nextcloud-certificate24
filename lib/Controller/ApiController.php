@@ -18,12 +18,14 @@ use OCP\AppFramework\OCSController;
 use OCP\Collaboration\Collaborators\ISearch;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\Image;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
@@ -282,7 +284,7 @@ class ApiController extends OCSController {
 			$failed_recipients = $this->mailer->send($message);
 			if (!empty($failed_recipients)) {
 				// TODO: Should we delete the request?
-				return new DataResponse(['error' => 'error_sending_email'], Http::STATUS_INTERNAL_ERROR);
+				return new DataResponse(['error' => 'error_sending_email'], Http::STATUS_INTERNAL_SERVER_ERROR);
 			}
 		}
 
@@ -700,11 +702,91 @@ class ApiController extends OCSController {
 		$event = new SignEvent($id, $row, $user);
 		$this->dispatcher->dispatch(SignEvent::class, $event);
 
+		// TODO: Make "mode" configurable per signing request.
+		$mode = Requests::MODE_SIGNED_NEW;
+
+		try {
+			switch ($mode) {
+				case Requests::MODE_SIGNED_NEW:
+					$this->storeSignedResult($user, $id, $row, $account);
+					break;
+				case Requests::MODE_SIGNED_REPLACE:
+					$this->replaceSignedResult($user, $id, $row, $account);
+					break;
+			}
+
+			$this->requests->markRequestSavedById($id);
+		} catch (\Exception $e) {
+			$this->logger->logException($e, [
+				'message' => 'Error processing signed result',
+				'app' => Application::APP_ID,
+			]);
+		}
+
 		return new DataResponse([
 			'request_id' => $id,
 			'signed' => $this->formatDateTime($signed),
 			'signed_url' => $this->client->getSignedUrl($row['esig_file_id'], $account, $row['esig_server']),
 		]);
+	}
+
+	private function storeSignedResult(?IUser $user, string $id, array $row, array $account) {
+		$owner = $this->userManager->get($row['user_id']);
+		if (!$owner) {
+			// Should not happen, owned requests are deleted when users are.
+			return;
+		}
+
+		$files = $this->root->getUserFolder($owner->getUID())->getById($row['file_id']);
+		if (empty($files)) {
+			// Should not happen, requests are deleted when files are.
+			return;
+		}
+
+		$file = $files[0];
+		$folder = $file->getParent();
+
+		switch ($row['recipient_type']) {
+			case 'user':
+				$signerName = $user->getDisplayName();
+				break;
+			case 'email':
+				$signerName = $row['recipient'];
+				break;
+		}
+
+		$info = pathinfo($row['filename']);
+		$date = new \DateTime();
+		$filename = $this->l10n->t('%1$s signed by %2$s on %3$s', [
+			$info['filename'],
+			$signerName,
+			$date->format(self::ISO8601_EXTENDED),
+		]) . ($info['extension'] ? ('.' . $info['extension']) : '');
+
+		$data = $this->client->downloadSignedFile($row['esig_file_id'], $account, $row['esig_server']);
+		$created = $folder->newFile($filename, $data);
+		return $created;
+	}
+
+	private function replaceSignedResult(?IUser $user, string $id, array $row, array $account) {
+		$owner = $this->userManager->get($row['user_id']);
+		if (!$owner) {
+			// Should not happen, owned requests are deleted when users are.
+			return;
+		}
+
+		$files = $this->root->getUserFolder($owner->getUID())->getById($row['file_id']);
+		if (empty($files)) {
+			// Should not happen, requests are deleted when files are.
+			return;
+		}
+
+		/** @var File $file */
+		$file = $files[0];
+
+		$data = $this->client->downloadSignedFile($row['esig_file_id'], $account, $row['esig_server']);
+		$file->putContent($data);
+		return $file;
 	}
 
 	/**
