@@ -266,6 +266,14 @@ class ApiController extends OCSController {
 			$options = null;
 		}
 
+		$error = $this->validator->validateShareOptions($options);
+		if ($error) {
+			return new DataResponse([
+				'error' => 'invalid_options',
+				'details' => $error
+			], Http::STATUS_BAD_REQUEST);
+		}
+
 		$id = $this->requests->storeRequest($file, $user, $recipient, $recipient_type, $options, $metadata, $account, $server, $esig_file_id);
 		if ($recipient_type === 'email') {
 			$lang = $this->l10n->getLanguageCode();
