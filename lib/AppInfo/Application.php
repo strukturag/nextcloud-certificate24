@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Esig\AppInfo;
 
 use OCA\Esig\Activity\Listener as ActivityListener;
+use OCA\Esig\Capabilities;
 use OCA\Esig\CSPSetter;
 use OCA\Esig\DeleteListener;
 use OCA\Esig\FilesLoader;
@@ -28,6 +29,7 @@ class Application extends App implements IBootstrap {
 	public function register(IRegistrationContext $context): void {
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPSetter::class);
 		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesLoader::class);
+		$context->registerCapability(Capabilities::class);
 
 		// Register the composer autoloader for packages shipped by this app
 		include_once __DIR__ . '/../../vendor/autoload.php';
