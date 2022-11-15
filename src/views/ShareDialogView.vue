@@ -83,6 +83,22 @@
 							@click="selectEmail" />
 					</div>
 				</div>
+				<div>
+					<label>
+						{{ t('esig', 'Action to perform when the file was signed successfully:') }}
+						<select id="signed_save_mode" v-model="signed_save_mode">
+							<option value="new">
+								{{ t('esig', 'Create new signed file next to original file') }}
+							</option>
+							<option value="replace">
+								{{ t('esig', 'Replace original file with signed file') }}
+							</option>
+							<option value="none">
+								{{ t('esig', 'Don\'t save signed file automatically') }}
+							</option>
+						</select>
+					</label>
+				</div>
 				<div v-if="signaturePositions && signaturePositions.length">
 					{{ n('esig', '%n signature field positioned', '%n signature fields positioned', signaturePositions.length) }}
 				</div>
@@ -122,6 +138,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import debounce from 'debounce'
+import { loadState } from '@nextcloud/initial-state'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { generateRemoteUrl } from '@nextcloud/router'
 
@@ -160,6 +177,8 @@ export default {
 			emailResults: {},
 			shareLoading: false,
 			signaturePositions: [],
+			settings: {},
+			signed_save_mode: null,
 		}
 	},
 
@@ -194,9 +213,14 @@ export default {
 		},
 	},
 
+	beforeMount() {
+		this.settings = loadState('esig', 'public-settings')
+	},
+
 	created() {
 		this.$root.$watch('fileModel', (newValue) => {
 			this.fileModel = newValue
+			this.signed_save_mode = this.settings.signed_save_mode
 			this.recipient_type = 'user'
 			this.noUserResults = false
 			this.usersLoading = false
@@ -360,7 +384,10 @@ export default {
 						signature_fields: this.signaturePositions,
 					}
 				}
-				await shareFile(this.fileModel.id, recipient, this.recipient_type, metadata)
+				const options = {
+					signed_save_mode: this.signed_save_mode,
+				}
+				await shareFile(this.fileModel.id, recipient, this.recipient_type, options, metadata)
 				this.shareLoading = false
 				this.closeModal()
 				showSuccess(t('esig', 'Requested signature.'))

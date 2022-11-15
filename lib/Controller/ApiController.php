@@ -163,10 +163,11 @@ class ApiController extends OCSController {
 	 * @param int $file_id
 	 * @param string $recipient
 	 * @param string $recipient_type
+	 * @param ?array $options
 	 * @param ?array $metadata
 	 * @return DataResponse
 	 */
-	public function shareFile(int $file_id, string $recipient, string $recipient_type, ?array $metadata = null): DataResponse {
+	public function shareFile(int $file_id, string $recipient, string $recipient_type, ?array $options = null, ?array $metadata = null): DataResponse {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([
@@ -261,7 +262,11 @@ class ApiController extends OCSController {
 			return new DataResponse(['error' => 'invalid_response'], Http::STATUS_BAD_GATEWAY);
 		}
 
-		$id = $this->requests->storeRequest($file, $user, $recipient, $recipient_type, $metadata, $account, $server, $esig_file_id);
+		if (empty($options)) {
+			$options = null;
+		}
+
+		$id = $this->requests->storeRequest($file, $user, $recipient, $recipient_type, $options, $metadata, $account, $server, $esig_file_id);
 		if ($recipient_type === 'email') {
 			$lang = $this->l10n->getLanguageCode();
 			$templateOptions = [
@@ -702,11 +707,13 @@ class ApiController extends OCSController {
 		$event = new SignEvent($id, $row, $user);
 		$this->dispatcher->dispatch(SignEvent::class, $event);
 
-		// TODO: Make "mode" configurable per signing request.
-		$mode = Requests::MODE_SIGNED_NEW;
+		$signed_save_mode = $row['signed_save_mode'];
+		if (empty($signed_save_mode)) {
+			$signed_save_mode = $this->config->getSignedSaveMode();
+		}
 
 		try {
-			switch ($mode) {
+			switch ($signed_save_mode) {
 				case Requests::MODE_SIGNED_NEW:
 					$this->storeSignedResult($user, $id, $row, $account);
 					break;
