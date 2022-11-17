@@ -282,7 +282,7 @@ class ApiController extends OCSController {
 			$failed_recipients = $this->mailer->send($message);
 			if (!empty($failed_recipients)) {
 				// TODO: Should we delete the request?
-				return new DataResponse(['error' => 'error_sending_email'], Http::STATUS_INTERNAL_ERROR);
+				return new DataResponse(['error' => 'error_sending_email'], Http::STATUS_INTERNAL_SERVER_ERROR);
 			}
 		}
 
