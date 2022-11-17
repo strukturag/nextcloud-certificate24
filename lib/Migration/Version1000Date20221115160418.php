@@ -3,7 +3,7 @@ namespace OCA\Esig\Migration;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
-use OCA\Esig\Config;
+use OCA\Esig\Requests;
 use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
 use OCP\Migration\SimpleMigrationStep;
@@ -37,9 +37,10 @@ class Version1000Date20221115160418 extends SimpleMigrationStep {
 	}
 
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
+		// Don't process signed results of existing requests.
 		$update = $this->db->getQueryBuilder();
 		$update->update('esig_requests')
-			->set('signed_save_mode', $update->createNamedParameter(Config::DEFAULT_SAVE_MODE))
+			->set('signed_save_mode', $update->createNamedParameter(Requests::MODE_SIGNED_NONE))
 			->where($update->expr()->isNull('signed_save_mode'));
 		$update->executeStatement();
 	}
