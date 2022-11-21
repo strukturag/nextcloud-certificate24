@@ -33,7 +33,7 @@
             ],
             "properties": {
                 "page": {
-                  " type": "integer",
+                    "type": "integer",
                     "minimum": 1
                 },
                 "id": {
