@@ -33,12 +33,12 @@
             ],
             "properties": {
                 "page": {
-                  "type": "integer",
-                  "minimum": 1
+                  " type": "integer",
+                    "minimum": 1
                 },
                 "id": {
-                  "type": "string",
-                  "minLength": 1
+                    "type": "string",
+                    "minLength": 1
                 },
                 "x": {
                     "type": "number"
