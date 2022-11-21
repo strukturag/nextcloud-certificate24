@@ -12,16 +12,14 @@ class ShareEvent extends Event {
 
 	private File $file;
 	private IUser $user;
-	private string $recipient;
-	private string $recipient_type;
+	private array $recipients;
 	private string $request_id;
 
-	public function __construct(File $file, IUser $user, string $recipient, string $recipient_type, string $request_id) {
+	public function __construct(File $file, IUser $user, array $recipients, string $request_id) {
 		parent::__construct();
 		$this->file = $file;
 		$this->user = $user;
-		$this->recipient = $recipient;
-		$this->recipient_type = $recipient_type;
+		$this->recipients = $recipients;
 		$this->request_id = $request_id;
 	}
 
@@ -40,17 +38,10 @@ class ShareEvent extends Event {
 	}
 
 	/**
-	 * @return string
+	 * @return array
 	 */
-	public function getRecipient(): string {
-		return $this->recipient;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getRecipientType(): string {
-		return $this->recipient_type;
+	public function getRecipients(): array {
+		return $this->recipients;
 	}
 
 	/**

@@ -48,7 +48,7 @@ class Requests {
 		return $this->secureRandom->generate($length, $chars);
 	}
 
-  public function storeRequest(File $file, IUser $user, string $recipient, string $recipient_type, ?array $options, ?array $metadata, array $account, string $server, string $esig_file_id): string {
+  public function storeRequest(File $file, IUser $user, array $recipients, ?array $options, ?array $metadata, array $account, string $server, string $esig_file_id): string {
 		$mime = $file->getMimeType();
 		if ($mime) {
 			$mime = strtolower($mime);
@@ -70,8 +70,6 @@ class Requests {
 					'size' => $query->createNamedParameter($file->getSize()),
 					'created' => $query->createFunction('now()'),
 					'user_id' => $query->createNamedParameter($user->getUID()),
-					'recipient' => $query->createNamedParameter($recipient),
-					'recipient_type' => $query->createNamedParameter($recipient_type),
 					'signed_save_mode' => $query->createNamedParameter($signed_save_mode),
 					'metadata' => $query->createNamedParameter(!empty($metadata) ? json_encode($metadata) : null),
 					'esig_account_id' => $query->createNamedParameter($account['id']),
@@ -94,10 +92,45 @@ class Requests {
 			break;
 		}
 
-		$event = new ShareEvent($file, $user, $recipient, $recipient_type, $id);
+		$insert = $this->db->getQueryBuilder();
+		$insert->insert('esig_recipients')
+			->values(
+				[
+					'request_id' => $query->createNamedParameter('request_id'),
+					'created' => $query->createFunction('now()'),
+					'type' => $query->createParameter('type'),
+					'value' => $query->createParameter('value'),
+				]
+			);
+		foreach ($recipients as $recipient) {
+			$insert->setParameter('type', $recipient['type']);
+			$insert->setParameter('value', $recipient['value']);
+			$insert->executeStatement();
+		}
+
+		$event = new ShareEvent($file, $user, $recipients, $id);
 		$this->dispatcher->dispatch(ShareEvent::class, $event);
 		return $id;
   }
+
+	private function getRecipients(string $request_id, ?IUser $user = null): ?array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('type', 'value', 'signed')
+			->from('esig_recipients')
+			->where($query->expr()->eq('request_id', $query->createNamedParameter($request_id)));
+		if ($user) {
+			$query->andWhere($query->expr()->eq('type', $query->createNamedParameter('user')))
+				->andWhere($query->expr()->eq('value', $query->createNamedParameter($user->getUID())));
+		}
+		$result = $query->executeQuery();
+
+		$recipients = [];
+		while ($row = $result->fetch()) {
+			$recipients[] = $row;
+		}
+		$result->closeCursor();
+		return $recipients;
+	}
 
 	public function getRequestById(string $id): ?array {
 		$query = $this->db->getQueryBuilder();
@@ -115,6 +148,7 @@ class Requests {
 		if ($row['metadata']) {
 			$row['metadata'] = json_decode($row['metadata'], true);
 		}
+		$row['recipients'] = $this->getRecipients($id);
 		return $row;
 	}
 
@@ -126,9 +160,6 @@ class Requests {
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->orderBy('created');
 
-		if (!$include_signed) {
-			$query->andWhere($query->expr()->isNull('signed'));
-		}
 		$result = $query->executeQuery();
 
 		$requests = [];
@@ -137,6 +168,20 @@ class Requests {
 				$row['metadata'] = json_decode($row['metadata'], true);
 			}
 
+			$row['recipients'] = $this->getRecipients($row['id']);
+			$allSigned = true;
+			if (!$include_signed) {
+				foreach ($row['recipients'] as $recipient) {
+					if (!$recipient['signed']) {
+						$allSigned = false;
+						break;
+					}
+				}
+
+				if ($allSigned) {
+					continue;
+				}
+			}
 			$requests[] = $row;
 		}
 		$result->closeCursor();
@@ -161,21 +206,20 @@ class Requests {
 		if ($row['metadata']) {
 			$row['metadata'] = json_decode($row['metadata'], true);
 		}
+		$row['recipients'] = $this->getRecipients($row['id']);
 		return $row;
 	}
 
 	public function getIncomingRequests(IUser $user, bool $include_signed): array {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('esig_requests')
-			->where($query->expr()->eq('recipient', $query->createNamedParameter($user->getUID())))
-			->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter('user')))
+		$query->select('r.*')
+			->from('esig_requests', 'r')
+			->join('r', 'esig_recipients', 'p', 'r.id = p.request_id')
+			->where($query->expr()->eq('p.value', $query->createNamedParameter($user->getUID())))
+			->andWhere($query->expr()->eq('p.type', $query->createNamedParameter('user')))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
-			->orderBy('created');
+			->orderBy('r.created');
 
-		if (!$include_signed) {
-			$query->andWhere($query->expr()->isNull('signed'));
-		}
 		$result = $query->executeQuery();
 
 		$requests = [];
@@ -184,6 +228,21 @@ class Requests {
 				$row['metadata'] = json_decode($row['metadata'], true);
 			}
 
+			// TODO: Get from joined query directly.
+			$row['recipients'] = $this->getRecipients($row['id'], $user);
+			$allSigned = true;
+			if (!$include_signed) {
+				foreach ($row['recipients'] as $recipient) {
+					if (!$recipient['signed']) {
+						$allSigned = false;
+						break;
+					}
+				}
+
+				if ($allSigned) {
+					continue;
+				}
+			}
 			$requests[] = $row;
 		}
 		$result->closeCursor();
@@ -218,12 +277,13 @@ class Requests {
 	}
 
 
-	public function markRequestSignedById(string $id, \DateTime $now) {
+	public function markRequestSignedById(string $id, string $type, string $value, \DateTime $now) {
 		$query = $this->db->getQueryBuilder();
-		$query->update('esig_requests')
+		$query->update('esig_recipients')
 			->set('signed', $query->createNamedParameter($now, 'datetimetz'))
-			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
-			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
+			->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->eq('type', $query->createNamedParameter($type)))
+			->andWhere($query->expr()->eq('value', $query->createNamedParameter($value)));
 		$query->executeStatement();
 	}
 
@@ -253,21 +313,41 @@ class Requests {
 	}
 
 	public function mayAccess(?IUser $user, array $request): bool {
-		switch ($request['recipient_type']) {
-			case 'user':
-				if (!$user) {
-					return false;
-				}
-				if ($user->getUID() !== $request['recipient'] && $user->getUID() !== $request['user_id']) {
-					// Only allowed to access if shared by or shared with current user.
-					return false;
-				}
-				break;
-			case 'email':
-				// Allow anonymous access.
-				break;
+		if ($user) {
+			if ($user->getUID() === $request['user_id']) {
+				// Request was created by the user.
+				return true;
+			}
+
+			// Check if request was sent to this user.
+			$query = $this->db->getQueryBuilder();
+			$query->select('id')
+				->from('esig_recipients')
+				->where($query->expr()->eq('request_id', $query->createNamedParameter($request['id'])))
+				->andWhere($query->expr()->eq('type', $query->createNamedParameter('user')))
+				->andWhere($query->expr()->eq('value', $query->createNamedParameter($user->getUID())));
+			$result = $query->executeQuery();
+			$row = $result->fetch();
+			$result->closeCursor();
+			if ($row) {
+				return true;
+			}
 		}
-		return true;
+
+		// Check if any email was requested.
+		// TODO: Explicitly check for email address.
+		$query = $this->db->getQueryBuilder();
+		$query->select('esig_recipients')
+			->where($query->expr()->eq('request_id', $query->createNamedParameter($request['id'])))
+			->andWhere($query->expr()->eq('type', $query->createNamedParameter('email')));
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+		if ($row) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

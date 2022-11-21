@@ -381,6 +381,13 @@ export default {
 				return
 			}
 
+			const recipients = [
+				{
+					type: this.recipient_type,
+					value: recipient,
+				},
+			]
+
 			this.error = ''
 			this.shareLoading = true
 			try {
@@ -394,7 +401,7 @@ export default {
 				const options = {
 					signed_save_mode: this.signed_save_mode,
 				}
-				await shareFile(this.fileModel.id, recipient, this.recipient_type, options, metadata)
+				await shareFile(this.fileModel.id, recipients, options, metadata)
 				this.shareLoading = false
 				this.closeModal()
 				showSuccess(t('esig', 'Requested signature.'))

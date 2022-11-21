@@ -40,11 +40,6 @@ class Listener {
 
 	public static function register(IEventDispatcher $dispatcher): void {
 		$listener = static function (ShareEvent $event): void {
-			if ($event->getRecipientType() !== 'user') {
-				// Only generate activities for users.
-				return;
-			}
-
 			$listener = Server::get(self::class);
 			$listener->onShareEvent($event);
 		};
@@ -84,13 +79,20 @@ class Listener {
 			return false;
 		}
 
-		try {
-			$activity->setAffectedUser($event->getRecipient());
-			$this->activityManager->publish($activity);
-		} catch (\BadMethodCallException $e) {
-			$this->logger->error($e->getMessage(), ['exception' => $e]);
-		} catch (\InvalidArgumentException $e) {
-			$this->logger->error($e->getMessage(), ['exception' => $e]);
+		foreach ($event->getRecipients() as $recipient) {
+			$type = $recipient['type'];
+			if ($type !== 'user') {
+				continue;
+			}
+
+			try {
+				$activity->setAffectedUser($recipient['value']);
+				$this->activityManager->publish($activity);
+			} catch (\BadMethodCallException $e) {
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
+			}
 		}
 
 		return true;
@@ -99,7 +101,7 @@ class Listener {
 	/**
 	 * The file "{filename}" was signed by {user}"
 	 *
-	 * @param ShareEvent $event
+	 * @param SignEvent $event
 	 * @return bool True if activity was generated, false otherwise
 	 */
 	public function onSignEvent(SignEvent $event): bool {

@@ -19,10 +19,10 @@
 							{{ t('esig', 'Created') }}
 						</th>
 						<th>
-							{{ t('esig', 'Signed') }}
+							{{ t('esig', 'Last signed') }}
 						</th>
 						<th>
-							{{ t('esig', 'Recipient') }}
+							{{ t('esig', 'Recipients') }}
 						</th>
 						<th>
 							{{ t('esig', 'Actions') }}
@@ -42,18 +42,8 @@
 							{{ request.signed }}
 						</td>
 						<td>
-							<div v-if="request.recipient_type === 'user'">
-								<NcAvatar :user="request.recipient"
-									:display-name="request.recipient"
-									:disable-menu="true"
-									:show-user-status="false"
-									:show-user-status-compact="false" />
-							</div>
-							<div v-else-if="request.recipient_type === 'email'">
-								<a :href="'mailto:' + request.recipient">{{ request.recipient }}</a>
-							</div>
-							<div v-else>
-								Unknown {{ request.recipient }}
+							<div v-for="recipient in request.recipients" :key="recipient.type + '-' + recipient.value">
+								<Recipient :recipient="recipient" />
 							</div>
 						</td>
 						<td>
@@ -85,23 +75,23 @@
 <script>
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Download from 'vue-material-design-icons/Download.vue'
 
+import Recipient from './Recipient.vue'
 import { getRequests, deleteRequest, getSignedUrl } from '../services/apiservice.js'
 
 export default {
 	name: 'OwnSignRequests',
 
 	components: {
-		NcAvatar,
 		NcButton,
 		NcLoadingIcon,
 		Delete,
 		Download,
+		Recipient,
 	},
 
 	data() {

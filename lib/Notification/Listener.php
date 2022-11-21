@@ -52,40 +52,45 @@ class Listener implements IEventListener {
 	 * @param ShareEvent $event
 	 */
 	public function onShareEvent(ShareEvent $event): void {
-		if ($event->getRecipientType() !== 'user') {
-			return;
-		}
-
 		$sender = $event->getUser();
 		$file = $event->getFile();
 
-		$notification = $this->notificationManager->createNotification();
 		$shouldFlush = $this->notificationManager->defer();
 		$dateTime = $this->timeFactory->getDateTime();
-		try {
-			$notification->setApp(Application::APP_ID)
-				->setDateTime($dateTime)
-				->setUser($event->getRecipient())
-				->setObject('file', (string) $file->getId())
-				->setSubject('share', [
-					'file_id' => $file->getId(),
-					'filename' => $file->getName(),
-					'sender' => $sender->getUID(),
-					'request_id' => $event->getRequestId(),
-				]);
-			$this->notificationManager->notify($notification);
-		} catch (\InvalidArgumentException $e) {
-			$this->logger->error($e->getMessage(), ['exception' => $e]);
-			if ($shouldFlush) {
-				$this->notificationManager->flush();
+		$hasNotifications = false;
+		foreach ($event->getRecipients() as $recipient) {
+			$type = $recipient['type'];
+			if ($type !== 'user') {
+				continue;
 			}
+
+			$notification = $this->notificationManager->createNotification();
+			try {
+				$notification->setApp(Application::APP_ID)
+					->setDateTime($dateTime)
+					->setUser($recipient['value'])
+					->setObject('file', (string) $file->getId())
+					->setSubject('share', [
+						'file_id' => $file->getId(),
+						'filename' => $file->getName(),
+						'sender' => $sender->getUID(),
+						'request_id' => $event->getRequestId(),
+					]);
+				$this->notificationManager->notify($notification);
+				$hasNotifications = true;
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
+			}
+		}
+		if ($hasNotifications && $shouldFlush) {
+			$this->notificationManager->flush();
 		}
 	}
 
 	/**
 	 * "The file "{filename}" was signed by {user}"
 	 *
-	 * @param ShareEvent $event
+	 * @param SignEvent $event
 	 */
 	public function onSignEvent(SignEvent $event): void {
 		$request = $event->getRequest();

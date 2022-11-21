@@ -40,6 +40,10 @@
                     "type": "string",
                     "minLength": 1
                 },
+                "recipient_idx": {
+                    "type": "integer",
+                    "minimum": 0
+                },
                 "x": {
                     "type": "number"
                 },
