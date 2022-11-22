@@ -751,7 +751,7 @@ class ApiController extends OCSController {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
-		$signatureImages = [];
+		$multipart = [];
 
 		$metadata = $row['metadata'] ?? [];
 		$fields = $metadata['signature_fields'] ?? [];
@@ -770,7 +770,7 @@ class ApiController extends OCSController {
 				$ref = $this->request->getParam($fieldId);
 				if ($ref) {
 					// Reference another image from the request.
-					$signatureImages[] = [
+					$multipart[] = [
 						'name' => $fieldId,
 						'contents' => $ref,
 					];
@@ -798,7 +798,7 @@ class ApiController extends OCSController {
 					}
 
 					// Use uploaded image.
-					$signatureImages[] = [
+					$multipart[] = [
 						'name' => $fieldId,
 						'filename' => $fieldId,
 						'contents' => $data,
@@ -811,7 +811,7 @@ class ApiController extends OCSController {
 
 				if ($imageId) {
 					// Reference configured personal signature image.
-					$signatureImages[] = [
+					$multipart[] = [
 						'name' => $fieldId,
 						'contents' => $imageId,
 					];
@@ -827,7 +827,7 @@ class ApiController extends OCSController {
 					}
 
 					$imageId = $fieldId;
-					$signatureImages[] = [
+					$multipart[] = [
 						'name' => $fieldId,
 						'filename' => $fieldId,
 						'contents' => $content,
@@ -839,8 +839,21 @@ class ApiController extends OCSController {
 			};
 		}
 
+		$multipart[] = [
+			'name' => 'options',
+			'contents' => json_encode([
+				'signer' => [
+					'type' => $type,
+					'value' => $value,
+				],
+			]),
+			'headers' => [
+				'Content-Type' => 'application/json',
+			],
+		];
+
 		try {
-			$data = $this->client->signFile($row['esig_file_id'], $signatureImages, $account, $row['esig_server']);
+			$data = $this->client->signFile($row['esig_file_id'], $multipart, $account, $row['esig_server']);
 		} catch (ConnectException $e) {
 			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {

@@ -61,7 +61,7 @@ class Client {
 		return json_decode($body, true);
 	}
 
-	public function signFile(string $id, array $images, array $account, string $server): array {
+	public function signFile(string $id, array $multipart, array $account, string $server): array {
 		$token = $this->tokens->getToken($account, $id);
 
 		$client = $this->clientService->newClient();
@@ -71,7 +71,7 @@ class Client {
 		];
 		$response = $client->post($server . 'api/v1/files/' . rawurlencode($account['id']) . '/sign/' . rawurlencode($id), [
 			'headers' => $headers,
-			'multipart' => $images,
+			'multipart' => $multipart,
 			'verify' => false,
 			'nextcloud' => [
 				'allow_local_address' => true,
