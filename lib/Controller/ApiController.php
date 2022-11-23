@@ -495,7 +495,7 @@ class ApiController extends OCSController {
 			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
 			'metadata' => $request['metadata'],
 		];
-		if (isset($response['signed']) && $request['signed']) {
+		if ($request['signed']) {
 			$response['signed'] = $this->formatDateTime($request['signed']);
 			$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 		}
