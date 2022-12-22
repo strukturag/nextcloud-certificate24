@@ -9,6 +9,7 @@ use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Client;
 use OCA\Esig\Config;
 use OCA\Esig\Events\SignEvent;
+use OCA\Esig\Metadata;
 use OCA\Esig\Requests;
 use OCA\Esig\TranslatedTemplate;
 use OCA\Esig\Validator;
@@ -64,6 +65,7 @@ class ApiController extends OCSController {
 	private Client $client;
 	private Config $config;
 	private Requests $requests;
+	private Metadata $metadata;
 	private Validator $validator;
 
 	public function __construct(string $appName,
@@ -81,6 +83,7 @@ class ApiController extends OCSController {
 								Client $client,
 								Config $config,
 								Requests $requests,
+								Metadata $metadata,
 								Validator $validator) {
 		parent::__construct($appName, $request);
 		$this->l10n = $l10n;
@@ -96,6 +99,7 @@ class ApiController extends OCSController {
 		$this->client = $client;
 		$this->config = $config;
 		$this->requests = $requests;
+		$this->metadata = $metadata;
 		$this->validator = $validator;
 	}
 
@@ -275,6 +279,9 @@ class ApiController extends OCSController {
 		}
 
 		$id = $this->requests->storeRequest($file, $user, $recipient, $recipient_type, $options, $metadata, $account, $server, $esig_file_id);
+
+		$this->metadata->storeMetadata($user, $file, $metadata);
+
 		if ($recipient_type === 'email') {
 			$lang = $this->l10n->getLanguageCode();
 			$templateOptions = [
@@ -837,6 +844,36 @@ class ApiController extends OCSController {
 		[$result, $hasMoreResults] = $this->search->search($search, $shareTypes, $lookup, $limit, $offset);
 		$response = new DataResponse($result);
 		return $response;
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $id
+	 * @return DataResponse
+	 */
+	public function getFileMetadata(string $id): DataResponse {
+		$user = $this->userSession->getUser();
+		$files = $this->root->getUserFolder($user->getUID())->getById($id);
+
+		if (empty($files)) {
+			return new DataResponse([
+				'error' => 'unknown_file',
+			], Http::STATUS_NOT_FOUND);
+		}
+
+		$file = $files[0];
+		if (!$file->isReadable() || !$file->isUpdateable()) {
+			return new DataResponse([
+				'error' => 'error_accessing_file',
+			], Http::STATUS_FORBIDDEN);
+		}
+
+		$metadata = $this->metadata->getMetadata($user, $file);
+		if ($metadata === null) {
+			$metadata = new \stdClass();
+		}
+		return new DataResponse($metadata);
 	}
 
 }

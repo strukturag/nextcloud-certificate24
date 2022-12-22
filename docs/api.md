@@ -57,6 +57,22 @@ Signature fields objects must contain the keys `id` (unique id of the field),
 based on the page viewport where the top left of the page is at `0` / `0`.
 
 
+## Get metadata of file.
+
+* Method: `GET`
+* Endpoint: `/api/v1/metadata/<file_id>`
+
+* Response:
+  - Status code:
+    + `401 Unauthorized` When the user is not logged in.
+    + `403 Forbidden` When the user is not allowed to access the file.
+    + `404 Not Found` When the file was not found.
+  - Data:
+     The metadata included in the previous request to share the file. See above
+     for details. Could be an empty JSON object if no request was sent for the
+     file before.
+
+
 ## Get list of files shared by current user
 
 * Method: `GET`

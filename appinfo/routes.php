@@ -88,6 +88,12 @@ return [
       'requirements' => $requirements,
     ],
 		[
+      'name' => 'Api#getFileMetadata',
+      'url' => '/api/{apiVersion}/metadata/{id}',
+      'verb' => 'GET',
+      'requirements' => $requirements,
+    ],
+		[
       'name' => 'Api#search',
       'url' => '/api/{apiVersion}/search',
       'verb' => 'POST',

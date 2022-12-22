@@ -2,17 +2,25 @@
 import axios from '@nextcloud/axios'
 import { generateUrl, generateOcsUrl } from '@nextcloud/router'
 
+const metadataCache = {}
+
 const isEmpty = (obj) => {
 	return !obj || Object.keys(obj).length === 0
 }
 
 const shareFile = async (file_id, recipient, recipient_type, options, metadata) => {
-	return await axios.post(generateOcsUrl('apps/esig/api/v1/share'), {
+	return axios.post(generateOcsUrl('apps/esig/api/v1/share'), {
 		file_id,
 		recipient,
 		recipient_type,
 		options: !isEmpty(options) ? options : null,
 		metadata: !isEmpty(metadata) ? metadata : null,
+	}).then(() => {
+		if (isEmpty(metadata)) {
+			delete metadataCache[file_id]
+		} else {
+			metadataCache[file_id] = metadata
+		}
 	})
 }
 
@@ -70,6 +78,24 @@ const uploadSignatureImage = async (image) => {
 	return await axios.postForm(generateUrl('apps/esig/settings/signature'), form)
 }
 
+const getMetadata = async (file_id) => {
+	return new Promise((resolve, reject) => {
+		if (Object.prototype.hasOwnProperty.call(metadataCache, file_id)) {
+			resolve(metadataCache[file_id])
+			return
+		}
+
+		axios.get(generateOcsUrl('apps/esig/api/v1/metadata/' + file_id))
+			.then((response) => {
+				const metadata = response.data?.ocs?.data || {}
+				metadataCache[file_id] = metadata
+				resolve(metadata)
+			}, (error) => {
+				reject(error)
+			})
+	})
+}
+
 export {
 	shareFile,
 	getRequests,
@@ -81,4 +107,5 @@ export {
 	search,
 	resetSignatureImage,
 	uploadSignatureImage,
+	getMetadata,
 }

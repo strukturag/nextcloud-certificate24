@@ -142,7 +142,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { generateRemoteUrl } from '@nextcloud/router'
 
-import { shareFile, search } from '../services/apiservice.js'
+import { shareFile, search, getMetadata } from '../services/apiservice.js'
 import SelectorDialogModal from '../components/SelectorDialogModal.vue'
 import SearchResults from '../components/SearchResults.vue'
 
@@ -179,6 +179,7 @@ export default {
 			signaturePositions: [],
 			settings: {},
 			signed_save_mode: null,
+			prevMetadata: {},
 		}
 	},
 
@@ -218,7 +219,7 @@ export default {
 	},
 
 	created() {
-		this.$root.$watch('fileModel', (newValue) => {
+		this.$root.$watch('fileModel', async (newValue) => {
 			this.fileModel = newValue
 			this.signed_save_mode = this.settings.signed_save_mode
 			this.recipient_type = 'user'
@@ -232,6 +233,12 @@ export default {
 			this.emailResults = {}
 			this.shareLoading = false
 			this.signaturePositions = []
+			if (newValue) {
+				const metadata = await getMetadata(newValue.id)
+				if (metadata && metadata.signature_fields) {
+					this.signaturePositions = metadata.signature_fields
+				}
+			}
 		})
 	},
 
