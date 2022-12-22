@@ -52,7 +52,6 @@ class Client {
 			$multipart[] = [
 				'name' => 'metadata',
 				'contents' => json_encode($metadata),
-				'filename' => 'metadata.json',
 				'headers' => [
 					'Content-Type' => 'application/json; charset=UTF-8',
 				],
