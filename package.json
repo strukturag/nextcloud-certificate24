@@ -17,7 +17,7 @@
 		"@nextcloud/router": "^2.0.0",
 		"@nextcloud/vue": "^7.0.0",
 		"debounce": "^1.2.1",
-		"jquery": "3.6.1",
+		"jquery": "3.6.2",
 		"vue": "2.7.10",
 		"vue-material-design-icons": "^5.1.2",
 		"vue-observe-visibility": "^1.0.0",
