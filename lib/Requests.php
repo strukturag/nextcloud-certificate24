@@ -18,19 +18,29 @@ use OCP\Security\ISecureRandom;
 
 class Requests {
 
+	// Store signed result as new file next to the original file.
+	public const MODE_SIGNED_NEW = 'new';
+	// Update original file with signed result.
+	public const MODE_SIGNED_REPLACE = 'replace';
+	// Don't process signed result.
+	public const MODE_SIGNED_NONE = 'none';
+
 	private ILogger $logger;
 	private ISecureRandom $secureRandom;
 	private IDBConnection $db;
 	private IEventDispatcher $dispatcher;
+	private Config $config;
 
 	public function __construct(ILogger $logger,
 								ISecureRandom $secureRandom,
 								IDBConnection $db,
-								IEventDispatcher $dispatcher) {
+								IEventDispatcher $dispatcher,
+								Config $config) {
 		$this->logger = $logger;
 		$this->secureRandom = $secureRandom;
 		$this->db = $db;
 		$this->dispatcher = $dispatcher;
+		$this->config = $config;
 	}
 
   private function newRandomId(int $length): string {
@@ -38,11 +48,17 @@ class Requests {
 		return $this->secureRandom->generate($length, $chars);
 	}
 
-  public function storeRequest(File $file, IUser $user, string $recipient, string $recipient_type, ?array $metadata, array $account, string $server, string $esig_file_id): string {
+  public function storeRequest(File $file, IUser $user, string $recipient, string $recipient_type, ?array $options, ?array $metadata, array $account, string $server, string $esig_file_id): string {
 		$mime = $file->getMimeType();
 		if ($mime) {
 			$mime = strtolower($mime);
 		}
+
+		$signed_save_mode = $this->config->getSignedSaveMode();
+		if ($options) {
+			$signed_save_mode = $options['signed_save_mode'] ?? $signed_save_mode;
+		}
+
 		$query = $this->db->getQueryBuilder();
 		$query->insert('esig_requests')
 			->values(
@@ -56,6 +72,7 @@ class Requests {
 					'user_id' => $query->createNamedParameter($user->getUID()),
 					'recipient' => $query->createNamedParameter($recipient),
 					'recipient_type' => $query->createNamedParameter($recipient_type),
+					'signed_save_mode' => $query->createNamedParameter($signed_save_mode),
 					'metadata' => $query->createNamedParameter(!empty($metadata) ? json_encode($metadata) : null),
 					'esig_account_id' => $query->createNamedParameter($account['id']),
 					'esig_server' => $query->createNamedParameter($server),
@@ -206,6 +223,16 @@ class Requests {
 		$query->update('esig_requests')
 			->set('signed', $query->createNamedParameter($now, 'datetimetz'))
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
+		$query->executeStatement();
+	}
+
+	public function markRequestSavedById(string $id) {
+		$query = $this->db->getQueryBuilder();
+		$query->update('esig_requests')
+			->set('saved', $query->createFunction('now()'))
+			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->isNull('saved'))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
 		$query->executeStatement();
 	}

@@ -17,6 +17,7 @@ Nextcloud instance.
     | `file_id`           | int     | The id of the file to be signed.                                 |
     | `recipient`         | string  | User id or email address to share the document with.             |
     | `recipient_type`    | string  | Type of recipient, can be `user` or `email`.                     |
+    | `options`           | array   | JSON options for the request.                                    |
     | `metadata`          | array   | JSON metadata to include in the request.                         |
 
 * Response:
@@ -30,6 +31,18 @@ Nextcloud instance.
     | field               | type    | description                                                      |
     |---------------------|---------|------------------------------------------------------------------|
     | `request_id`        | string  | The id of the signing request.                                   |
+
+
+The following fields are currently defined for the request `options` JSON:
+
+  | field               | type    | description                                                      |
+  |---------------------|---------|------------------------------------------------------------------|
+  | `signed_save_mode`  | string  | How signed files should be processed (`new`, `replace`, `none`). |
+
+If the `signed_save_mode` option is omitted, the configured system default will
+be used. The value `new` will create a new signed file next to the original
+file, `replace` will replace the original file with the signed file and `none`
+will not download signed files automatically.
 
 
 The following fields are currently defined for the request `metadata` JSON:

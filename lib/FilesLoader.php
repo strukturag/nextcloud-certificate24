@@ -42,6 +42,13 @@ class FilesLoader implements IEventListener {
 			$server
 		);
 
+		$this->initialState->provideInitialState(
+			'public-settings',
+			[
+				'signed_save_mode' => $this->config->getSignedSaveMode(),
+			]
+		);
+
 		Util::addScript('esig', 'esig-loader');
 	}
 

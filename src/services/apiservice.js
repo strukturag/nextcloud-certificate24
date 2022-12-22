@@ -6,11 +6,12 @@ const isEmpty = (obj) => {
 	return !obj || Object.keys(obj).length === 0
 }
 
-const shareFile = async (file_id, recipient, recipient_type, metadata) => {
+const shareFile = async (file_id, recipient, recipient_type, options, metadata) => {
 	return await axios.post(generateOcsUrl('apps/esig/api/v1/share'), {
 		file_id,
 		recipient,
 		recipient_type,
+		options: !isEmpty(options) ? options : null,
 		metadata: !isEmpty(metadata) ? metadata : null,
 	})
 }

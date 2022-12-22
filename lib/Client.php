@@ -114,4 +114,17 @@ class Client {
 		return $url;
 	}
 
+	public function downloadSignedFile(string $id, array $account, string $server): string {
+		$url = $this->getSignedUrl($id, $account, $server);
+		$client = $this->clientService->newClient();
+		$response = $client->get($url, [
+			'verify' => false,
+			'nextcloud' => [
+				'allow_local_address' => true,
+			],
+		]);
+		$body = $response->getBody();
+		return $body;
+	}
+
 }

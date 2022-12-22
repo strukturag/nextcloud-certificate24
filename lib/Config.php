@@ -14,6 +14,7 @@ use OCP\IUser;
 class Config {
 
 	public const DEFAULT_SERVER = "https://api.certificate24.com/";
+	public const DEFAULT_SAVE_MODE = 'new';
 
 	private IConfig $config;
 	protected IAppData $appData;
@@ -47,6 +48,10 @@ class Config {
 			$account = json_decode($account, true);
 		}
 		return $account;
+	}
+
+	public function getSignedSaveMode(): string {
+		return $this->config->getAppValue('esig', 'signed_save_mode', self::DEFAULT_SAVE_MODE);
 	}
 
 	public function getSignatureImage(IUser $user): ?ISimpleFile {
