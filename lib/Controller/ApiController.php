@@ -300,7 +300,7 @@ class ApiController extends OCSController {
 
 		$server = $this->config->getServer();
 		try {
-			$data = $this->client->shareFile($file, $metadata, $account, $server);
+			$data = $this->client->shareFile($file, $recipients, $metadata, $account, $server);
 		} catch (ConnectException $e) {
 			$this->logger->logException($e, [
 				'message' => 'Error connecting to ' . $server,

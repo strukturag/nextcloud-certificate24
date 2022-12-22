@@ -23,7 +23,7 @@ class Client {
 		$this->tokens = $tokens;
 	}
 
-	public function shareFile(File $file, ?array $metadata, array $account, string $server): array {
+	public function shareFile(File $file, array $recipients, ?array $metadata, array $account, string $server): array {
 		$token = $this->tokens->getToken($account, $file->getName());
 
 		$client = $this->clientService->newClient();
@@ -31,14 +31,23 @@ class Client {
 			'X-Vinegar-Token' => $token,
 			'X-Vinegar-API' => 'true',
 		];
-		$multipart = [[
-			'name' => 'file',
-			'contents' => $file->getContent(),
-			'filename' => $file->getName(),
-			'headers' => [
-				'Content-Type' => strtolower($file->getMimeType()),
+		$multipart = [
+			[
+				'name' => 'file',
+				'contents' => $file->getContent(),
+				'filename' => $file->getName(),
+				'headers' => [
+					'Content-Type' => strtolower($file->getMimeType()),
+				],
 			],
-		]];
+			[
+				'name' => 'recipients',
+				'contents' => json_encode($recipients),
+				'headers' => [
+					'Content-Type' => 'application/json; charset=UTF-8',
+				],
+			]
+		];
 		if (!empty($metadata)) {
 			$multipart[] = [
 				'name' => 'metadata',
