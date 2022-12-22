@@ -52,9 +52,6 @@ class ApiController extends OCSController {
 	const MAX_SIGN_OPTIONS_SIZE = 8 * 1024;
 	const MAX_IMAGE_SIZE = 1024 * 1024;
 
-	// TODO: Remove once backend server supports multiple recipients.
-	const MAX_RECIPIENTS = 1;
-
 	private IL10N $l10n;
 	private IFactory $l10nFactory;
 	private ILogger $logger;
@@ -269,13 +266,6 @@ class ApiController extends OCSController {
 					}
 				}
 			}
-		}
-
-		// TODO: Remove once backend server supports multiple recipients.
-		if (count($recipients) > self::MAX_RECIPIENTS) {
-			return new DataResponse([
-				'error' => 'too_many_recipients',
-			], Http::STATUS_BAD_REQUEST);
 		}
 
 		$user = $this->userSession->getUser();
