@@ -832,6 +832,7 @@ class ApiController extends OCSController {
 		$multipart[] = [
 			'name' => 'options',
 			'contents' => json_encode([
+				'version' => '1.0',
 				'signer' => [
 					'type' => $type,
 					'value' => $value,
