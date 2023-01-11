@@ -56,39 +56,23 @@ class Version1000Date20221121132914 extends SimpleMigrationStep {
 				'onUpdate' => 'cascade',
 			], 'fk_request_id');
 		}
+
+		$this->ensureColumnIsNullable($schema, 'esig_requests', 'recipient_type');
+		$this->ensureColumnIsNullable($schema, 'esig_requests', 'recipient');
+
 		return $schema;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
-		$select = $this->db->getQueryBuilder();
-		$select->select('*')
-			->from('esig_requests');
+	protected function ensureColumnIsNullable(ISchemaWrapper $schema, string $tableName, string $columnName): bool {
+		$table = $schema->getTable($tableName);
+		$column = $table->getColumn($columnName);
 
-		$insert = $this->db->getQueryBuilder();
-		$insert->insert('esig_recipients')
-			->values(
-				[
-					'request_id' => $insert->createParameter('request_id'),
-					'created' => $insert->createParameter('created'),
-					'signed' => $insert->createParameter('signed'),
-					'type' => $insert->createParameter('type'),
-					'value' => $insert->createParameter('value'),
-				]
-			);
-
-		$result = $select->executeQuery();
-		while ($row = $result->fetch()) {
-			$insert->setParameter('request_id', $row['id'])
-				->setParameter('created', $row['created'])
-				->setParameter('signed', $row['signed'])
-				->setParameter('type', $row['recipient_type'])
-				->setParameter('value', $row['recipient']);
-			$insert->executeStatement();
+		if ($column->getNotnull()) {
+			$column->setNotnull(false);
+			return true;
 		}
-		$result->closeCursor();
+
+		return false;
 	}
 
 }
