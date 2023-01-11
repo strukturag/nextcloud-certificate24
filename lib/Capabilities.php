@@ -27,6 +27,7 @@ class Capabilities implements IPublicCapability {
 
 		$capabilities = [
 			'features' => [
+				'multiple-recipients',
 			],
 			'config' => [
 				'requests' => [
