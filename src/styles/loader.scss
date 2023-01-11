@@ -1,9 +1,9 @@
 .icon-esig-sign {
-  background-image: url(../../img/app-dark.svg);
+	background-image: url(../../img/app-dark.svg);
 }
 
 [data-themes*=dark] {
-  .icon-esig-sign {
-    background-image: url(../../img/app.svg);
-  }
+	.icon-esig-sign {
+		background-image: url(../../img/app.svg);
+	}
 }
