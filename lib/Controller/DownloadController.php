@@ -93,6 +93,42 @@ class DownloadController extends Controller {
 	 * @NoCSRFRequired
 	 * @BruteForceProtection(action=esig_request)
 	 */
+	public function downloadSource(string $id): Response {
+		$req = $this->requests->getRequestById($id);
+		if (!$req) {
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle();
+			return $response;
+		}
+
+		$account = $this->config->getAccount();
+		if (!$account['id'] || !$account['secret']) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		} else if ($account['id'] !== $req['esig_account_id']) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		$user = $this->userSession->getUser();
+		if (!$this->requests->mayAccess($user, $req)) {
+			$redirectUrl = $this->urlGenerator->linkToRoute('esig.Download.downloadSource', ['id' => $id]);
+			$response = new RedirectResponse($this->urlGenerator->linkToRoute('core.login.showLoginForm', [
+				'redirect_url' => $redirectUrl,
+			]));
+			$response->throttle();
+			return $response;
+		}
+
+		$url = $this->client->getSourceUrl($req['esig_file_id'], $account, $req['esig_server']);
+		$url .= (strpos($url, '?') === false) ? '?' : '&';
+		$url .= 'download=1';
+		return new RedirectResponse($url);
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 * @BruteForceProtection(action=esig_request)
+	 */
 	public function downloadSigned(string $id): Response {
 		$req = $this->requests->getRequestById($id);
 		if (!$req) {

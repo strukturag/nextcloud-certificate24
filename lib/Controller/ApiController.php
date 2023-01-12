@@ -535,7 +535,7 @@ class ApiController extends OCSController {
 				'display_name' => $owner ? $owner->getDisplayName() : null,
 				'filename' => $file->getName(),
 				'mimetype' => $mime,
-				'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
+				'download_url' => $this->client->getSourceUrl($request['esig_file_id'], $account, $request['esig_server']),
 				'metadata' => $metadata,
 			];
 			if ($include_signed) {
@@ -665,7 +665,7 @@ class ApiController extends OCSController {
 			'display_name' => $owner ? $owner->getDisplayName() : null,
 			'filename' => $file->getName(),
 			'mimetype' => $mime,
-			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
+			'download_url' => $this->client->getSourceUrl($request['esig_file_id'], $account, $request['esig_server']),
 			'metadata' => $metadata,
 		];
 		foreach ($request['recipients'] as $recipient) {

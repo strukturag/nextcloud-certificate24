@@ -115,6 +115,13 @@ class Client {
 		return $url;
 	}
 
+	public function getSourceUrl(string $id, array $account, string $server): string {
+		$url = $server . 'api/v1/files/' . rawurlencode($account['id']) . '/source/' . rawurlencode($id);
+		$token = $this->tokens->getToken($account, $id);
+		$url .= '?token=' . urlencode($token);
+		return $url;
+	}
+
 	public function getSignedUrl(string $id, array $account, string $server): string {
 		$url = $server . 'api/v1/files/' . rawurlencode($account['id']) . '/sign/' . rawurlencode($id);
 		$token = $this->tokens->getToken($account, $id);

@@ -9,8 +9,8 @@
 				<PdfViewer :width="800"
 					:height="1132"
 					:max-height="400"
-					:url="downloadOriginalUrl(request)"
-					:download-url="downloadOriginalUrl(request)"
+					:url="downloadSourceUrl(request)"
+					:download-url="downloadSourceUrl(request)"
 					:signature-positions="signature_fields"
 					@init:start="loading = true"
 					@init:done="loading = false" />
@@ -44,7 +44,7 @@ import FileSign from 'vue-material-design-icons/FileSign.vue'
 import { loadState } from '@nextcloud/initial-state'
 
 import PdfViewer from './PdfViewer.vue'
-import { signRequest, getOriginalUrl } from '../services/apiservice.js'
+import { signRequest, getSourceUrl } from '../services/apiservice.js'
 
 export default {
 	name: 'SignDialogModal',
@@ -88,8 +88,8 @@ export default {
 	},
 
 	methods: {
-		downloadOriginalUrl(request) {
-			return getOriginalUrl(request.request_id)
+		downloadSourceUrl(request) {
+			return getSourceUrl(request.request_id)
 		},
 
 		sign(request) {

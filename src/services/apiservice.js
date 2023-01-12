@@ -55,6 +55,10 @@ const getOriginalUrl = (id) => {
 	return generateUrl('apps/esig/download/' + id)
 }
 
+const getSourceUrl = (id) => {
+	return generateUrl('apps/esig/download/source/' + id)
+}
+
 const getSignedUrl = (id) => {
 	return generateUrl('apps/esig/download/signed/' + id)
 }
@@ -102,6 +106,7 @@ export {
 	deleteRequest,
 	signRequest,
 	getOriginalUrl,
+	getSourceUrl,
 	getSignedUrl,
 	search,
 	resetSignatureImage,

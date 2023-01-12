@@ -24,6 +24,11 @@ return [
       'verb' => 'GET',
     ],
 		[
+      'name' => 'Download#downloadSource',
+      'url' => '/download/source/{id}',
+      'verb' => 'GET',
+    ],
+		[
       'name' => 'Download#downloadSigned',
       'url' => '/download/signed/{id}',
       'verb' => 'GET',
