@@ -63,7 +63,7 @@ export default {
 
 	methods: {
 		itemName(item) {
-			return item.name || item.label
+			return item.name || item.label || ''
 		},
 
 		itemIcon(item) {

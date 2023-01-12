@@ -9,13 +9,36 @@
 				<div v-if="error" class="error">
 					{{ error }}
 				</div>
+				<div v-if="recipients.length > 0"
+					class="recipients_section">
+					<h2>{{ t('esig', 'Recipients') }}</h2>
+					<ul>
+						<NcListItemIcon v-for="recipient in recipients"
+							:key="recipient.type + '-' + recipient.value"
+							:user="recipient.type === 'user' ? recipient.value : undefined"
+							:disable-menu="true"
+							:show-user-status="false"
+							:show-user-status-compact="false"
+							:title="recipientName(recipient)"
+							:subtitle="recipientTitle(recipient)">
+							<NcActions>
+								<NcActionButton @click="deleteRecipient(recipient)">
+									<template #icon>
+										<Delete :size="20" />
+									</template>
+									{{ t('esig', 'Delete recipient') }}
+								</NcActionButton>
+							</NcActions>
+						</NcListItemIcon>
+					</ul>
+				</div>
 				<div class="recipient_section">
 					<NcCheckboxRadioSwitch :checked.sync="recipient_type"
 						:disabled="shareLoading"
 						value="user"
 						name="recipient_type"
 						type="radio">
-						{{ t('esig', 'Request signature from user') }}
+						{{ t('esig', 'Add user') }}
 					</NcCheckboxRadioSwitch>
 					<div v-if="userSelected" class="search">
 						<NcTextField ref="userField"
@@ -43,7 +66,7 @@
 							:no-results="noUserResults"
 							:scrollable="true"
 							:selectable="true"
-							@click="selectUser" />
+							@click="addUser" />
 					</div>
 				</div>
 				<div class="recipient_section">
@@ -52,7 +75,7 @@
 						value="email"
 						name="recipient_type"
 						type="radio">
-						{{ t('esig', 'Request signature from email address') }}
+						{{ t('esig', 'Add email address') }}
 					</NcCheckboxRadioSwitch>
 					<div v-if="!userSelected" class="search">
 						<NcTextField ref="emailField"
@@ -80,7 +103,7 @@
 							:no-results="noEmailResults"
 							:scrollable="true"
 							:selectable="true"
-							@click="selectEmail" />
+							@click="addEmail" />
 					</div>
 				</div>
 				<div>
@@ -112,7 +135,7 @@
 						{{ t('esig', 'Select signature position') }}
 					</NcButton>
 					<NcButton type="primary"
-						:disabled="shareLoading"
+						:disabled="shareLoading || !recipients.length"
 						@click="requestSignature">
 						<template #icon>
 							<FileSign />
@@ -124,6 +147,7 @@
 			<SelectorDialogModal v-if="showSelectModal"
 				:url="getFileUrl(fileModel)"
 				:signature-positions="signaturePositions"
+				:recipients="recipients"
 				@close="closeSelectModal" />
 		</NcModal>
 	</div>
@@ -131,12 +155,16 @@
 
 <script>
 import Close from 'vue-material-design-icons/Close.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcListItemIcon from '@nextcloud/vue/dist/Components/NcListItemIcon.js'
 import debounce from 'debounce'
 import { loadState } from '@nextcloud/initial-state'
 import { showSuccess, showError } from '@nextcloud/dialogs'
@@ -151,12 +179,16 @@ export default {
 
 	components: {
 		Close,
+		Delete,
 		FileSign,
 		Magnify,
+		NcActions,
+		NcActionButton,
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcModal,
 		NcTextField,
+		NcListItemIcon,
 		SelectorDialogModal,
 		SearchResults,
 	},
@@ -166,6 +198,7 @@ export default {
 			fileModel: null,
 			showSelectModal: false,
 			error: '',
+			recipients: [],
 			recipient_type: 'user',
 			noUserResults: false,
 			usersLoading: false,
@@ -233,6 +266,7 @@ export default {
 			this.emailResults = {}
 			this.shareLoading = false
 			this.signaturePositions = []
+			this.recipients = []
 			if (newValue) {
 				const metadata = await getMetadata(newValue.id)
 				if (metadata && metadata.signature_fields) {
@@ -309,6 +343,26 @@ export default {
 			this.focusEmailInput()
 		},
 
+		isEmail(email) {
+			if (!email) {
+				return false
+			}
+
+			// Email addresses need at least one "@".
+			const atpos = email.indexOf('@')
+			if (atpos <= 0) {
+				return false
+			}
+
+			// And a dot after the "@".
+			const dotpos = email.indexOf('.', atpos + 1)
+			if (dotpos < 0 || dotpos === email.length - 1) {
+				return false
+			}
+
+			return true
+		},
+
 		debounceSearchEmails: debounce(function() {
 			this.searchEmails()
 		}, 250),
@@ -322,6 +376,16 @@ export default {
 			this.emailsLoading = false
 			const emails = this.emailResults.emails || []
 			const exact = this.emailResults.exact?.users || []
+			if (!emails.length && this.isEmail(this.email)) {
+				emails.push({
+					name: this.email,
+					value: {
+						shareType: OC.Share.SHARE_TYPE_EMAIL,
+						shareWith: this.email,
+					},
+				})
+				this.emailResults.emails = emails
+			}
 			if (!emails.length && !exact.length) {
 				this.noEmailResults = true
 			}
@@ -342,21 +406,48 @@ export default {
 			this.$root.$emit('dialog:closed')
 		},
 
-		selectUser(item) {
-			this.user = item.value.shareWith
+		addRecipient(recipient) {
+			const prev = this.recipients.find((elem) => {
+				return elem.type === recipient.type && elem.value === recipient.value
+			})
+			if (prev) {
+				return
+			}
+
+			this.recipients.push(recipient)
+		},
+
+		deleteRecipient(recipient) {
+			this.recipients = this.recipients.filter((elem) => {
+				return elem.type !== recipient.type || elem.value !== recipient.value
+			})
+		},
+
+		addUser(item) {
+			this.addRecipient({
+				type: 'user',
+				value: item.value.shareWith,
+				item,
+			})
+			this.user = ''
 			this.userResults = {}
 			this.noUserResults = false
 		},
 
-		selectEmail(item) {
+		addEmail(item) {
 			if (item.value && item.value.shareType === OC.Share.SHARE_TYPE_USER) {
 				this.recipient_type = 'user'
-				this.selectUser(item)
+				this.addUser(item)
 				return
 			}
 
 			const shareWith = item.value?.shareWith || ''
-			this.email = shareWith
+			this.addRecipient({
+				type: 'email',
+				value: shareWith,
+				item,
+			})
+			this.email = ''
 			this.emailResults = {}
 			this.noEmailResults = false
 		},
@@ -367,26 +458,17 @@ export default {
 				return
 			}
 
-			let recipient
-			switch (this.recipient_type) {
-			case 'user':
-				recipient = this.user
-				break
-			case 'email':
-				recipient = this.email
-				break
-			}
-			if (!recipient) {
-				this.error = t('esig', 'Please select a recipient first.')
+			if (!this.recipients.length) {
+				this.error = t('esig', 'Please add at least one recipient first.')
 				return
 			}
 
-			const recipients = [
-				{
-					type: this.recipient_type,
-					value: recipient,
-				},
-			]
+			const recipients = this.recipients.map((elem) => {
+				return {
+					type: elem.type,
+					value: elem.value,
+				}
+			})
 
 			this.error = ''
 			this.shareLoading = true
@@ -438,6 +520,32 @@ export default {
 		getFileUrl(model) {
 			return generateRemoteUrl('webdav') + model.getFullPath()
 		},
+
+		recipientName(recipient) {
+			switch (recipient.type) {
+			case 'user':
+				// fallthrough
+			case 'email':
+				return recipient.item.name || recipient.item.label || ''
+			default:
+				return ''
+			}
+		},
+
+		recipientTitle(recipient) {
+			return recipient.value
+		},
+
+		recipientIcon(recipient) {
+			switch (recipient.type) {
+			case 'user':
+				return 'icon-user'
+			case 'email':
+				return 'icon-mail'
+			default:
+				return ''
+			}
+		},
 	},
 }
 </script>
@@ -454,6 +562,11 @@ h1 {
 
 .recipient_section {
 	margin-bottom: 1em;
+}
+
+.recipient__icon {
+	width: 44px;
+	height: 44px;
 }
 
 .error {

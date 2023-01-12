@@ -11,6 +11,7 @@
 					:height="1132"
 					:max-height="400"
 					:url="url"
+					:recipients="recipients"
 					:signature-positions="signaturePositions"
 					@init:start="loading = true"
 					@init:done="loading = false" />
@@ -47,6 +48,10 @@ export default {
 	props: {
 		url: {
 			type: String,
+			required: true,
+		},
+		recipients: {
+			type: Array,
 			required: true,
 		},
 		signaturePositions: {
