@@ -27,14 +27,14 @@
 		<personal-section>OCA\Esig\Settings\Section</personal-section>
 	</settings>
 
-        <activity>
-                <settings>
-                        <setting>OCA\Esig\Activity\Setting</setting>
-                </settings>
+	<activity>
+		<settings>
+			<setting>OCA\Esig\Activity\Setting</setting>
+		</settings>
 
-                <providers>
-                        <provider>OCA\Esig\Activity\Provider\Share</provider>
-                        <provider>OCA\Esig\Activity\Provider\Sign</provider>
-                </providers>
-        </activity>
+		<providers>
+			<provider>OCA\Esig\Activity\Provider\Share</provider>
+			<provider>OCA\Esig\Activity\Provider\Sign</provider>
+		</providers>
+	</activity>
 </info>

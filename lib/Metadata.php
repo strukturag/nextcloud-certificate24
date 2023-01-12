@@ -29,7 +29,7 @@ class Metadata {
 		$this->dispatcher = $dispatcher;
 	}
 
-  public function storeMetadata(IUser $user, File $file, ?array $metadata): void {
+	public function storeMetadata(IUser $user, File $file, ?array $metadata): void {
 		if (empty($metadata)) {
 			$this->deleteMetadata($user, $file);
 			return;
@@ -64,7 +64,7 @@ class Metadata {
 			// Another user added the entry concurrently.
 			return;
 		}
-  }
+	}
 
 	public function getMetadata(IUser $user, File $file): ?array {
 		$query = $this->db->getQueryBuilder();

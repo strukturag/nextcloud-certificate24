@@ -215,7 +215,7 @@ class DownloadController extends Controller {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-    if ($image['size'] > self::MAX_IMAGE_SIZE) {
+		if ($image['size'] > self::MAX_IMAGE_SIZE) {
 			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		}
 

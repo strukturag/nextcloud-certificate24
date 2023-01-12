@@ -744,7 +744,7 @@ class ApiController extends OCSController {
 		} else if ($user) {
 			$type = 'user';
 			$value = $user->getUID();
-		} else  {
+		} else {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 

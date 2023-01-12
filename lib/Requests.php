@@ -43,12 +43,12 @@ class Requests {
 		$this->config = $config;
 	}
 
-  private function newRandomId(int $length): string {
+	private function newRandomId(int $length): string {
 		$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
 		return $this->secureRandom->generate($length, $chars);
 	}
 
-  public function storeRequest(File $file, IUser $user, array $recipients, ?array $options, ?array $metadata, array $account, string $server, string $esig_file_id): string {
+	public function storeRequest(File $file, IUser $user, array $recipients, ?array $options, ?array $metadata, array $account, string $server, string $esig_file_id): string {
 		$mime = $file->getMimeType();
 		if ($mime) {
 			$mime = strtolower($mime);
@@ -116,7 +116,7 @@ class Requests {
 		$event = new ShareEvent($file, $user, $recipients, $id);
 		$this->dispatcher->dispatch(ShareEvent::class, $event);
 		return $id;
-  }
+	}
 
 	private function getRecipients(array $row): ?array {
 		if ($row['recipient']) {
