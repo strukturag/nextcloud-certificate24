@@ -925,10 +925,10 @@ class ApiController extends OCSController {
 		try {
 			switch ($signed_save_mode) {
 				case Requests::MODE_SIGNED_NEW:
-					$this->storeSignedResult($user, $id, $row, $account);
+					$this->storeSignedResult($user, $id, $row, $type, $value, $account);
 					break;
 				case Requests::MODE_SIGNED_REPLACE:
-					$this->replaceSignedResult($user, $id, $row, $account);
+					$this->replaceSignedResult($user, $id, $row, $type, $value, $account);
 					break;
 				case Requests::MODE_SIGNED_NONE:
 					break;
@@ -949,7 +949,7 @@ class ApiController extends OCSController {
 		]);
 	}
 
-	private function storeSignedResult(?IUser $user, string $id, array $row, array $account) {
+	private function storeSignedResult(?IUser $user, string $id, array $row, string $type, string $value, array $account) {
 		$owner = $this->userManager->get($row['user_id']);
 		if (!$owner) {
 			// Should not happen, owned requests are deleted when users are.
@@ -965,12 +965,12 @@ class ApiController extends OCSController {
 		$file = $files[0];
 		$folder = $file->getParent();
 
-		switch ($row['recipient_type']) {
+		switch ($type) {
 			case 'user':
 				$signerName = $user->getDisplayName();
 				break;
 			case 'email':
-				$signerName = $row['recipient'];
+				$signerName = $value;
 				break;
 		}
 
@@ -987,7 +987,7 @@ class ApiController extends OCSController {
 		return $created;
 	}
 
-	private function replaceSignedResult(?IUser $user, string $id, array $row, array $account) {
+	private function replaceSignedResult(?IUser $user, string $id, array $row, string $type, string $value, array $account) {
 		$owner = $this->userManager->get($row['user_id']);
 		if (!$owner) {
 			// Should not happen, owned requests are deleted when users are.
