@@ -100,10 +100,10 @@ class Requests {
 			$insert->insert('esig_recipients')
 				->values(
 					[
-						'request_id' => $query->createNamedParameter('request_id'),
-						'created' => $query->createFunction('now()'),
-						'type' => $query->createParameter('type'),
-						'value' => $query->createParameter('value'),
+						'request_id' => $insert->createNamedParameter($id),
+						'created' => $insert->createFunction('now()'),
+						'type' => $insert->createParameter('type'),
+						'value' => $insert->createParameter('value'),
 					]
 				);
 			foreach ($recipients as $recipient) {
