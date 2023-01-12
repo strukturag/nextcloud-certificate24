@@ -107,6 +107,8 @@ class Listener implements IEventListener {
 				->setSubject('sign', [
 					'request' => $request,
 					'request_id' => $event->getRequestId(),
+					'recipient' => $event->getRecipient(),
+					'recipient_type' => $event->getRecipientType(),
 					'user' => $user ? $user->getUID() : null,
 				]);
 			$this->notificationManager->notify($notification);

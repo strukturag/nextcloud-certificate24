@@ -11,12 +11,16 @@ class SignEvent extends Event {
 
 	private string $request_id;
 	private array $request;
+	private string $type;
+	private string $value;
 	private ?IUser $user;
 
-	public function __construct(string $request_id, array $request, ?IUser $user) {
+	public function __construct(string $request_id, array $request, string $type, string $value, ?IUser $user) {
 		parent::__construct();
 		$this->request_id = $request_id;
 		$this->request = $request;
+		$this->type = $type;
+		$this->value = $value;
 		$this->user = $user;
 	}
 
@@ -32,6 +36,20 @@ class SignEvent extends Event {
 	 */
 	public function getRequest(): array {
 		return $this->request;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRecipientType(): string {
+		return $this->type;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRecipient(): string {
+		return $this->value;
 	}
 
 	/**

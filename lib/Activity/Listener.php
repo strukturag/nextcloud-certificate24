@@ -118,8 +118,8 @@ class Listener {
 				->setSubject('sign', [
 					'file_id' => $request['file_id'],
 					'filename' => $request['filename'],
-					'recipient' => $request['recipient'],
-					'recipient_type' => $request['recipient_type'],
+					'recipient' => $event->getRecipient(),
+					'recipient_type' => $event->getRecipientType(),
 					'request_id' => $id,
 				]);
 		} catch (\InvalidArgumentException $e) {

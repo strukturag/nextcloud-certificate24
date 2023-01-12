@@ -914,7 +914,7 @@ class ApiController extends OCSController {
 
 		$this->requests->markRequestSignedById($id, $type, $value, $signed);
 
-		$event = new SignEvent($id, $row, $user);
+		$event = new SignEvent($id, $row, $type, $value, $user);
 		$this->dispatcher->dispatch(SignEvent::class, $event);
 
 		$signed_save_mode = $row['signed_save_mode'];
