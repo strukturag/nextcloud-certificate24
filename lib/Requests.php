@@ -118,12 +118,8 @@ class Requests {
 		return $id;
   }
 
-	private function getRecipients(array $row, ?IUser $user = null): ?array {
+	private function getRecipients(array $row): ?array {
 		if ($row['recipient']) {
-			if ($user && ($row['recipient_type'] !== 'user' || $row['recipient'] !== $user->getUID())) {
-				return [];
-			}
-
 			return [
 				[
 					'type' => $row['recipient_type'],
@@ -137,10 +133,6 @@ class Requests {
 		$query->select('type', 'value', 'signed')
 			->from('esig_recipients')
 			->where($query->expr()->eq('request_id', $query->createNamedParameter($row['id'])));
-		if ($user) {
-			$query->andWhere($query->expr()->eq('type', $query->createNamedParameter('user')))
-				->andWhere($query->expr()->eq('value', $query->createNamedParameter($user->getUID())));
-		}
 		$result = $query->executeQuery();
 
 		$recipients = [];
@@ -244,7 +236,7 @@ class Requests {
 				$row['metadata'] = json_decode($row['metadata'], true);
 			}
 
-			$row['recipients'] = $this->getRecipients($row, $user);
+			$row['recipients'] = $this->getRecipients($row);
 			$allSigned = true;
 			if (!$include_signed) {
 				foreach ($row['recipients'] as $recipient) {
@@ -277,7 +269,7 @@ class Requests {
 			}
 
 			// TODO: Get from joined query directly.
-			$row['recipients'] = $this->getRecipients($row, $user);
+			$row['recipients'] = $this->getRecipients($row);
 			$allSigned = true;
 			if (!$include_signed) {
 				foreach ($row['recipients'] as $recipient) {

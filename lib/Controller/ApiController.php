@@ -454,6 +454,45 @@ class ApiController extends OCSController {
 		return new DataResponse($response);
 	}
 
+	private function filterMetadata(array $request, IUser $user): array {
+		$metadata = $request['metadata'];
+		if (empty($metadata) || !isset($metadata['signature_fields'])) {
+			return $metadata;
+		}
+
+		$recipients = $request['recipients'];
+		if (count($recipients) <= 1) {
+			return $metadata;
+		}
+
+		$idx = -1;
+		$found = -1;
+		foreach ($recipients as $recipient) {
+			$idx++;
+			if ($recipient['type'] === 'user' && $recipient['value'] === $user->getUID()) {
+				$found = $idx;
+				break;
+			}
+		}
+
+		if ($found === -1) {
+			return $metadata;
+		}
+
+		$fields = [];
+		foreach ($metadata['signature_fields'] as $field) {
+			if (!isset($field['recipient_idx']) || $field['recipient_idx'] !== $found) {
+				continue;
+			}
+
+			$fields[] = $field;
+		}
+
+		$filtered = $metadata;
+		$filtered['signature_fields'] = $fields;
+		return $filtered;
+	}
+
 	/**
 	 * @NoAdminRequired
 	 *
@@ -488,6 +527,7 @@ class ApiController extends OCSController {
 			if ($mime) {
 				$mime = strtolower($mime);
 			}
+			$metadata = $this->filterMetadata($request, $user);
 			$r = [
 				'request_id' => $request['id'],
 				'created' => $this->formatDateTime($request['created']),
@@ -496,7 +536,7 @@ class ApiController extends OCSController {
 				'filename' => $file->getName(),
 				'mimetype' => $mime,
 				'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
-				'metadata' => $request['metadata'],
+				'metadata' => $metadata,
 			];
 			if ($include_signed) {
 				foreach ($request['recipients'] as $recipient) {
@@ -617,6 +657,7 @@ class ApiController extends OCSController {
 		if ($mime) {
 			$mime = strtolower($mime);
 		}
+		$metadata = $this->filterMetadata($request, $user);
 		$response = [
 			'request_id' => $id,
 			'created' => $this->formatDateTime($request['created']),
@@ -625,7 +666,7 @@ class ApiController extends OCSController {
 			'filename' => $file->getName(),
 			'mimetype' => $mime,
 			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
-			'metadata' => $request['metadata'],
+			'metadata' => $metadata,
 		];
 		foreach ($request['recipients'] as $recipient) {
 			if ($recipient['type'] !== 'user' || $recipient['value'] !== $user->getUID()) {
