@@ -10,10 +10,21 @@
 				{{ t('esig', 'Could not load document, signature position is not supported.') }}
 			</div>
 		</div>
-		<div v-if="!loadingFailed"
-			v-show="!initialLoad"
-			ref="container"
-			class="container" />
+		<PdfDocument v-show="!initialLoad && !loadingFailed"
+			:url="url"
+			:page="page"
+			:width="width"
+			:height="height"
+			:max-height="maxHeight"
+			:enable-select="true"
+			:signature-positions="signaturePositions"
+			:recipients="recipients"
+			@pdf:loaded="pdfLoaded"
+			@pdf:error="pdfFailed"
+			@render:error="renderError"
+			@loading:start="loading++"
+			@loading:stop="loading--"
+			@update:rectangles="updateRectangles" />
 	</div>
 </template>
 
@@ -22,7 +33,9 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import { showError } from '@nextcloud/dialogs'
 
 import PdfNavigtion from './PdfNavigation.vue'
-import getVinegarApi from '../services/vinegarapi.js'
+import externalComponent from '../services/externalComponent.js'
+
+const PdfDocument = () => externalComponent('PdfDocument')
 
 export default {
 	name: 'PdfSelector',
@@ -30,6 +43,7 @@ export default {
 	components: {
 		NcLoadingIcon,
 		PdfNavigtion,
+		PdfDocument,
 	},
 
 	props: {
@@ -66,75 +80,47 @@ export default {
 			initialLoad: true,
 			loadingFailed: false,
 			loading: 0,
-			api: null,
-			doc: null,
+			page: 0,
 			numPages: null,
+			updatedRects: null,
 		}
 	},
 
 	async mounted() {
 		this.$emit('init:start')
-		this.loading++
-		try {
-			const container = this.$refs.container
-			container.style.minWidth = this.width + 'px'
-			container.style.minHeight = this.height + 'px'
-			let scrollbarWidth = 0
-			if (this.maxHeight > 0) {
-				container.style.maxHeight = this.maxHeight + 'px'
-				container.style.minHeight = this.maxHeight + 'px'
-				container.style.overflowY = 'scroll'
-
-				// Create the div
-				const scrollDiv = document.createElement('div')
-				scrollDiv.className = 'scrollbar-measure'
-				document.body.appendChild(scrollDiv)
-
-				// Get the scrollbar width
-				scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth
-				// Add space for box shadow
-				scrollbarWidth += 10
-
-				// Delete the div
-				document.body.removeChild(scrollDiv)
-			}
-			this.api = await getVinegarApi()
-			this.doc = new this.api.PdfDocument(container, {
-				url: this.url,
-				width: this.width - scrollbarWidth,
-				height: this.height,
-				enable_select: true,
-				signaturePositions: this.signaturePositions,
-				recipients: this.recipients,
-			})
-			this.numPages = await this.doc.numPages()
-			this.renderPage(1)
-		} catch (e) {
-			console.error('Could not load document', e)
-			showError(t('esig', 'Could not load document.'))
-			this.loadingFailed = true
-		} finally {
-			this.initialLoad = false
-			this.loading--
-			this.$emit('init:done')
-		}
+		this.updatedRects = this.signaturePositions || []
 	},
 
 	methods: {
-		async renderPage(idx) {
-			this.loading++
-			try {
-				await this.doc.renderPage(idx)
-			} catch (e) {
-				console.error('Could not render page', idx, e)
-				showError(t('esig', 'Could not render page {page}.', { page: idx }))
-			} finally {
-				this.loading--
-			}
+		pdfLoaded(properties) {
+			this.numPages = properties.numPages
+			this.initialLoad = false
+			this.$emit('init:done')
+		},
+
+		pdfFailed(error) {
+			console.error('Could not load document', error)
+			showError(t('esig', 'Could not load document, please download and review manually.'))
+			this.loadingFailed = true
+			this.initialLoad = false
+			this.$emit('init:done')
+		},
+
+		renderPage(idx) {
+			this.page = idx
+		},
+
+		renderError(idx, error) {
+			console.error('Could not render page', idx, error)
+			showError(t('esig', 'Could not render page {page}.', { page: idx }))
+		},
+
+		updateRectangles(rects) {
+			this.updatedRects = rects
 		},
 
 		getSignaturePositions() {
-			return this.doc ? this.doc.getSignaturePositions() : []
+			return this.updatedRects
 		},
 
 		closeModal() {

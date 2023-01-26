@@ -19,10 +19,18 @@
 				</template>
 			</NcButton>
 		</div>
-		<div v-if="!loadingFailed"
-			v-show="!initialLoad"
-			ref="container"
-			class="container" />
+		<PdfDocument v-show="!initialLoad && !loadingFailed"
+			:url="downloadUrl"
+			:page="page"
+			:width="width"
+			:height="height"
+			:max-height="maxHeight"
+			:signature-positions="signaturePositions"
+			@pdf:loaded="pdfLoaded"
+			@pdf:error="pdfFailed"
+			@render:error="renderError"
+			@loading:start="loading++"
+			@loading:stop="loading--" />
 	</div>
 </template>
 
@@ -33,7 +41,9 @@ import Download from 'vue-material-design-icons/Download.vue'
 import { showError } from '@nextcloud/dialogs'
 
 import PdfNavigtion from './PdfNavigation.vue'
-import getVinegarApi from '../services/vinegarapi.js'
+import externalComponent from '../services/externalComponent.js'
+
+const PdfDocument = () => externalComponent('PdfDocument')
 
 export default {
 	name: 'PdfViewer',
@@ -43,6 +53,7 @@ export default {
 		NcLoadingIcon,
 		Download,
 		PdfNavigtion,
+		PdfDocument,
 	},
 
 	props: {
@@ -80,8 +91,7 @@ export default {
 			initialLoad: true,
 			loadingFailed: false,
 			loading: 0,
-			api: null,
-			doc: null,
+			page: 0,
 			numPages: null,
 		}
 	},
@@ -91,71 +101,36 @@ export default {
 
 	async mounted() {
 		this.$emit('init:start')
-		this.loading++
-		try {
-			const container = this.$refs.container
-			container.style.minWidth = this.width + 'px'
-			container.style.minHeight = this.height + 'px'
-			let scrollbarWidth = 0
-			if (this.maxHeight > 0) {
-				container.style.maxHeight = this.maxHeight + 'px'
-				container.style.minHeight = this.maxHeight + 'px'
-				container.style.overflowY = 'scroll'
-
-				// Create the div
-				const scrollDiv = document.createElement('div')
-				scrollDiv.className = 'scrollbar-measure'
-				document.body.appendChild(scrollDiv)
-
-				// Get the scrollbar width
-				scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth
-				// Add space for box shadow
-				scrollbarWidth += 10
-
-				// Delete the div
-				document.body.removeChild(scrollDiv)
-			}
-			this.api = await getVinegarApi()
-			this.doc = new this.api.PdfDocument(container, {
-				url: this.url,
-				width: this.width - scrollbarWidth,
-				height: this.height,
-				signaturePositions: this.signaturePositions,
-			})
-			this.numPages = await this.doc.numPages()
-			this.renderPage(1)
-		} catch (e) {
-			console.error('Could not load document', e)
-			showError(t('esig', 'Could not load document, please download and review manually.'))
-			this.loadingFailed = true
-		} finally {
-			this.initialLoad = false
-			this.loading--
-			this.$emit('init:done')
-		}
 	},
 
 	methods: {
-		async renderPage(idx) {
-			this.loading++
-			try {
-				await this.doc.renderPage(idx)
-			} catch (e) {
-				console.error('Could not render page', idx, e)
-				showError(t('esig', 'Could not render page {page}.', { page: idx }))
-			} finally {
-				this.loading--
-			}
+		pdfLoaded(properties) {
+			this.numPages = properties.numPages
+			this.initialLoad = false
+			this.$emit('init:done')
+		},
+
+		pdfFailed(error) {
+			console.error('Could not load document', error)
+			showError(t('esig', 'Could not load document, please download and review manually.'))
+			this.loadingFailed = true
+			this.initialLoad = false
+			this.$emit('init:done')
+		},
+
+		renderPage(idx) {
+			this.page = idx
+		},
+
+		renderError(idx, error) {
+			console.error('Could not render page', idx, error)
+			showError(t('esig', 'Could not render page {page}.', { page: idx }))
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-canvas {
-	display: block;
-}
-
 .pdfviewer {
 	position: relative;
 }
@@ -164,26 +139,5 @@ canvas {
 	position: absolute;
 	left: 0;
 	top: 0;
-}
-
-.container {
-	margin-bottom: 1em;
-	width: 100%;
-	position: relative;
-}
-
-.container:deep canvas.pdfpage {
-	border: 1px solid #888;
-	box-shadow: 2px 2px 5px #888;
-}
-</style>
-
-<style lang="scss">
-.scrollbar-measure {
-	width: 100px;
-	height: 100px;
-	overflow: scroll;
-	position: absolute;
-	top: -9999px;
 }
 </style>
