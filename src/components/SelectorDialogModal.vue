@@ -6,18 +6,18 @@
 		<div class="modal__content">
 			<h1>{{ t('esig', 'Select signature position') }}</h1>
 			<div class="document">
-				<PdfSelector ref="selector"
-					:width="800"
+				<PdfSelector :width="800"
 					:height="1132"
 					:max-height="400"
 					:url="url"
 					:recipients="recipients"
 					:signature-positions="signaturePositions"
-					@init:start="loading = true"
-					@init:done="loading = false" />
+					@loading:start="loading++"
+					@loading:stop="loading--"
+					@rectangles:update="updateRectangles" />
 			</div>
 			<NcButton type="primary"
-				:disabled="loading"
+				:disabled="loading > 0"
 				@click="savePositions()">
 				{{ t('esig', 'Save') }}
 				<template #icon>
@@ -33,7 +33,9 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Check from 'vue-material-design-icons/Check.vue'
 
-import PdfSelector from '../components/PdfSelector.vue'
+import externalComponent from '../services/externalComponent.js'
+
+const PdfSelector = () => externalComponent('PdfSelector')
 
 export default {
 	name: 'SelectorDialogModal',
@@ -63,7 +65,8 @@ export default {
 
 	data() {
 		return {
-			loading: false,
+			loading: 0,
+			rectangles: null,
 		}
 	},
 
@@ -77,9 +80,12 @@ export default {
 			this.closeModal()
 		},
 
+		updateRectangles(rects) {
+			this.rectangles = rects
+		},
+
 		closeModal() {
-			const positions = this.$refs.selector.getSignaturePositions()
-			this.$emit('close', positions)
+			this.$emit('close', this.rectangles || this.signaturePositions)
 		},
 	},
 }

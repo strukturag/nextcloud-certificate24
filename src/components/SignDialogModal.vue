@@ -6,25 +6,24 @@
 		<div class="modal__content">
 			<h1>{{ t('esig', 'Sign {filename}', {filename: request.filename}) }}</h1>
 			<div class="document">
-				<PdfViewer :width="800"
+				<PdfSigner :url="downloadSourceUrl(request)"
+					:download-url="downloadSourceUrl(request)"
+					:width="800"
 					:height="1132"
 					:max-height="400"
-					:url="downloadSourceUrl(request)"
-					:download-url="downloadSourceUrl(request)"
 					:signature-positions="signature_fields"
-					@init:start="loading = true"
-					@init:done="loading = false" />
+					@pdf:error="pdfFailed"
+					@render:error="renderError"
+					@loading:start="loading++"
+					@loading:stop="loading--" />
 			</div>
 			<NcCheckboxRadioSwitch v-if="signature_fields && settings['has-signature-image']"
-				:disabled="loading"
+				:disabled="loading > 1"
 				:checked.sync="embedSignature">
 				{{ t('esig', 'Embed personal signature in fields') }}
 			</NcCheckboxRadioSwitch>
-			<!--
-				{{ request }}
-			-->
 			<NcButton type="primary"
-				:disabled="loading"
+				:disabled="loading > 0"
 				@click="sign(request)">
 				{{ t('esig', 'Sign') }}
 				<template #icon>
@@ -38,13 +37,16 @@
 <script>
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
 import { loadState } from '@nextcloud/initial-state'
 
-import PdfViewer from './PdfViewer.vue'
 import { signRequest, getSourceUrl } from '../services/apiservice.js'
+
+import externalComponent from '../services/externalComponent.js'
+
+const PdfSigner = () => externalComponent('PdfSigner')
 
 export default {
 	name: 'SignDialogModal',
@@ -53,8 +55,8 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcModal,
-		PdfViewer,
 		FileSign,
+		PdfSigner,
 	},
 
 	props: {
@@ -66,7 +68,7 @@ export default {
 
 	data() {
 		return {
-			loading: false,
+			loading: 0,
 			settings: [],
 			embedSignature: true,
 		}
@@ -90,6 +92,16 @@ export default {
 	methods: {
 		downloadSourceUrl(request) {
 			return getSourceUrl(request.request_id)
+		},
+
+		pdfFailed(error) {
+			console.error('Could not load document', error)
+			showError(t('esig', 'Could not load document, please download and review manually.'))
+		},
+
+		renderError(idx, error) {
+			console.error('Could not render page', idx, error)
+			showError(t('esig', 'Could not render page {page}.', { page: idx }))
 		},
 
 		sign(request) {
