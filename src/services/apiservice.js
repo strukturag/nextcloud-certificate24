@@ -8,11 +8,10 @@ const isEmpty = (obj) => {
 	return !obj || Object.keys(obj).length === 0
 }
 
-const shareFile = async (file_id, recipient, recipient_type, options, metadata) => {
+const shareFile = async (file_id, recipients, options, metadata) => {
 	return axios.post(generateOcsUrl('apps/esig/api/v1/share'), {
 		file_id,
-		recipient,
-		recipient_type,
+		recipients,
 		options: !isEmpty(options) ? options : null,
 		metadata: !isEmpty(metadata) ? metadata : null,
 	}).then(() => {
@@ -54,6 +53,10 @@ const signRequest = async (id, options) => {
 
 const getOriginalUrl = (id) => {
 	return generateUrl('apps/esig/download/' + id)
+}
+
+const getSourceUrl = (id) => {
+	return generateUrl('apps/esig/download/source/' + id)
 }
 
 const getSignedUrl = (id) => {
@@ -103,6 +106,7 @@ export {
 	deleteRequest,
 	signRequest,
 	getOriginalUrl,
+	getSourceUrl,
 	getSignedUrl,
 	search,
 	resetSignatureImage,

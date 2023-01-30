@@ -45,6 +45,10 @@ export default {
 			type: Number,
 			required: true,
 		},
+		recipients: {
+			type: Array,
+			required: true,
+		},
 		maxHeight: {
 			type: Number,
 			required: false,
@@ -101,6 +105,7 @@ export default {
 				height: this.height,
 				enable_select: true,
 				signaturePositions: this.signaturePositions,
+				recipients: this.recipients,
 			})
 			this.numPages = await this.doc.numPages()
 			this.renderPage(1)

@@ -15,8 +15,7 @@ Nextcloud instance.
     | field               | type    | description                                                      |
     |---------------------|---------|------------------------------------------------------------------|
     | `file_id`           | int     | The id of the file to be signed.                                 |
-    | `recipient`         | string  | User id or email address to share the document with.             |
-    | `recipient_type`    | string  | Type of recipient, can be `user` or `email`.                     |
+    | `recipients`        | array   | List of recipients to share the document with.                   |
     | `options`           | array   | JSON options for the request.                                    |
     | `metadata`          | array   | JSON metadata to include in the request.                         |
 
@@ -31,6 +30,14 @@ Nextcloud instance.
     | field               | type    | description                                                      |
     |---------------------|---------|------------------------------------------------------------------|
     | `request_id`        | string  | The id of the signing request.                                   |
+
+
+Each entry in the `recipients` array must contain the following fields:
+
+  | field               | type    | description                                                      |
+  |---------------------|---------|------------------------------------------------------------------|
+  | `type`              | string  | Type of recipient, can be `user` or `email`.                     |
+  | `value`             | string  | Userid (for type `user`) or email address (for type `email`).    |
 
 
 The following fields are currently defined for the request `options` JSON:
@@ -55,6 +62,10 @@ The following fields are currently defined for the request `metadata` JSON:
 Signature fields objects must contain the keys `id` (unique id of the field),
 `page` (1-based page number), `x`, `y`, `width`, `height` with values
 based on the page viewport where the top left of the page is at `0` / `0`.
+
+If signatures are requested from multiple recipients, each signature field must
+contain a `recipient_idx` field with the (0-based) index of the recipient that
+should sign the field.
 
 
 ## Get metadata of file.
@@ -97,14 +108,14 @@ based on the page viewport where the top left of the page is at `0` / `0`.
     | `filename`          | string  | Filename that was shared.                                        |
     | `mimetype`          | string  | Mimetype of the shared file.                                     |
     | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
-    | `recipient`         | string  | User id or email address to share the document with.             |
-    | `recipient_type`    | string  | Type of recipient, can be `user` or `email`.                     |
+    | `recipients`        | array   | List of recipients the file was shared with.                     |
     | `metadata`          | array   | Optional request JSON metadata (see above).                      |
-    | `signed`            | iso8601 | The timestamp when the file was signed or `null`.                |
+    | `signed`            | iso8601 | The timestamp when the file was last signed or `null`.           |
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
 The field `signed` is only returned if `include_signed` was passed as `true` in
-the request.
+the request. Recipients that already signed the file will have an additional
+field `signed` in their `recipients` entry.
 
 
 ## Get list of files requested to by signed by current user
@@ -133,7 +144,7 @@ the request.
     | `mimetype`          | string  | Mimetype of the shared file.                                     |
     | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
     | `metadata`          | array   | Optional request JSON metadata (see above).                      |
-    | `signed`            | iso8601 | The timestamp when the file was signed or `null`.                |
+    | `signed`            | iso8601 | The timestamp when the file was signed (if already signed).      |
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
 The field `signed` is only returned if `include_signed` was passed as `true` in
@@ -169,11 +180,13 @@ the request.
     | `filename`          | string  | Filename that was shared.                                        |
     | `mimetype`          | string  | Mimetype of the shared file.                                     |
     | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
-    | `recipient`         | string  | User id or email address to share the document with.             |
-    | `recipient_type`    | string  | Type of recipient, can be `user` or `email`.                     |
+    | `recipients`        | array   | List of recipients the file was shared with.                     |
     | `metadata`          | array   | Optional request JSON metadata (see above).                      |
-    | `signed`            | iso8601 | The timestamp when the file was signed (if already signed).      |
+    | `signed`            | iso8601 | The timestamp when the file was last signed (if already signed). |
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
+
+Recipients that already signed the file will have an additional field `signed`
+in their `recipients` entry.
 
 
 ## Get details on file shared for signing
@@ -235,6 +248,7 @@ The following fields are currently defined for the `options` JSON:
 
   | field                  | type    | description                                                      |
   |------------------------|---------|------------------------------------------------------------------|
+  | `email`                | string  | Email address if signing as anonymous user.                      |
   | `embed_user_signature` | bool    | Embed the personal signature image in all fields.                |
 
 

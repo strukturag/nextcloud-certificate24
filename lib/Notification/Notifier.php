@@ -158,8 +158,8 @@ class Notifier implements INotifier {
 				'name' => $request['filename'],
 			],
 		];
-		$recipient = $request['recipient'];
-		switch ($request['recipient_type']) {
+		$recipient = $parameters['recipient'];
+		switch ($parameters['recipient_type']) {
 			case 'user':
 				$rosParameters['user'] = [
 					'type' => 'user',
