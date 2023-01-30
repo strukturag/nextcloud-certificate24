@@ -427,6 +427,7 @@ export default {
 			this.addRecipient({
 				type: 'user',
 				value: item.value.shareWith,
+				display_name: item.label,
 				item,
 			})
 			this.user = ''
@@ -445,6 +446,7 @@ export default {
 			this.addRecipient({
 				type: 'email',
 				value: shareWith,
+				display_name: item.label,
 				item,
 			})
 			this.email = ''
