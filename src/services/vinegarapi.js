@@ -2,6 +2,10 @@ import { loadState } from '@nextcloud/initial-state'
 
 let api
 
+const translator = (message, params) => {
+	return t('esig', message, params)
+}
+
 const getVinegarApi = async () => {
 	if (!api) {
 		const ts = (new Date()).getTime()
@@ -18,6 +22,7 @@ const getVinegarApi = async () => {
 		api = VinegarApi
 		api.Setup({
 			url: base,
+			translator,
 		})
 		console.info('Loaded vinegar API', api.version)
 	}
