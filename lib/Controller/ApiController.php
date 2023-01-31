@@ -10,6 +10,7 @@ use OCA\Esig\Client;
 use OCA\Esig\Config;
 use OCA\Esig\Events\SignEvent;
 use OCA\Esig\Mails;
+use OCA\Esig\Manager;
 use OCA\Esig\Metadata;
 use OCA\Esig\Requests;
 use OCA\Esig\Validator;
@@ -20,7 +21,6 @@ use OCP\Collaboration\Collaborators\ISearch;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
-use OCP\IL10N;
 use OCP\ILogger;
 use OCP\Image;
 use OCP\IRequest;
@@ -48,7 +48,6 @@ class ApiController extends OCSController {
 	const MAX_SIGN_OPTIONS_SIZE = 8 * 1024;
 	const MAX_IMAGE_SIZE = 1024 * 1024;
 
-	private IL10N $l10n;
 	private ILogger $logger;
 	private IUserManager $userManager;
 	private IUserSession $userSession;
@@ -62,10 +61,10 @@ class ApiController extends OCSController {
 	private Metadata $metadata;
 	private Validator $validator;
 	private Mails $mails;
+	private Manager $manager;
 
 	public function __construct(string $appName,
 								IRequest $request,
-								IL10N $l10n,
 								ILogger $logger,
 								IUserManager $userManager,
 								IUserSession $userSession,
@@ -78,9 +77,9 @@ class ApiController extends OCSController {
 								Requests $requests,
 								Metadata $metadata,
 								Validator $validator,
-								Mails $mails) {
+								Mails $mails,
+								Manager $manager) {
 		parent::__construct($appName, $request);
-		$this->l10n = $l10n;
 		$this->logger = $logger;
 		$this->userManager = $userManager;
 		$this->userSession = $userSession;
@@ -94,6 +93,7 @@ class ApiController extends OCSController {
 		$this->metadata = $metadata;
 		$this->validator = $validator;
 		$this->mails = $mails;
+		$this->manager = $manager;
 	}
 
 	private function parseDateTime($s) {
@@ -870,95 +870,13 @@ class ApiController extends OCSController {
 		$event = new SignEvent($id, $row, $type, $value, $user);
 		$this->dispatcher->dispatch(SignEvent::class, $event);
 
-		$signed_save_mode = $row['signed_save_mode'];
-		if (empty($signed_save_mode)) {
-			$signed_save_mode = $this->config->getSignedSaveMode();
-		}
-
-		try {
-			switch ($signed_save_mode) {
-				case Requests::MODE_SIGNED_NEW:
-					$this->storeSignedResult($user, $id, $row, $type, $value, $account);
-					break;
-				case Requests::MODE_SIGNED_REPLACE:
-					$this->replaceSignedResult($user, $id, $row, $type, $value, $account);
-					break;
-				case Requests::MODE_SIGNED_NONE:
-					break;
-			}
-
-			$this->requests->markRequestSavedById($id);
-		} catch (\Exception $e) {
-			$this->logger->logException($e, [
-				'message' => 'Error processing signed result',
-				'app' => Application::APP_ID,
-			]);
-		}
+		$this->manager->saveSignedResult($row, $type, $value, $signed, $user, $account);
 
 		return new DataResponse([
 			'request_id' => $id,
 			'signed' => $this->formatDateTime($signed),
 			'signed_url' => $this->client->getSignedUrl($row['esig_file_id'], $account, $row['esig_server']),
 		]);
-	}
-
-	private function storeSignedResult(?IUser $user, string $id, array $row, string $type, string $value, array $account) {
-		$owner = $this->userManager->get($row['user_id']);
-		if (!$owner) {
-			// Should not happen, owned requests are deleted when users are.
-			return;
-		}
-
-		$files = $this->root->getUserFolder($owner->getUID())->getById($row['file_id']);
-		if (empty($files)) {
-			// Should not happen, requests are deleted when files are.
-			return;
-		}
-
-		$file = $files[0];
-		$folder = $file->getParent();
-
-		switch ($type) {
-			case 'user':
-				$signerName = $user->getDisplayName();
-				break;
-			case 'email':
-				$signerName = $value;
-				break;
-		}
-
-		$info = pathinfo($row['filename']);
-		$date = new \DateTime();
-		$filename = $this->l10n->t('%1$s signed by %2$s on %3$s', [
-			$info['filename'],
-			$signerName,
-			$date->format(self::ISO8601_EXTENDED),
-		]) . ($info['extension'] ? ('.' . $info['extension']) : '');
-
-		$data = $this->client->downloadSignedFile($row['esig_file_id'], $account, $row['esig_server']);
-		$created = $folder->newFile($filename, $data);
-		return $created;
-	}
-
-	private function replaceSignedResult(?IUser $user, string $id, array $row, string $type, string $value, array $account) {
-		$owner = $this->userManager->get($row['user_id']);
-		if (!$owner) {
-			// Should not happen, owned requests are deleted when users are.
-			return;
-		}
-
-		$files = $this->root->getUserFolder($owner->getUID())->getById($row['file_id']);
-		if (empty($files)) {
-			// Should not happen, requests are deleted when files are.
-			return;
-		}
-
-		/** @var File $file */
-		$file = $files[0];
-
-		$data = $this->client->downloadSignedFile($row['esig_file_id'], $account, $row['esig_server']);
-		$file->putContent($data);
-		return $file;
 	}
 
 	/**

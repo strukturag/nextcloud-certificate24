@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Esig;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Config;
 use OCA\Esig\Events\ShareEvent;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -346,13 +347,27 @@ class Requests {
 		$query->executeStatement();
 	}
 
-	public function markRequestSavedById(string $id) {
+	public function markRequestSavedById(string $id, string $type, string $value) {
 		$query = $this->db->getQueryBuilder();
 		$query->update('esig_requests')
 			->set('saved', $query->createFunction('now()'))
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
 			->andWhere($query->expr()->isNull('saved'))
-			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
+			->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter($type)))
+			->andWhere($query->expr()->eq('recipient', $query->createNamedParameter($value)));
+		if ($query->executeStatement() === 1) {
+			// Single recipient for this request.
+			return;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('esig_recipients')
+			->set('saved', $query->createFunction('now()'))
+			->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->isNull('saved'))
+			->andWhere($query->expr()->eq('type', $query->createNamedParameter($type)))
+			->andWhere($query->expr()->eq('value', $query->createNamedParameter($value)));
 		$query->executeStatement();
 	}
 
@@ -465,6 +480,55 @@ class Requests {
 			if (!isset($requests[$row['request_id']])) {
 				// TODO: Use simpler query that doesn't fetch all recipients.
 				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
+				if (!$requests[$row['request_id']]) {
+					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending email of ' . $row['type'] . ' ' . $row['value'], [
+						'app' => Application::APP_ID,
+					]);
+					continue;
+				}
+			}
+			$row['request'] = $requests[$row['request_id']];
+			$recipients[] = $row;
+		}
+		$result->closeCursor();
+		$pending['multi'] = $recipients;
+		return $pending;
+	}
+
+	public function getPendingDownloads() {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_requests')
+			->where($query->expr()->isNotNull('signed'))
+			->andWhere($query->expr()->isNull('saved'));
+		$result = $query->executeQuery();
+
+		$pending = [];
+		$recipients = [];
+		while ($row = $result->fetch()) {
+			$recipients[] = $row;
+		}
+		$result->closeCursor();
+		$pending['single'] = $recipients;
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_recipients')
+			->where($query->expr()->isNotNull('signed'))
+			->andWhere($query->expr()->isNull('saved'));
+		$result = $query->executeQuery();
+		$recipients = [];
+		$requests = [];
+		while ($row = $result->fetch()) {
+			if (!isset($requests[$row['request_id']])) {
+				// TODO: Use simpler query that doesn't fetch all recipients.
+				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
+				if (!$requests[$row['request_id']]) {
+					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending download of ' . $row['type'] . ' ' . $row['value'], [
+						'app' => Application::APP_ID,
+					]);
+					continue;
+				}
 			}
 			$row['request'] = $requests[$row['request_id']];
 			$recipients[] = $row;
