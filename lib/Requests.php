@@ -78,6 +78,7 @@ class Requests {
 		if (count($recipients) === 1) {
 			$values['recipient'] = $query->createNamedParameter($recipients[0]['value']);
 			$values['recipient_type'] = $query->createNamedParameter($recipients[0]['type']);
+			$values['esig_signature_id'] = $query->createNamedParameter($recipients[0]['public_id'] ?? null);
 		}
 		$query->insert('esig_requests')
 			->values($values);
@@ -105,11 +106,13 @@ class Requests {
 						'created' => $insert->createFunction('now()'),
 						'type' => $insert->createParameter('type'),
 						'value' => $insert->createParameter('value'),
+						'esig_signature_id' => $insert->createParameter('esig_signature_id'),
 					]
 				);
 			foreach ($recipients as $recipient) {
 				$insert->setParameter('type', $recipient['type']);
 				$insert->setParameter('value', $recipient['value']);
+				$insert->setParameter('esig_signature_id', $recipient['public_id'] ?? null);
 				$insert->executeStatement();
 			}
 		}
@@ -125,13 +128,14 @@ class Requests {
 				[
 					'type' => $row['recipient_type'],
 					'value' => $row['recipient'],
+					'esig_signature_id' => $row['esig_signature_id'],
 					'signed' => $row['signed'],
 				],
 			];
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('type', 'value', 'signed')
+		$query->select('type', 'value', 'esig_signature_id', 'signed')
 			->from('esig_recipients')
 			->where($query->expr()->eq('request_id', $query->createNamedParameter($row['id'])));
 		$result = $query->executeQuery();

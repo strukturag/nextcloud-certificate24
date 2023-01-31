@@ -310,6 +310,7 @@ class ApiController extends OCSController {
 			return new DataResponse(['error' => 'invalid_response'], Http::STATUS_BAD_GATEWAY);
 		}
 
+		$recipients = $data['recipients'] ?? $recipients;
 		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id);
 
 		$this->metadata->storeMetadata($user, $file, $metadata);
@@ -320,7 +321,11 @@ class ApiController extends OCSController {
 				continue;
 			}
 
-			$this->mails->sendRequestMail($id, $user, $file, $recipient);
+			if (!isset($recipient['esig_signature_id'])) {
+				$recipient['esig_signature_id'] = $recipient['public_id'];
+			}
+
+			$this->mails->sendRequestMail($id, $user, $file, $recipient, $server);
 		}
 
 		return new DataResponse(['request_id' => $id], Http::STATUS_CREATED);
