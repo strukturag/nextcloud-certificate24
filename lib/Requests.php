@@ -418,4 +418,59 @@ class Requests {
 		return false;
 	}
 
+	public function markEmailSent(string $id, array $recipients, string $email) {
+		$query = $this->db->getQueryBuilder();
+		if (count($recipients) === 1) {
+			$query->update('esig_requests')
+				->set('email_sent', $query->createFunction('now()'))
+				->where($query->expr()->eq('id', $query->createNamedParameter($id)))
+				->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter('email')))
+				->andWhere($query->expr()->eq('recipient', $query->createNamedParameter($email)));
+		} else {
+			$query->update('esig_recipients')
+				->set('email_sent', $query->createFunction('now()'))
+				->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
+				->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter('email')))
+				->andWhere($query->expr()->eq('recipient', $query->createNamedParameter($email)));
+		}
+		$query->executeStatement();
+	}
+
+	public function getPendingEmails() {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_requests')
+			->where($query->expr()->eq('recipient_type', $query->createNamedParameter('email')))
+			->andWhere($query->expr()->isNull('email_sent'));
+		$result = $query->executeQuery();
+
+		$pending = [];
+		$recipients = [];
+		while ($row = $result->fetch()) {
+			$recipients[] = $row;
+		}
+		$result->closeCursor();
+		$pending['single'] = $recipients;
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_recipients')
+			->where($query->expr()->eq('type', $query->createNamedParameter('email')))
+			->andWhere($query->expr()->isNull('email_sent'));
+		$result = $query->executeQuery();
+		$recipients = [];
+		$requests = [];
+		while ($row = $result->fetch()) {
+			if (!isset($requests[$row['request_id']])) {
+				// TODO: Use simpler query that doesn't fetch all recipients.
+				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
+			}
+			$row['request'] = $requests[$row['request_id']];
+			$recipients[] = $row;
+		}
+		$result->closeCursor();
+		$pending['multi'] = $recipients;
+		return $pending;
+	}
+
 }
