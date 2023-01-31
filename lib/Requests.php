@@ -325,7 +325,6 @@ class Requests {
 		return $requests;
 	}
 
-
 	public function markRequestSignedById(string $id, string $type, string $value, \DateTime $now) {
 		$query = $this->db->getQueryBuilder();
 		$query->update('esig_requests')
@@ -418,21 +417,23 @@ class Requests {
 		return false;
 	}
 
-	public function markEmailSent(string $id, array $recipients, string $email) {
+	public function markEmailSent(string $id, string $email) {
 		$query = $this->db->getQueryBuilder();
-		if (count($recipients) === 1) {
-			$query->update('esig_requests')
-				->set('email_sent', $query->createFunction('now()'))
-				->where($query->expr()->eq('id', $query->createNamedParameter($id)))
-				->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter('email')))
-				->andWhere($query->expr()->eq('recipient', $query->createNamedParameter($email)));
-		} else {
-			$query->update('esig_recipients')
-				->set('email_sent', $query->createFunction('now()'))
-				->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
-				->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter('email')))
-				->andWhere($query->expr()->eq('recipient', $query->createNamedParameter($email)));
+		$query->update('esig_requests')
+			->set('email_sent', $query->createFunction('now()'))
+			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter('email')))
+			->andWhere($query->expr()->eq('recipient', $query->createNamedParameter($email)));
+		if ($query->executeStatement() === 1) {
+			return;
 		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('esig_recipients')
+			->set('email_sent', $query->createFunction('now()'))
+			->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->eq('type', $query->createNamedParameter('email')))
+			->andWhere($query->expr()->eq('value', $query->createNamedParameter($email)));
 		$query->executeStatement();
 	}
 

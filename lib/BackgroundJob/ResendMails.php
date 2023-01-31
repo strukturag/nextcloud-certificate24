@@ -52,13 +52,11 @@ class ResendMails extends TimedJob {
 			}
 
 			$file = $files[0];
-			$recipients = [
-				[
-					'type' => $entry['recipient_type'],
-					'value' => $entry['recipient'],
-				],
+			$recipient = [
+				'type' => $entry['recipient_type'],
+				'value' => $entry['recipient'],
 			];
-			$this->mails->sendRequestMail($entry['id'], $user, $file, $recipients, $recipients[0]);
+			$this->mails->sendRequestMail($entry['id'], $user, $file, $recipient);
 		}
 
 		foreach ($pending['multi'] as $entry) {
@@ -75,12 +73,11 @@ class ResendMails extends TimedJob {
 			}
 
 			$file = $files[0];
-			$recipients = $entry['request']['recipients'];
 			$recipient = [
 				'type' => $entry['type'],
 				'value' => $entry['value'],
 			];
-			$this->mails->sendRequestMail($entry['id'], $user, $file, $recipients, $recipient);
+			$this->mails->sendRequestMail($entry['request_id'], $user, $file, $recipient);
 		}
 	}
 }

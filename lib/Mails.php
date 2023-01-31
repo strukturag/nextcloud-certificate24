@@ -59,7 +59,7 @@ class Mails {
 		return trim($result);
 	}
 
-	public function sendRequestMail(string $id, IUser $user, File $file, array $recipients, array $recipient) {
+	public function sendRequestMail(string $id, IUser $user, File $file, array $recipient) {
 		$lang = $this->l10n->getLanguageCode();
 		$templateOptions = [
 			'file' => $file,
@@ -86,7 +86,7 @@ class Mails {
 			return;
 		}
 
-		$this->requests->markEmailSent($id, $recipients, $recipient['value']);
+		$this->requests->markEmailSent($id, $recipient['value']);
 		$this->logger->info('Sent email to ' . $recipient['value'], [
 			'app' => Application::APP_ID,
 		]);

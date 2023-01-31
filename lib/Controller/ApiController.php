@@ -320,7 +320,7 @@ class ApiController extends OCSController {
 				continue;
 			}
 
-			$this->mails->sendRequestMail($id, $user, $file, $recipients, $recipient);
+			$this->mails->sendRequestMail($id, $user, $file, $recipient);
 		}
 
 		return new DataResponse(['request_id' => $id], Http::STATUS_CREATED);
