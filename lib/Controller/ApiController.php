@@ -276,6 +276,18 @@ class ApiController extends OCSController {
 			], Http::STATUS_BAD_REQUEST);
 		}
 
+		if (empty($options)) {
+			$options = null;
+		}
+
+		$error = $this->validator->validateShareOptions($options);
+		if ($error) {
+			return new DataResponse([
+				'error' => 'invalid_options',
+				'details' => $error
+			], Http::STATUS_BAD_REQUEST);
+		}
+
 		$server = $this->config->getServer();
 		try {
 			$data = $this->client->shareFile($file, $recipients, $metadata, $account, $server);
@@ -296,18 +308,6 @@ class ApiController extends OCSController {
 		$esig_file_id = $data['file_id'] ?? '';
 		if (empty($esig_file_id)) {
 			return new DataResponse(['error' => 'invalid_response'], Http::STATUS_BAD_GATEWAY);
-		}
-
-		if (empty($options)) {
-			$options = null;
-		}
-
-		$error = $this->validator->validateShareOptions($options);
-		if ($error) {
-			return new DataResponse([
-				'error' => 'invalid_options',
-				'details' => $error
-			], Http::STATUS_BAD_REQUEST);
 		}
 
 		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id);
