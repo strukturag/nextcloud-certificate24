@@ -6,7 +6,7 @@
 	<summary><![CDATA[eSignatures]]></summary>
 	<description><![CDATA[eSignatures]]></description>
 
-	<version>0.0.9</version>
+	<version>0.0.10</version>
 	<license>agpl</license>
 
 	<author>Joachim Bauch</author>
@@ -19,6 +19,10 @@
 	<types>
 		<dav />
 	</types>
+
+	<background-jobs>
+		<job>OCA\Esig\BackgroundJob\ResendMails</job>
+	</background-jobs>
 
 	<settings>
 		<admin>OCA\Esig\Settings\Admin\AdminSettings</admin>

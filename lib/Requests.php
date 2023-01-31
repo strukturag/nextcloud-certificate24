@@ -436,4 +436,41 @@ class Requests {
 		$query->executeStatement();
 	}
 
+	public function getPendingEmails() {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_requests')
+			->where($query->expr()->eq('recipient_type', $query->createNamedParameter('email')))
+			->andWhere($query->expr()->isNull('email_sent'));
+		$result = $query->executeQuery();
+
+		$pending = [];
+		$recipients = [];
+		while ($row = $result->fetch()) {
+			$recipients[] = $row;
+		}
+		$result->closeCursor();
+		$pending['single'] = $recipients;
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_recipients')
+			->where($query->expr()->eq('type', $query->createNamedParameter('email')))
+			->andWhere($query->expr()->isNull('email_sent'));
+		$result = $query->executeQuery();
+		$recipients = [];
+		$requests = [];
+		while ($row = $result->fetch()) {
+			if (!isset($requests[$row['request_id']])) {
+				// TODO: Use simpler query that doesn't fetch all recipients.
+				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
+			}
+			$row['request'] = $requests[$row['request_id']];
+			$recipients[] = $row;
+		}
+		$result->closeCursor();
+		$pending['multi'] = $recipients;
+		return $pending;
+	}
+
 }
