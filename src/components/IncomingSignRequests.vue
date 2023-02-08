@@ -85,9 +85,11 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import Download from 'vue-material-design-icons/Download.vue'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
+import { showError } from '@nextcloud/dialogs'
 
 import SignDialogModal from './SignDialogModal.vue'
 import { getIncomingRequests, getOriginalUrl, getSignedUrl } from '../services/apiservice.js'
+import getVinegarApi from '../services/vinegarapi.js'
 
 export default {
 	name: 'IncomingSignRequests',
@@ -126,7 +128,24 @@ export default {
 		},
 
 		async signRequest(request) {
-			this.signDialog = request
+			getVinegarApi()
+				.then(() => {
+					this.signDialog = request
+				})
+				.catch((error) => {
+					const msg = error.message || error
+					switch (msg) {
+					case 'client_unsupported':
+						showError(t('esig', 'The server requires a newer version of the app. Please contact your administrator.'))
+						break
+					case 'server_unsupported':
+						showError(t('esig', 'This app requires a newer version of the server. Please contact your administrator.'))
+						break
+					default:
+						console.error('Error loading esig API', error)
+						showError(t('esig', 'Error loading serverside API, please try again later.'))
+					}
+				})
 		},
 
 		downloadOriginalUrl(request) {

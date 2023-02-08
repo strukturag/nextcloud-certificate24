@@ -171,6 +171,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { generateRemoteUrl } from '@nextcloud/router'
 
 import { shareFile, search, getMetadata } from '../services/apiservice.js'
+import getVinegarApi from '../services/vinegarapi.js'
 import SelectorDialogModal from '../components/SelectorDialogModal.vue'
 import SearchResults from '../components/SearchResults.vue'
 
@@ -511,7 +512,24 @@ export default {
 		},
 
 		openSelectModal() {
-			this.showSelectModal = true
+			getVinegarApi()
+				.then(() => {
+					this.showSelectModal = true
+				})
+				.catch((error) => {
+					const msg = error.message || error
+					switch (msg) {
+					case 'client_unsupported':
+						showError(t('esig', 'The server requires a newer version of the app. Please contact your administrator.'))
+						break
+					case 'server_unsupported':
+						showError(t('esig', 'This app requires a newer version of the server. Please contact your administrator.'))
+						break
+					default:
+						console.error('Error loading esig API', error)
+						showError(t('esig', 'Error loading serverside API, please try again later.'))
+					}
+				})
 		},
 
 		closeSelectModal(positions) {
