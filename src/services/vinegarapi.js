@@ -12,8 +12,8 @@ const features = [
 
 // eslint-disable-next-line jsdoc/require-jsdoc
 function checkServerFeatures(features) {
-	// We don't need any special server features for now.
-	return true
+	return features
+		&& features.indexOf('sign-anonymous') !== -1
 }
 
 const getVinegarApi = async () => {
