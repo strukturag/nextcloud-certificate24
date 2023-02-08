@@ -142,4 +142,20 @@ class Client {
 		return $body;
 	}
 
+	public function getSignatureDetails(string $id, array $account, string $server, string $signature_id): string {
+		$url = $server . 'api/v1/files/' . rawurlencode($account['id']) . '/' . rawurlencode($id) . '/' . rawurlencode($signature_id) . '/details';
+		$token = $this->tokens->getToken($account, $signature_id, 'signature-details');
+		$url .= '?token=' . urlencode($token);
+
+		$client = $this->clientService->newClient();
+		$response = $client->get($url, [
+			'verify' => false,
+			'nextcloud' => [
+				'allow_local_address' => true,
+			],
+		]);
+		$body = $response->getBody();
+		return $body;
+	}
+
 }

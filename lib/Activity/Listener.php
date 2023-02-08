@@ -113,7 +113,7 @@ class Listener {
 			$activity->setApp('esig')
 				->setType('esig')
 				->setObject('file', (int) $request['file_id'])
-				->setTimestamp($this->timeFactory->getTime())
+				->setTimestamp($event->getSigned()->getTimestamp())
 				->setAffectedUser($request['user_id'])
 				->setSubject('sign', [
 					'file_id' => $request['file_id'],

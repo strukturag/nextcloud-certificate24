@@ -542,4 +542,47 @@ class Requests {
 		return $pending;
 	}
 
+	public function getPendingSignatures() {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_requests')
+			->where($query->expr()->isNull('signed'))
+			->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter('email')));
+		$result = $query->executeQuery();
+
+		$pending = [];
+		$recipients = [];
+		while ($row = $result->fetch()) {
+			$recipients[] = $row;
+		}
+		$result->closeCursor();
+		$pending['single'] = $recipients;
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_recipients')
+			->where($query->expr()->isNull('signed'))
+			->andWhere($query->expr()->eq('type', $query->createNamedParameter('email')));
+		$result = $query->executeQuery();
+		$recipients = [];
+		$requests = [];
+		while ($row = $result->fetch()) {
+			if (!isset($requests[$row['request_id']])) {
+				// TODO: Use simpler query that doesn't fetch all recipients.
+				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
+				if (!$requests[$row['request_id']]) {
+					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending signature of ' . $row['type'] . ' ' . $row['value'], [
+						'app' => Application::APP_ID,
+					]);
+					continue;
+				}
+			}
+			$row['request'] = $requests[$row['request_id']];
+			$recipients[] = $row;
+		}
+		$result->closeCursor();
+		$pending['multi'] = $recipients;
+		return $pending;
+	}
+
 }
