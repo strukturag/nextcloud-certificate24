@@ -23,13 +23,14 @@ class Tokens {
 		$this->config = $config;
 	}
 
-	public function getToken(array $account, string $subject): string {
+	public function getToken(array $account, string $subject, string $action): string {
 		$now = $this->timeFactory->getTime();
 		$claims = [
 			'iss' => $this->urlGenerator->getAbsoluteURL(''),
 			'sub' => $subject,
 			'iat' => $now,
 			'exp' => $now + (5 * 60),
+			'act' => $action,
 		];
 		$jwt = JWT::encode($claims, $account['secret'], 'EdDSA');
 		return $jwt;
