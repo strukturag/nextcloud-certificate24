@@ -24,7 +24,7 @@ class Client {
 	}
 
 	public function shareFile(File $file, array $recipients, ?array $metadata, array $account, string $server): array {
-		$token = $this->tokens->getToken($account, $file->getName());
+		$token = $this->tokens->getToken($account, $file->getName(), 'upload');
 
 		$client = $this->clientService->newClient();
 		$headers = [
@@ -70,7 +70,7 @@ class Client {
 	}
 
 	public function signFile(string $id, array $multipart, array $account, string $server): array {
-		$token = $this->tokens->getToken($account, $id);
+		$token = $this->tokens->getToken($account, $id, 'sign');
 
 		$client = $this->clientService->newClient();
 		$headers = [
@@ -90,7 +90,7 @@ class Client {
 	}
 
 	public function deleteFile(string $id, array $account, string $server): array {
-		$token = $this->tokens->getToken($account, $id);
+		$token = $this->tokens->getToken($account, $id, 'delete');
 
 		$client = $this->clientService->newClient();
 		$headers = [
@@ -110,21 +110,21 @@ class Client {
 
 	public function getOriginalUrl(string $id, array $account, string $server): string {
 		$url = $server . 'api/v1/files/' . rawurlencode($account['id']) . '/' . rawurlencode($id);
-		$token = $this->tokens->getToken($account, $id);
+		$token = $this->tokens->getToken($account, $id, 'download-original');
 		$url .= '?token=' . urlencode($token);
 		return $url;
 	}
 
 	public function getSourceUrl(string $id, array $account, string $server): string {
 		$url = $server . 'api/v1/files/' . rawurlencode($account['id']) . '/source/' . rawurlencode($id);
-		$token = $this->tokens->getToken($account, $id);
+		$token = $this->tokens->getToken($account, $id, 'download-source');
 		$url .= '?token=' . urlencode($token);
 		return $url;
 	}
 
 	public function getSignedUrl(string $id, array $account, string $server): string {
 		$url = $server . 'api/v1/files/' . rawurlencode($account['id']) . '/sign/' . rawurlencode($id);
-		$token = $this->tokens->getToken($account, $id);
+		$token = $this->tokens->getToken($account, $id, 'download-signed');
 		$url .= '?token=' . urlencode($token);
 		return $url;
 	}
