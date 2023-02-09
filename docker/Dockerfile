@@ -24,6 +24,7 @@ RUN npm ci && \
 		rm -rf composer.* && \
 		rm -rf package* && \
 		rm -rf *.js && \
+		rm -rf js/*.map && \
 		\
 		rm -rf docker/ && \
 		rm -rf docs/ && \
