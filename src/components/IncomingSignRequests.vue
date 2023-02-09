@@ -52,11 +52,13 @@
 						<td>
 							<div class="grid">
 								<NcButton v-if="!request.signed"
+									:disabled="request.loading"
 									type="primary"
 									@click="signRequest(request)">
 									{{ t('esig', 'Sign') }}
 									<template #icon>
-										<FileSign :size="20" />
+										<NcLoadingIcon v-show="request.loading" :size="20" />
+										<FileSign v-show="!request.loading" :size="20" />
 									</template>
 								</NcButton>
 								<NcButton v-if="request.signed"
@@ -128,6 +130,7 @@ export default {
 		},
 
 		async signRequest(request) {
+			this.$set(request, 'loading', true)
 			getVinegarApi()
 				.then(() => {
 					this.signDialog = request
@@ -145,6 +148,9 @@ export default {
 						console.error('Error loading esig API', error)
 						showError(t('esig', 'Error loading serverside API, please try again later.'))
 					}
+				})
+				.finally(() => {
+					this.$delete(request, 'loading')
 				})
 		},
 
