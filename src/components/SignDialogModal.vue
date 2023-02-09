@@ -18,7 +18,7 @@
 					@loading:stop="loading--" />
 			</div>
 			<NcCheckboxRadioSwitch v-if="signature_fields && settings['has-signature-image']"
-				:disabled="loading > 1"
+				:disabled="loading > 0"
 				:checked.sync="embedSignature">
 				{{ t('esig', 'Embed personal signature in fields') }}
 			</NcCheckboxRadioSwitch>
@@ -27,7 +27,8 @@
 				@click="sign(request)">
 				{{ t('esig', 'Sign') }}
 				<template #icon>
-					<FileSign :size="20" />
+					<NcLoadingIcon v-show="signLoading" :size="20" />
+					<FileSign v-show="!signLoading" :size="20" />
 				</template>
 			</NcButton>
 		</div>
@@ -39,6 +40,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
 import { loadState } from '@nextcloud/initial-state'
 
@@ -55,6 +57,7 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcModal,
+		NcLoadingIcon,
 		FileSign,
 		PdfSigner,
 	},
@@ -69,6 +72,7 @@ export default {
 	data() {
 		return {
 			loading: 0,
+			signLoading: false,
 			settings: [],
 			embedSignature: true,
 		}
@@ -113,7 +117,8 @@ export default {
 						return
 					}
 
-					this.loading = true
+					this.loading++
+					this.signLoading = true
 					try {
 						const response = await signRequest(request.request_id, {
 							embed_user_signature: this.embedSignature,
@@ -126,7 +131,8 @@ export default {
 						console.error('Could not sign request', request, error)
 						showError(t('esig', 'Error while signing request.'))
 					} finally {
-						this.loading = false
+						this.loading--
+						this.signLoading = false
 					}
 				}.bind(this)
 			)
