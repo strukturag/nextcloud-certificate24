@@ -3,7 +3,8 @@ FROM node:16 AS builder
 WORKDIR /workdir
 COPY . .
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive \
+	COMPOSER_ALLOW_SUPERUSER=1
 
 RUN apt-get update && apt-get install -y \
 			apt-transport-https \
