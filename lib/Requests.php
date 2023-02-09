@@ -137,7 +137,8 @@ class Requests {
 		$query = $this->db->getQueryBuilder();
 		$query->select('type', 'value', 'esig_signature_id', 'signed')
 			->from('esig_recipients')
-			->where($query->expr()->eq('request_id', $query->createNamedParameter($row['id'])));
+			->where($query->expr()->eq('request_id', $query->createNamedParameter($row['id'])))
+			->orderBy('id');
 		$result = $query->executeQuery();
 
 		$recipients = [];
