@@ -128,9 +128,11 @@
 				<div class="buttons">
 					<NcButton v-if="fileModel && fileModel.canDownload()"
 						type="secondary"
+						:disabled="selectModalLoading"
 						@click="openSelectModal">
 						<template #icon>
-							<FileSign />
+							<NcLoadingIcon v-show="selectModalLoading" :size="24" />
+							<FileSign v-show="!selectModalLoading" />
 						</template>
 						{{ t('esig', 'Select signature position') }}
 					</NcButton>
@@ -138,7 +140,8 @@
 						:disabled="shareLoading || !recipients.length"
 						@click="requestSignature">
 						<template #icon>
-							<FileSign />
+							<NcLoadingIcon v-show="shareLoading" :size="24" />
+							<FileSign v-show="!shareLoading" />
 						</template>
 						{{ t('esig', 'Request signature') }}
 					</NcButton>
@@ -165,6 +168,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import NcListItemIcon from '@nextcloud/vue/dist/Components/NcListItemIcon.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import debounce from 'debounce'
 import { loadState } from '@nextcloud/initial-state'
 import { showSuccess, showError } from '@nextcloud/dialogs'
@@ -190,6 +194,7 @@ export default {
 		NcModal,
 		NcTextField,
 		NcListItemIcon,
+		NcLoadingIcon,
 		SelectorDialogModal,
 		SearchResults,
 	},
@@ -211,6 +216,7 @@ export default {
 			emailResults: {},
 			shareLoading: false,
 			signaturePositions: [],
+			selectModalLoading: false,
 			settings: {},
 			signed_save_mode: null,
 			prevMetadata: {},
@@ -512,6 +518,7 @@ export default {
 		},
 
 		openSelectModal() {
+			this.selectModalLoading = true
 			getVinegarApi()
 				.then(() => {
 					this.showSelectModal = true
@@ -529,6 +536,9 @@ export default {
 						console.error('Error loading esig API', error)
 						showError(t('esig', 'Error loading serverside API, please try again later.'))
 					}
+				})
+				.finally(() => {
+					this.selectModalLoading = false
 				})
 		},
 
