@@ -28,6 +28,7 @@ class Capabilities implements IPublicCapability {
 		$capabilities = [
 			'features' => [
 				'multiple-recipients',
+				'sign-anonymous',
 			],
 			'config' => [
 				'requests' => [

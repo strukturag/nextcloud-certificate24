@@ -56,17 +56,18 @@ class ResendMails extends TimedJob {
 				'type' => $entry['recipient_type'],
 				'value' => $entry['recipient'],
 			];
-			$this->mails->sendRequestMail($entry['id'], $user, $file, $recipient);
+			$this->mails->sendRequestMail($entry['id'], $user, $file, $recipient, $entry['esig_server']);
 		}
 
 		foreach ($pending['multi'] as $entry) {
-			$user = $this->userManager->get($entry['request']['user_id']);
+			$request = $entry['request'];
+			$user = $this->userManager->get($request['user_id']);
 			if (!$user) {
 				// Should not happen, requests will get deleted if the owner is deleted.
 				continue;
 			}
 
-			$files = $this->root->getUserFolder($user->getUID())->getById($entry['request']['file_id']);
+			$files = $this->root->getUserFolder($user->getUID())->getById($request['file_id']);
 			if (empty($files)) {
 				// Should not happen, requests will get deleted if the associated file is deleted.
 				continue;
@@ -77,7 +78,7 @@ class ResendMails extends TimedJob {
 				'type' => $entry['type'],
 				'value' => $entry['value'],
 			];
-			$this->mails->sendRequestMail($entry['request_id'], $user, $file, $recipient);
+			$this->mails->sendRequestMail($entry['request_id'], $user, $file, $recipient, $request['esig_server']);
 		}
 	}
 }

@@ -98,10 +98,9 @@ class Listener implements IEventListener {
 
 		$notification = $this->notificationManager->createNotification();
 		$shouldFlush = $this->notificationManager->defer();
-		$dateTime = $this->timeFactory->getDateTime();
 		try {
 			$notification->setApp(Application::APP_ID)
-				->setDateTime($dateTime)
+				->setDateTime($event->getSigned())
 				->setUser($request['user_id'])
 				->setObject('request', $event->getRequestId())
 				->setSubject('sign', [

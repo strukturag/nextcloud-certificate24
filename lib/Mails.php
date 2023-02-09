@@ -59,14 +59,26 @@ class Mails {
 		return trim($result);
 	}
 
-	public function sendRequestMail(string $id, IUser $user, File $file, array $recipient) {
+	public function sendRequestMail(string $id, IUser $user, File $file, array $recipient, string $server) {
+		$signature_id = $recipient['esig_signature_id'] ?? null;
+		if (!$signature_id) {
+			$this->logger->error('No signature id found for request ' . $id . ' to send mail to ' . $recipient['value'], [
+				'app' => Application::APP_ID,
+			]);
+			return;
+		}
+
+		if ($server && $server[strlen($server)-1] != '/') {
+			$server = $server . '/';
+		}
+
 		$lang = $this->l10n->getLanguageCode();
 		$templateOptions = [
 			'file' => $file,
 			'user' => $user,
 			'recipient' => $recipient['value'],
 			'request_id' => $id,
-			'url' => $this->urlGenerator->linkToRouteAbsolute('esig.Page.sign', ['id' => $id]),
+			'url' => $server . 's/' . urlencode($signature_id),
 		];
 		$body = $this->renderTemplate('email.share.body', $templateOptions, $lang);
 		$subject = $this->renderTemplate('email.share.subject', $templateOptions, $lang);
@@ -80,14 +92,14 @@ class Mails {
 		$message->setPlainBody($body);
 		$failed_recipients = $this->mailer->send($message);
 		if (!empty($failed_recipients)) {
-			$this->logger->error('Could not send email to ' . $recipient['value'], [
+			$this->logger->error('Could not send email for request ' . $id . ' to ' . $recipient['value'], [
 				'app' => Application::APP_ID,
 			]);
 			return;
 		}
 
 		$this->requests->markEmailSent($id, $recipient['value']);
-		$this->logger->info('Sent email to ' . $recipient['value'], [
+		$this->logger->info('Sent email for request ' . $id . ' to ' . $recipient['value'], [
 			'app' => Application::APP_ID,
 		]);
 	}

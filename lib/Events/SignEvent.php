@@ -13,14 +13,16 @@ class SignEvent extends Event {
 	private array $request;
 	private string $type;
 	private string $value;
+	private \DateTime $signed;
 	private ?IUser $user;
 
-	public function __construct(string $request_id, array $request, string $type, string $value, ?IUser $user) {
+	public function __construct(string $request_id, array $request, string $type, string $value, \DateTime $signed, ?IUser $user) {
 		parent::__construct();
 		$this->request_id = $request_id;
 		$this->request = $request;
 		$this->type = $type;
 		$this->value = $value;
+		$this->signed = $signed;
 		$this->user = $user;
 	}
 
@@ -50,6 +52,13 @@ class SignEvent extends Event {
 	 */
 	public function getRecipient(): string {
 		return $this->value;
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getSigned(): \DateTime {
+		return $this->signed;
 	}
 
 	/**
