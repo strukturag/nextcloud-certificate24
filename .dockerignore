@@ -4,7 +4,9 @@ docker/Dockerfile
 
 *.code-workspace
 *.md
+*.patch
 *.phar
+*.txt
 .*y*ml
 *.y*ml
 
