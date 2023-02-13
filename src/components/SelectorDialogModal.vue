@@ -35,7 +35,7 @@ import Check from 'vue-material-design-icons/Check.vue'
 
 import externalComponent from '../services/externalComponent.js'
 
-const PdfSelector = () => externalComponent('PdfSelector')
+const PdfSelector = externalComponent('PdfSelector')
 
 export default {
 	name: 'SelectorDialogModal',

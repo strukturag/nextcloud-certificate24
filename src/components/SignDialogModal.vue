@@ -48,7 +48,7 @@ import { signRequest, getSourceUrl } from '../services/apiservice.js'
 
 import externalComponent from '../services/externalComponent.js'
 
-const PdfSigner = () => externalComponent('PdfSigner')
+const PdfSigner = externalComponent('PdfSigner')
 
 export default {
 	name: 'SignDialogModal',
