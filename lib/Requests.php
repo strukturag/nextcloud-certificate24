@@ -388,6 +388,14 @@ class Requests {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('esig_requests')
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
+		if (!$query->executeStatement()) {
+			return;
+		}
+
+		// Explicitly delete recipients for databases without foreign keys.
+		$query = $this->db->getQueryBuilder();
+		$query->delete('esig_recipients')
+			->where($query->expr()->eq('request_id', $query->createNamedParameter($id)));
 		$query->executeStatement();
 	}
 
