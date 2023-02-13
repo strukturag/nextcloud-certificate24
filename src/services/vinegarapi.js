@@ -14,6 +14,7 @@ const features = [
 function checkServerFeatures(features) {
 	return features
 		&& features.indexOf('sign-anonymous') !== -1
+		&& features.indexOf('signature-drawer') !== -1
 }
 
 const getVinegarApi = async () => {

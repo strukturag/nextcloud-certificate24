@@ -42,6 +42,14 @@ class PersonalSettings implements ISettings {
 		}
 		$this->initialState->provideInitialState('settings', $settings);
 
+		$server = $this->config->getServer();
+		if (!empty($server)) {
+			$this->initialState->provideInitialState(
+				'vinegar_server',
+				$server
+			);
+		}
+
 		Util::addScript('esig', 'esig-personal-settings');
 
 		return new TemplateResponse('esig', 'settings/personal-settings', [], '');
