@@ -484,9 +484,16 @@ export default {
 			try {
 				let metadata
 				if (this.signaturePositions && this.signaturePositions.length) {
+					let signaturePositions = this.signaturePositions
+					if (recipients.length === 1) {
+						signaturePositions = signaturePositions.map((e) => {
+							delete e.recipient_idx
+							return e
+						})
+					}
 					metadata = {
 						version: '1.0',
-						signature_fields: this.signaturePositions,
+						signature_fields: signaturePositions,
 					}
 				}
 				const options = {
