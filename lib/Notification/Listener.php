@@ -34,12 +34,14 @@ class Listener implements IEventListener {
 
 	public static function register(IEventDispatcher $dispatcher): void {
 		$listener = static function (ShareEvent $event): void {
+			/** @var Listener $listener */
 			$listener = Server::get(self::class);
 			$listener->onShareEvent($event);
 		};
 		$dispatcher->addListener(ShareEvent::class, $listener);
 
 		$listener = static function (SignEvent $event): void {
+			/** @var Listener $listener */
 			$listener = Server::get(self::class);
 			$listener->onSignEvent($event);
 		};
