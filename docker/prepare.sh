@@ -31,6 +31,12 @@ fi
 if [ -n "$NEXTCLOUD_ADMIN_EMAIL" ]; then
     run_as 'php /var/www/html/occ user:setting "${NEXTCLOUD_ADMIN_USER}" settings email "${NEXTCLOUD_ADMIN_EMAIL}"' || true
 fi
+if [ -n "$OVERWRITEHOST" ]; then
+    run_as 'php /var/www/html/occ config:system:set overwritehost --value "${OVERWRITEHOST}"'
+fi
+if [ -n "$OVERWRITECLIURL" ]; then
+    run_as 'php /var/www/html/occ config:system:set overwrite.cli.url --value "${OVERWRITECLIURL}"'
+fi
 
 if [ -n "$ESIG_ACCOUNT_ID" ] && [ -n "$ESIG_ACCOUNT_SECRET" ]; then
     run_as 'php /var/www/html/occ config:app:set esig account --value "{\"id\": \"${ESIG_ACCOUNT_ID}\",\"secret\": \"${ESIG_ACCOUNT_SECRET}\"}"'
