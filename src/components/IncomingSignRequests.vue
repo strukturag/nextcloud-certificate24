@@ -40,7 +40,7 @@
 							{{ request.created }}
 						</td>
 						<td>
-							{{ request.signed }}
+							{{ request.own_signed }}
 						</td>
 						<td>
 							<NcAvatar :user="request.user_id"
@@ -51,7 +51,7 @@
 						</td>
 						<td>
 							<div class="grid">
-								<NcButton v-if="!request.signed"
+								<NcButton v-if="!request.own_signed"
 									:disabled="request.loading"
 									type="primary"
 									@click="signRequest(request)">
@@ -69,6 +69,9 @@
 										<Download :size="20" />
 									</template>
 								</NcButton>
+								<div v-if="!request.signed && request.own_signed">
+									{{ t('esig', 'Waiting for other signatures.') }}
+								</div>
 								<SignDialogModal v-if="signDialog === request"
 									:request="request"
 									@close="closeDialog" />

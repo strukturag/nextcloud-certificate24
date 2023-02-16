@@ -362,8 +362,10 @@ class ApiController extends OCSController {
 				'metadata' => $request['metadata'],
 			];
 			if ($include_signed) {
+				$allSigned = true;
 				foreach ($request['recipients'] as $recipient) {
 					if (!isset($recipient['signed'])) {
+						$allSigned = false;
 						continue;
 					}
 
@@ -374,6 +376,10 @@ class ApiController extends OCSController {
 					if (!isset($r['signed_url'])) {
 						$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 					}
+				}
+				if (!$allSigned) {
+					unset($r['signed']);
+					unset($r['signed_url']);
 				}
 			}
 			$response[] = $r;
@@ -466,16 +472,28 @@ class ApiController extends OCSController {
 				'metadata' => $metadata,
 			];
 			if ($include_signed) {
+				$allSigned = true;
 				foreach ($request['recipients'] as $recipient) {
-					if ($recipient['type'] !== 'user' || $recipient['value'] !== $user->getUID()) {
+					if (!$recipient['signed']) {
+						$allSigned = false;
 						continue;
 					}
 
-					if ($recipient['signed']) {
-						$r['signed'] = $this->formatDateTime($recipient['signed']);
+					$signed = $this->formatDateTime($recipient['signed']);
+					if (!isset($r['signed']) || $signed > $r['signed']) {
+						$r['signed'] = $signed;
+					}
+					if (!isset($r['signed_url'])) {
 						$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 					}
-					break;
+
+					if ($recipient['type'] === 'user' && $recipient['value'] === $user->getUID()) {
+						$r['own_signed'] = $signed;
+					}
+				}
+				if (!$allSigned) {
+					unset($r['signed']);
+					unset($r['signed_url']);
 				}
 			}
 			$response[] = $r;
@@ -524,8 +542,10 @@ class ApiController extends OCSController {
 			'recipients' => $this->formatRecipients($request['recipients']),
 			'metadata' => $request['metadata'],
 		];
+		$allSigned = true;
 		foreach ($request['recipients'] as $recipient) {
 			if (!isset($recipient['signed'])) {
+				$allSigned = false;
 				continue;
 			}
 
@@ -534,8 +554,12 @@ class ApiController extends OCSController {
 				$response['signed'] = $signed;
 			}
 			if (!isset($response['signed_url'])) {
-				$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
+				$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 			}
+		}
+		if (!$allSigned) {
+			unset($response['signed']);
+			unset($response['signed_url']);
 		}
 		return new DataResponse($response);
 	}
@@ -595,16 +619,28 @@ class ApiController extends OCSController {
 			'download_url' => $this->client->getSourceUrl($request['esig_file_id'], $account, $request['esig_server']),
 			'metadata' => $metadata,
 		];
+		$allSigned = true;
 		foreach ($request['recipients'] as $recipient) {
-			if ($recipient['type'] !== 'user' || $recipient['value'] !== $user->getUID()) {
+			if (!$recipient['signed']) {
+				$allSigned = false;
 				continue;
 			}
 
-			if ($recipient['signed']) {
-				$response['signed'] = $this->formatDateTime($recipient['signed']);
+			$signed = $this->formatDateTime($recipient['signed']);
+			if (!isset($response['signed']) || $signed > $response['signed']) {
+				$response['signed'] = $signed;
+			}
+			if (!isset($response['signed_url'])) {
 				$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 			}
-			break;
+
+			if ($recipient['type'] === 'user' && $recipient['value'] === $user->getUID()) {
+				$response['own_signed'] = $signed;
+			}
+		}
+		if (!$allSigned) {
+			unset($response['signed']);
+			unset($response['signed_url']);
 		}
 		return new DataResponse($response);
 	}

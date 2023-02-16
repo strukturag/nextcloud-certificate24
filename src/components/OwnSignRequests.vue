@@ -39,7 +39,7 @@
 							{{ request.created }}
 						</td>
 						<td>
-							{{ request.signed }}
+							{{ getLastSignature(request) }}
 						</td>
 						<td>
 							<div v-for="recipient in request.recipients" :key="recipient.type + '-' + recipient.value">
@@ -106,6 +106,23 @@ export default {
 	},
 
 	methods: {
+		getLastSignature(request) {
+			if (request.signed) {
+				return request.signed
+			}
+			let result
+			request.recipients.forEach((recipient) => {
+				if (!recipient.signed) {
+					return
+				}
+
+				if (!result || recipient.signed > result) {
+					result = recipient.signed
+				}
+			})
+			return result
+		},
+
 		async fetchRequests() {
 			this.loading = true
 			let response
