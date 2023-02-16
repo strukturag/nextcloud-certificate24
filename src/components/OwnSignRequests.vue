@@ -63,6 +63,14 @@
 										<Download :size="20" />
 									</template>
 								</NcButton>
+								<NcButton v-if="request.details_url"
+									type="primary"
+									@click="openWindow(request.details_url)">
+									{{ t('esig', 'Show details') }}
+									<template #icon>
+										<OpenInNew :size="20" />
+									</template>
+								</NcButton>
 							</div>
 						</td>
 					</tr>
@@ -79,6 +87,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Download from 'vue-material-design-icons/Download.vue'
+import OpenInNew from 'vue-material-design-icons/OpenInNew.vue'
 
 import Recipient from './Recipient.vue'
 import { getRequests, deleteRequest, getSignedUrl } from '../services/apiservice.js'
@@ -91,6 +100,7 @@ export default {
 		NcLoadingIcon,
 		Delete,
 		Download,
+		OpenInNew,
 		Recipient,
 	},
 
@@ -167,15 +177,18 @@ export default {
 		getLinkName(request) {
 			return 'outgoing-' + request.request_id
 		},
+
+		openWindow(url) {
+			window.open(url, '_blank')
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
 .grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr;
-	grid-template-rows: repeat(auto-fill, auto);
+	display: flex;
+	column-gap: 12px;
 	position: relative;
 	margin: 12px 0;
 }

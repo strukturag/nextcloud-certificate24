@@ -380,6 +380,8 @@ class ApiController extends OCSController {
 				if (!$allSigned) {
 					unset($r['signed']);
 					unset($r['signed_url']);
+				} else if ($request['esig_signature_result_id']) {
+					$r['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
 				}
 			}
 			$response[] = $r;
@@ -494,6 +496,8 @@ class ApiController extends OCSController {
 				if (!$allSigned) {
 					unset($r['signed']);
 					unset($r['signed_url']);
+				} else if ($request['esig_signature_result_id']) {
+					$r['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
 				}
 			}
 			$response[] = $r;
@@ -560,6 +564,8 @@ class ApiController extends OCSController {
 		if (!$allSigned) {
 			unset($response['signed']);
 			unset($response['signed_url']);
+		} else if ($request['esig_signature_result_id']) {
+			$response['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
 		}
 		return new DataResponse($response);
 	}
@@ -641,6 +647,8 @@ class ApiController extends OCSController {
 		if (!$allSigned) {
 			unset($response['signed']);
 			unset($response['signed_url']);
+		} else if ($request['esig_signature_result_id']) {
+			$response['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
 		}
 		return new DataResponse($response);
 	}

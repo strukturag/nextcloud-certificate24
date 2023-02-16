@@ -158,4 +158,9 @@ class Client {
 		return $body;
 	}
 
+	public function getDetailsUrl(string $id, string $server): string {
+		$url = $server . 'details/' . rawurlencode($id);
+		return $url;
+	}
+
 }

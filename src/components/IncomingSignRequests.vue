@@ -69,6 +69,14 @@
 										<Download :size="20" />
 									</template>
 								</NcButton>
+								<NcButton v-if="request.details_url"
+									type="primary"
+									@click="openWindow(request.details_url)">
+									{{ t('esig', 'Show details') }}
+									<template #icon>
+										<OpenInNew :size="20" />
+									</template>
+								</NcButton>
 								<div v-if="!request.signed && request.own_signed">
 									{{ t('esig', 'Waiting for other signatures.') }}
 								</div>
@@ -90,6 +98,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import Download from 'vue-material-design-icons/Download.vue'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
+import OpenInNew from 'vue-material-design-icons/OpenInNew.vue'
 import { showError } from '@nextcloud/dialogs'
 
 import SignDialogModal from './SignDialogModal.vue'
@@ -105,6 +114,7 @@ export default {
 		NcLoadingIcon,
 		Download,
 		FileSign,
+		OpenInNew,
 		SignDialogModal,
 	},
 
@@ -172,6 +182,19 @@ export default {
 		closeDialog() {
 			this.signDialog = null
 		},
+
+		openWindow(url) {
+			window.open(url, '_blank')
+		},
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.grid {
+	display: flex;
+	column-gap: 12px;
+	position: relative;
+	margin: 12px 0;
+}
+</style>
