@@ -39,8 +39,6 @@ function str_to_stream(string $string) {
 
 class ApiController extends OCSController {
 
-	const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
-
 	const PDF_MIME_TYPES = [
 		'application/pdf',
 	];
@@ -96,42 +94,12 @@ class ApiController extends OCSController {
 		$this->manager = $manager;
 	}
 
-	private function parseDateTime($s) {
-		if (!$s) {
-			return null;
-		}
-		if ($s[strlen($s) - 1] === 'Z') {
-			$s = substr($s, 0, strlen($s) - 1) . '+00:00';
-		}
-		if ($s[strlen($s) - 3] !== ':') {
-			$s = $s . ':00';
-		}
-		if ($s[10] === ' ') {
-			$s[10] = 'T';
-		}
-		if (strlen($s) === 19) {
-			// SQLite backend stores without timezone, e.g. "2022-10-12 06:54:54".
-			$s .= '+00:00';
-		}
-		$dt = \DateTime::createFromFormat(\DateTime::ISO8601, $s);
-		if (!$dt) {
-			$dt = \DateTime::createFromFormat(self::ISO8601_EXTENDED, $s);
-		}
-		if (!$dt) {
-			$this->logger->error('Could not convert ' . $s . ' to datetime', [
-				'app' => Application::APP_ID,
-			]);
-			$dt = null;
-		}
-		return $dt;
-	}
-
 	private function formatDateTime($dt) {
 		if (!$dt) {
 			return null;
 		}
 		if (is_string($dt)) {
-			$dt = $this->parseDateTime($dt);
+			$dt = $this->requests->parseDateTime($dt);
 			if (!$dt) {
 				return null;
 			}
@@ -865,7 +833,7 @@ class ApiController extends OCSController {
 
 		$signed = $data['signed'] ?? null;
 		if (is_string($signed)) {
-			$signed = $this->parseDateTime($signed);
+			$signed = $this->requests->parseDateTime($signed);
 		}
 		if (!$signed) {
 			$signed = new \DateTime();
@@ -876,7 +844,9 @@ class ApiController extends OCSController {
 		$event = new SignEvent($id, $row, $type, $value, $signed, $user, $isLast);
 		$this->dispatcher->dispatch(SignEvent::class, $event);
 
-		$this->manager->saveSignedResult($row, $type, $value, $signed, $user, $account);
+		if ($isLast) {
+			$this->manager->saveSignedResult($row, $signed, $user, $account);
+		}
 
 		return new DataResponse([
 			'request_id' => $id,

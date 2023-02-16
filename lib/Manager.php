@@ -20,8 +20,6 @@ use OCP\IUserManager;
 
 class Manager {
 
-	const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
-
 	private ILogger $logger;
 	private IL10N $l10n;
 	private IUserManager $userManager;
@@ -94,7 +92,7 @@ class Manager {
 		}
 	}
 
-	private function storeSignedResult(?IUser $user, array $row, string $type, string $value, \DateTime $signed, array $account) {
+	private function storeSignedResult(?IUser $user, array $row, \DateTime $signed, array $account) {
 		$owner = $this->userManager->get($row['user_id']);
 		if (!$owner) {
 			// Should not happen, owned requests are deleted when users are.
@@ -110,28 +108,35 @@ class Manager {
 		$file = $files[0];
 		$folder = $file->getParent();
 
-		switch ($type) {
+		switch ($row['recipient_type']) {
 			case 'user':
-				$signerName = $user->getDisplayName();
+				$signerName = $user ? $user->getDisplayName() : $row['recipient'];
 				break;
 			case 'email':
-				$signerName = $value;
+				$signerName = $row['recipient'];
 				break;
 		}
 
 		$info = pathinfo($row['filename']);
-		$filename = $this->l10n->t('%1$s signed by %2$s on %3$s', [
-			$info['filename'],
-			$signerName,
-			$signed->format(self::ISO8601_EXTENDED),
-		]) . ($info['extension'] ? ('.' . $info['extension']) : '');
+		if (count($row['recipients']) === 1) {
+			$filename = $this->l10n->t('%1$s signed by %2$s on %3$s', [
+				$info['filename'],
+				$signerName,
+				$signed->format(Requests::ISO8601_EXTENDED),
+			]) . ($info['extension'] ? ('.' . $info['extension']) : '');
+		} else {
+			$filename = $this->l10n->t('%1$s signed on %2$s', [
+				$info['filename'],
+				$signed->format(Requests::ISO8601_EXTENDED),
+			]) . ($info['extension'] ? ('.' . $info['extension']) : '');
+		}
 
 		$data = $this->client->downloadSignedFile($row['esig_file_id'], $account, $row['esig_server']);
 		$created = $folder->newFile($filename, $data);
 		return $created;
 	}
 
-	private function replaceSignedResult(?IUser $user, array $row, string $type, string $value, \DateTime $signed, array $account) {
+	private function replaceSignedResult(?IUser $user, array $row, \DateTime $signed, array $account) {
 		$owner = $this->userManager->get($row['user_id']);
 		if (!$owner) {
 			// Should not happen, owned requests are deleted when users are.
@@ -152,7 +157,7 @@ class Manager {
 		return $file;
 	}
 
-	public function saveSignedResult(array $request, string $type, string $value, \DateTime $signed, ?IUser $user, array $account) {
+	public function saveSignedResult(array $request, \DateTime $signed, ?IUser $user, array $account) {
 		$signed_save_mode = $request['signed_save_mode'];
 		if (empty($signed_save_mode)) {
 			$signed_save_mode = $this->config->getSignedSaveMode();
@@ -161,22 +166,22 @@ class Manager {
 		try {
 			switch ($signed_save_mode) {
 				case Requests::MODE_SIGNED_NEW:
-					$this->storeSignedResult($user, $request, $type, $value, $signed, $account);
+					$this->storeSignedResult($user, $request, $signed, $account);
 					break;
 				case Requests::MODE_SIGNED_REPLACE:
-					$this->replaceSignedResult($user, $request, $type, $value, $signed, $account);
+					$this->replaceSignedResult($user, $request, $signed, $account);
 					break;
 				case Requests::MODE_SIGNED_NONE:
 					break;
 			}
 
-			$this->requests->markRequestSavedById($request['id'], $type, $value);
-			$this->logger->info('Processed signed result of ' . $type . ' ' . $value . ' for request ' . $request['id'], [
+			$this->requests->markRequestSavedById($request['id']);
+			$this->logger->info('Processed signed result of request ' . $request['id'], [
 				'app' => Application::APP_ID,
 			]);
 		} catch (\Exception $e) {
 			$this->logger->logException($e, [
-				'message' => 'Error processing signed result of ' . $type . ' ' . $value . ' for request ' . $request['id'],
+				'message' => 'Error processing signed result of request ' . $request['id'],
 				'app' => Application::APP_ID,
 			]);
 		}

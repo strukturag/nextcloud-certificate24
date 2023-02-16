@@ -16,8 +16,11 @@ use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
+use Throwable;
 
 class Requests {
+
+	const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
 
 	// Store signed result as new file next to the original file.
 	public const MODE_SIGNED_NEW = 'new';
@@ -42,6 +45,36 @@ class Requests {
 		$this->db = $db;
 		$this->dispatcher = $dispatcher;
 		$this->config = $config;
+	}
+
+	public function parseDateTime($s) {
+		if (!$s) {
+			return null;
+		}
+		if ($s[strlen($s) - 1] === 'Z') {
+			$s = substr($s, 0, strlen($s) - 1) . '+00:00';
+		}
+		if ($s[strlen($s) - 3] !== ':') {
+			$s = $s . ':00';
+		}
+		if ($s[10] === ' ') {
+			$s[10] = 'T';
+		}
+		if (strlen($s) === 19) {
+			// SQLite backend stores without timezone, e.g. "2022-10-12 06:54:54".
+			$s .= '+00:00';
+		}
+		$dt = \DateTime::createFromFormat(\DateTime::ISO8601, $s);
+		if (!$dt) {
+			$dt = \DateTime::createFromFormat(self::ISO8601_EXTENDED, $s);
+		}
+		if (!$dt) {
+			$this->logger->error('Could not convert ' . $s . ' to datetime', [
+				'app' => Application::APP_ID,
+			]);
+			$dt = null;
+		}
+		return $dt;
 	}
 
 	private function newRandomId(int $length): string {
@@ -333,56 +366,51 @@ class Requests {
 	}
 
 	public function markRequestSignedById(string $id, string $type, string $value, \DateTime $now): bool {
-		$query = $this->db->getQueryBuilder();
-		$query->update('esig_requests')
-			->set('signed', $query->createNamedParameter($now, 'datetimetz'))
-			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
-			->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter($type)))
-			->andWhere($query->expr()->eq('recipient', $query->createNamedParameter($value)));
-		if ($query->executeStatement() === 1) {
-			// Single recipient for this request.
-			return true;
+		$this->db->beginTransaction();
+		try {
+			$query = $this->db->getQueryBuilder();
+			$query->update('esig_requests')
+				->set('signed', $query->createNamedParameter($now, 'datetimetz'))
+				->where($query->expr()->eq('id', $query->createNamedParameter($id)))
+				->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter($type)))
+				->andWhere($query->expr()->eq('recipient', $query->createNamedParameter($value)));
+			if ($query->executeStatement() === 1) {
+				// Single recipient for this request.
+				$this->db->commit();
+				return true;
+			}
+
+			$query = $this->db->getQueryBuilder();
+			$query->update('esig_recipients')
+				->set('signed', $query->createNamedParameter($now, 'datetimetz'))
+				->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
+				->andWhere($query->expr()->eq('type', $query->createNamedParameter($type)))
+				->andWhere($query->expr()->eq('value', $query->createNamedParameter($value)));
+			$query->executeStatement();
+
+			$query = $this->db->getQueryBuilder();
+			$query->selectAlias($query->func()->count('1'), 'count')
+				->from('esig_recipients')
+				->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
+				->andWhere($query->expr()->isNull('signed'));
+			$result = $query->executeQuery();
+			$row = $result->fetch();
+			$result->closeCursor();
+			$this->db->commit();
+
+			return ((int) $row['count']) === 0;
+		} catch (Throwable $e) {
+			$this->db->rollBack();
+			throw $e;
 		}
-
-		$query = $this->db->getQueryBuilder();
-		$query->update('esig_recipients')
-			->set('signed', $query->createNamedParameter($now, 'datetimetz'))
-			->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
-			->andWhere($query->expr()->eq('type', $query->createNamedParameter($type)))
-			->andWhere($query->expr()->eq('value', $query->createNamedParameter($value)));
-		$query->executeStatement();
-
-		$query = $this->db->getQueryBuilder();
-		$query->selectAlias($query->func()->count('1'), 'count')
-			->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
-			->andWhere($query->expr()->isNull('signed'));
-		$result = $query->executeQuery();
-		$row = $result->fetch();
-		$result->closeCursor();
-		return $row['count'] === 0;
 	}
 
-	public function markRequestSavedById(string $id, string $type, string $value) {
+	public function markRequestSavedById(string $id) {
 		$query = $this->db->getQueryBuilder();
 		$query->update('esig_requests')
 			->set('saved', $query->createFunction('now()'))
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
-			->andWhere($query->expr()->isNull('saved'))
-			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
-			->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter($type)))
-			->andWhere($query->expr()->eq('recipient', $query->createNamedParameter($value)));
-		if ($query->executeStatement() === 1) {
-			// Single recipient for this request.
-			return;
-		}
-
-		$query = $this->db->getQueryBuilder();
-		$query->update('esig_recipients')
-			->set('saved', $query->createFunction('now()'))
-			->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
-			->andWhere($query->expr()->isNull('saved'))
-			->andWhere($query->expr()->eq('type', $query->createNamedParameter($type)))
-			->andWhere($query->expr()->eq('value', $query->createNamedParameter($value)));
+			->andWhere($query->expr()->isNull('saved'));
 		$query->executeStatement();
 	}
 
@@ -527,37 +555,43 @@ class Requests {
 		$result = $query->executeQuery();
 
 		$pending = [];
-		$recipients = [];
 		while ($row = $result->fetch()) {
 			$row['recipients'] = $this->getRecipients($row);
-			$recipients[] = $row;
+			$row['last_signed'] = $row['signed'];
+			$pending[] = $row;
 		}
 		$result->closeCursor();
-		$pending['single'] = $recipients;
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
-			->from('esig_recipients')
-			->where($query->expr()->isNotNull('signed'))
-			->andWhere($query->expr()->isNull('saved'));
+		$query->select('r.*')
+			->from('esig_requests', 'r')
+			->where($query->expr()->isNull('r.recipient'))
+			->andWhere($query->expr()->isNull('r.saved'))
+			->andWhere('not exists (select * from oc_esig_recipients p where r.id = p.request_id and p.signed is null)');
 		$result = $query->executeQuery();
-		$recipients = [];
-		$requests = [];
 		while ($row = $result->fetch()) {
-			if (!isset($requests[$row['request_id']])) {
-				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
-				if (!$requests[$row['request_id']]) {
-					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending download of ' . $row['type'] . ' ' . $row['value'], [
-						'app' => Application::APP_ID,
-					]);
+			$row['recipients'] = $this->getRecipients($row);
+			$last_signed = null;
+			foreach ($row['recipients'] as $recipient) {
+				$signed = $recipient['signed'] ?? null;
+				if (is_string($signed)) {
+					$signed = $this->parseDateTime($signed);
+				}
+				if (!$signed) {
 					continue;
 				}
+				if (!$last_signed || $last_signed < $signed) {
+					$last_signed = $signed;
+				}
 			}
-			$row['request'] = $requests[$row['request_id']];
-			$recipients[] = $row;
+			if (!$last_signed) {
+				// Should not happen, based on the query all recipients should have signed the request.
+				continue;
+			}
+			$row['last_signed'] = $last_signed;
+			$pending[] = $row;
 		}
 		$result->closeCursor();
-		$pending['multi'] = $recipients;
 		return $pending;
 	}
 

@@ -20,8 +20,6 @@ use OCP\ILogger;
 
 class FetchSigned extends TimedJob {
 
-	const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
-
 	private ILogger $logger;
 	private IEventDispatcher $dispatcher;
 	private Config $config;
@@ -48,36 +46,6 @@ class FetchSigned extends TimedJob {
 		$this->requests = $requests;
 		$this->client = $client;
 		$this->manager = $manager;
-	}
-
-	private function parseDateTime($s) {
-		if (!$s) {
-			return null;
-		}
-		if ($s[strlen($s) - 1] === 'Z') {
-			$s = substr($s, 0, strlen($s) - 1) . '+00:00';
-		}
-		if ($s[strlen($s) - 3] !== ':') {
-			$s = $s . ':00';
-		}
-		if ($s[10] === ' ') {
-			$s[10] = 'T';
-		}
-		if (strlen($s) === 19) {
-			// SQLite backend stores without timezone, e.g. "2022-10-12 06:54:54".
-			$s .= '+00:00';
-		}
-		$dt = \DateTime::createFromFormat(\DateTime::ISO8601, $s);
-		if (!$dt) {
-			$dt = \DateTime::createFromFormat(self::ISO8601_EXTENDED, $s);
-		}
-		if (!$dt) {
-			$this->logger->error('Could not convert ' . $s . ' to datetime', [
-				'app' => Application::APP_ID,
-			]);
-			$dt = null;
-		}
-		return $dt;
 	}
 
 	protected function getSignatureDetails(string $id, string $file_id, array $account, string $server, string $signature_id, string $type, string $value): ?array {
@@ -153,17 +121,19 @@ class FetchSigned extends TimedJob {
 				continue;
 			}
 
-			$signed = $this->parseDateTime($details['signed'] ?? null);
+			$signed = $this->requests->parseDateTime($details['signed'] ?? null);
 			if ($signed) {
 				$isLast = $this->requests->markRequestSignedById($request['id'], $request['recipient_type'], $request['recipient'], $signed);
-				$this->logger->info('Request ' . $request['id'] . ' was signed by ' . $request['recipient_type'] . ' ' . $request['recipient'] . ' on ' . $signed->format(self::ISO8601_EXTENDED), [
+				$this->logger->info('Request ' . $request['id'] . ' was signed by ' . $request['recipient_type'] . ' ' . $request['recipient'] . ' on ' . $signed->format(Requests::ISO8601_EXTENDED), [
 					'app' => Application::APP_ID,
 				]);
 
 				$event = new SignEvent($request['id'], $request, $request['recipient_type'], $request['recipient'], $signed, null, $isLast);
 				$this->dispatcher->dispatch(SignEvent::class, $event);
 
-				$this->manager->saveSignedResult($request, $request['recipient_type'], $request['recipient'], $signed, null, $account);
+				if ($isLast) {
+					$this->manager->saveSignedResult($request, $signed, null, $account);
+				}
 			}
 		}
 
@@ -186,17 +156,19 @@ class FetchSigned extends TimedJob {
 				continue;
 			}
 
-			$signed = $this->parseDateTime($details['signed'] ?? null);
+			$signed = $this->requests->parseDateTime($details['signed'] ?? null);
 			if ($signed) {
 				$isLast = $this->requests->markRequestSignedById($request['id'], $entry['type'], $entry['value'], $signed);
-				$this->logger->info('Request ' . $request['id'] . ' was signed by ' . $entry['type'] . ' ' . $entry['value'] . ' on ' . $signed->format(self::ISO8601_EXTENDED), [
+				$this->logger->info('Request ' . $request['id'] . ' was signed by ' . $entry['type'] . ' ' . $entry['value'] . ' on ' . $signed->format(Requests::ISO8601_EXTENDED), [
 					'app' => Application::APP_ID,
 				]);
 
 				$event = new SignEvent($request['id'], $request, $entry['type'], $entry['value'], $signed, null, $isLast);
 				$this->dispatcher->dispatch(SignEvent::class, $event);
 
-				$this->manager->saveSignedResult($request, $entry['type'], $entry['value'], $signed, null, $account);
+				if ($isLast) {
+					$this->manager->saveSignedResult($request, $signed, null, $account);
+				}
 			}
 		}
 	}

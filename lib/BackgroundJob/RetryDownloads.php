@@ -16,8 +16,6 @@ use OCP\IUserManager;
 
 class RetryDownloads extends TimedJob {
 
-	const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
-
 	private ILogger $logger;
 	private IUserManager $userManager;
 	private Config $config;
@@ -43,36 +41,6 @@ class RetryDownloads extends TimedJob {
 		$this->manager = $manager;
 	}
 
-	private function parseDateTime($s) {
-		if (!$s) {
-			return null;
-		}
-		if ($s[strlen($s) - 1] === 'Z') {
-			$s = substr($s, 0, strlen($s) - 1) . '+00:00';
-		}
-		if ($s[strlen($s) - 3] !== ':') {
-			$s = $s . ':00';
-		}
-		if ($s[10] === ' ') {
-			$s[10] = 'T';
-		}
-		if (strlen($s) === 19) {
-			// SQLite backend stores without timezone, e.g. "2022-10-12 06:54:54".
-			$s .= '+00:00';
-		}
-		$dt = \DateTime::createFromFormat(\DateTime::ISO8601, $s);
-		if (!$dt) {
-			$dt = \DateTime::createFromFormat(self::ISO8601_EXTENDED, $s);
-		}
-		if (!$dt) {
-			$this->logger->error('Could not convert ' . $s . ' to datetime', [
-				'app' => Application::APP_ID,
-			]);
-			$dt = null;
-		}
-		return $dt;
-	}
-
 	protected function run($argument): void {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
@@ -80,7 +48,7 @@ class RetryDownloads extends TimedJob {
 		}
 
 		$pending = $this->requests->getPendingDownloads();
-		foreach ($pending['single'] as $request) {
+		foreach ($pending as $request) {
 			if ($account['id'] !== $request['esig_account_id']) {
 				continue;
 			}
@@ -94,33 +62,11 @@ class RetryDownloads extends TimedJob {
 				}
 			}
 
-			$signed = $request['signed'];
+			$signed = $request['last_signed'];
 			if (is_string($signed)) {
-				$signed = $this->parseDateTime($signed);
+				$signed = $this->requests->parseDateTime($signed);
 			}
-			$this->manager->saveSignedResult($request, $request['recipient_type'], $request['recipient'], $signed, $user, $account);
-		}
-
-		foreach ($pending['multi'] as $entry) {
-			$request = $entry['request'];
-			if ($account['id'] !== $request['esig_account_id']) {
-				continue;
-			}
-
-			$user = null;
-			if ($entry['type'] === 'user') {
-				$user = $this->userManager->get($entry['value']);
-				if (!$user) {
-					// Should not happen, requests will get deleted if the recipient is deleted.
-					continue;
-				}
-			}
-
-			$signed = $entry['signed'];
-			if (is_string($signed)) {
-				$signed = $this->parseDateTime($signed);
-			}
-			$this->manager->saveSignedResult($request, $entry['type'], $entry['value'], $signed, $user, $account);
+			$this->manager->saveSignedResult($request, $signed, $user, $account);
 		}
 	}
 }
