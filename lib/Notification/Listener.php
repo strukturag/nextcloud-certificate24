@@ -119,6 +119,30 @@ class Listener implements IEventListener {
 				$this->notificationManager->flush();
 			}
 		}
+
+		if ($event->isLastSignature()) {
+			$notification = $this->notificationManager->createNotification();
+			$shouldFlush = $this->notificationManager->defer();
+			try {
+				$notification->setApp(Application::APP_ID)
+					->setDateTime($event->getSigned())
+					->setUser($request['user_id'])
+					->setObject('request', $event->getRequestId())
+					->setSubject('last_signature', [
+						'request' => $request,
+						'request_id' => $event->getRequestId(),
+						'recipient' => $event->getRecipient(),
+						'recipient_type' => $event->getRecipientType(),
+						'user' => $user ? $user->getUID() : null,
+					]);
+				$this->notificationManager->notify($notification);
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
+				if ($shouldFlush) {
+					$this->notificationManager->flush();
+				}
+			}
+		}
 	}
 
 	public function handle(Event $event): void {

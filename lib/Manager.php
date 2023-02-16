@@ -7,7 +7,11 @@ namespace OCA\Esig;
 use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Client;
 use OCA\Esig\Config;
+use OCA\Esig\Events\SignEvent;
+use OCA\Esig\Mails;
 use OCA\Esig\Requests;
+use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -25,6 +29,7 @@ class Manager {
 	private Client $client;
 	private Config $config;
 	private Requests $requests;
+	private Mails $mails;
 
 	public function __construct(ILogger $logger,
 								IL10N $l10n,
@@ -32,7 +37,8 @@ class Manager {
 								IRootFolder $root,
 								Client $client,
 								Config $config,
-								Requests $requests) {
+								Requests $requests,
+								Mails $mails) {
 		$this->logger = $logger;
 		$this->l10n = $l10n;
 		$this->userManager = $userManager;
@@ -40,6 +46,52 @@ class Manager {
 		$this->client = $client;
 		$this->config = $config;
 		$this->requests = $requests;
+		$this->mails = $mails;
+	}
+
+	public static function register(IEventDispatcher $dispatcher): void {
+		$dispatcher->addServiceListener(SignEvent::class, self::class);
+	}
+
+	public function handle(Event $event): void {
+		if ($event instanceof SignEvent) {
+			if ($event->isLastSignature()) {
+				$this->handleLastSignature($event);
+				return;
+			}
+		}
+	}
+
+	private function handleLastSignature(SignEvent $event) {
+		$request = $event->getRequest();
+		$owner = null;
+		$file = null;
+		foreach ($request['recipients'] as $recipient) {
+			if ($recipient['type'] !== 'email') {
+				// Regular users get notified through Nextcloud.
+				continue;
+			}
+
+			if (!$owner) {
+				$owner = $this->userManager->get($request['user_id']);
+				if (!$owner) {
+					// Should not happen, owned requests are deleted when users are.
+					return;
+				}
+			}
+
+			if (!$file) {
+				$files = $this->root->getUserFolder($owner->getUID())->getById($request['file_id']);
+				if (empty($files)) {
+					// Should not happen, requests are deleted when files are.
+					return;
+				}
+
+				$file = $files[0];
+			}
+
+			$this->mails->sendLastSignatureMail($event->getRequestId(), $request, $owner, $file, $recipient);
+		}
 	}
 
 	private function storeSignedResult(?IUser $user, array $row, string $type, string $value, \DateTime $signed, array $account) {

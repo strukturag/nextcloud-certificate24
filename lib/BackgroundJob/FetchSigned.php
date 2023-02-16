@@ -155,12 +155,12 @@ class FetchSigned extends TimedJob {
 
 			$signed = $this->parseDateTime($details['signed'] ?? null);
 			if ($signed) {
-				$this->requests->markRequestSignedById($request['id'], $request['recipient_type'], $request['recipient'], $signed);
+				$isLast = $this->requests->markRequestSignedById($request['id'], $request['recipient_type'], $request['recipient'], $signed);
 				$this->logger->info('Request ' . $request['id'] . ' was signed by ' . $request['recipient_type'] . ' ' . $request['recipient'] . ' on ' . $signed->format(self::ISO8601_EXTENDED), [
 					'app' => Application::APP_ID,
 				]);
 
-				$event = new SignEvent($request['id'], $request, $request['recipient_type'], $request['recipient'], $signed, null);
+				$event = new SignEvent($request['id'], $request, $request['recipient_type'], $request['recipient'], $signed, null, $isLast);
 				$this->dispatcher->dispatch(SignEvent::class, $event);
 
 				$this->manager->saveSignedResult($request, $request['recipient_type'], $request['recipient'], $signed, null, $account);
@@ -188,12 +188,12 @@ class FetchSigned extends TimedJob {
 
 			$signed = $this->parseDateTime($details['signed'] ?? null);
 			if ($signed) {
-				$this->requests->markRequestSignedById($request['id'], $entry['type'], $entry['value'], $signed);
+				$isLast = $this->requests->markRequestSignedById($request['id'], $entry['type'], $entry['value'], $signed);
 				$this->logger->info('Request ' . $request['id'] . ' was signed by ' . $entry['type'] . ' ' . $entry['value'] . ' on ' . $signed->format(self::ISO8601_EXTENDED), [
 					'app' => Application::APP_ID,
 				]);
 
-				$event = new SignEvent($request['id'], $request, $entry['type'], $entry['value'], $signed, null);
+				$event = new SignEvent($request['id'], $request, $entry['type'], $entry['value'], $signed, null, $isLast);
 				$this->dispatcher->dispatch(SignEvent::class, $event);
 
 				$this->manager->saveSignedResult($request, $entry['type'], $entry['value'], $signed, null, $account);

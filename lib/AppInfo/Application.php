@@ -9,6 +9,7 @@ use OCA\Esig\Capabilities;
 use OCA\Esig\CSPSetter;
 use OCA\Esig\DeleteListener;
 use OCA\Esig\FilesLoader;
+use OCA\Esig\Manager;
 use OCA\Esig\Notification\Listener as NotificationListener;
 use OCA\Esig\Notification\Notifier;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
@@ -57,6 +58,7 @@ class Application extends App implements IBootstrap {
 		ActivityListener::register($dispatcher);
 		NotificationListener::register($dispatcher);
 		DeleteListener::register($dispatcher);
+		Manager::register($dispatcher);
 
 		$manager = $server->getNotificationManager();
 		$manager->registerNotifierService(Notifier::class);

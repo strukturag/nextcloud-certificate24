@@ -311,7 +311,8 @@ class ApiController extends OCSController {
 		}
 
 		$recipients = $data['recipients'] ?? $recipients;
-		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id);
+		$esig_signature_result_id = $data['signature_id'] ?? null;
+		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id, $esig_signature_result_id);
 
 		$this->metadata->storeMetadata($user, $file, $metadata);
 
@@ -870,9 +871,9 @@ class ApiController extends OCSController {
 			$signed = new \DateTime();
 		}
 
-		$this->requests->markRequestSignedById($id, $type, $value, $signed);
+		$isLast = $this->requests->markRequestSignedById($id, $type, $value, $signed);
 
-		$event = new SignEvent($id, $row, $type, $value, $signed, $user);
+		$event = new SignEvent($id, $row, $type, $value, $signed, $user, $isLast);
 		$this->dispatcher->dispatch(SignEvent::class, $event);
 
 		$this->manager->saveSignedResult($row, $type, $value, $signed, $user, $account);

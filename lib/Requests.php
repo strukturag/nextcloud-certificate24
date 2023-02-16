@@ -49,7 +49,7 @@ class Requests {
 		return $this->secureRandom->generate($length, $chars);
 	}
 
-	public function storeRequest(File $file, IUser $user, array $recipients, ?array $options, ?array $metadata, array $account, string $server, string $esig_file_id): string {
+	public function storeRequest(File $file, IUser $user, array $recipients, ?array $options, ?array $metadata, array $account, string $server, string $esig_file_id, ?string $esig_signature_result_id): string {
 		$mime = $file->getMimeType();
 		if ($mime) {
 			$mime = strtolower($mime);
@@ -74,6 +74,7 @@ class Requests {
 			'esig_account_id' => $query->createNamedParameter($account['id']),
 			'esig_server' => $query->createNamedParameter($server),
 			'esig_file_id' => $query->createNamedParameter($esig_file_id),
+			'esig_signature_result_id' => $query->createNamedParameter($esig_signature_result_id),
 		];
 		if (count($recipients) === 1) {
 			$values['recipient'] = $query->createNamedParameter($recipients[0]['value']);
@@ -331,7 +332,7 @@ class Requests {
 		return $requests;
 	}
 
-	public function markRequestSignedById(string $id, string $type, string $value, \DateTime $now) {
+	public function markRequestSignedById(string $id, string $type, string $value, \DateTime $now): bool {
 		$query = $this->db->getQueryBuilder();
 		$query->update('esig_requests')
 			->set('signed', $query->createNamedParameter($now, 'datetimetz'))
@@ -340,7 +341,7 @@ class Requests {
 			->andWhere($query->expr()->eq('recipient', $query->createNamedParameter($value)));
 		if ($query->executeStatement() === 1) {
 			// Single recipient for this request.
-			return;
+			return true;
 		}
 
 		$query = $this->db->getQueryBuilder();
@@ -350,6 +351,15 @@ class Requests {
 			->andWhere($query->expr()->eq('type', $query->createNamedParameter($type)))
 			->andWhere($query->expr()->eq('value', $query->createNamedParameter($value)));
 		$query->executeStatement();
+
+		$query = $this->db->getQueryBuilder();
+		$query->selectAlias($query->func()->count('1'), 'count')
+			->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
+			->andWhere($query->expr()->isNull('signed'));
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+		return $row['count'] === 0;
 	}
 
 	public function markRequestSavedById(string $id, string $type, string $value) {
@@ -476,6 +486,7 @@ class Requests {
 		$pending = [];
 		$recipients = [];
 		while ($row = $result->fetch()) {
+			$row['recipients'] = $this->getRecipients($row);
 			$recipients[] = $row;
 		}
 		$result->closeCursor();
@@ -491,7 +502,6 @@ class Requests {
 		$requests = [];
 		while ($row = $result->fetch()) {
 			if (!isset($requests[$row['request_id']])) {
-				// TODO: Use simpler query that doesn't fetch all recipients.
 				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
 				if (!$requests[$row['request_id']]) {
 					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending email of ' . $row['type'] . ' ' . $row['value'], [
@@ -519,6 +529,7 @@ class Requests {
 		$pending = [];
 		$recipients = [];
 		while ($row = $result->fetch()) {
+			$row['recipients'] = $this->getRecipients($row);
 			$recipients[] = $row;
 		}
 		$result->closeCursor();
@@ -534,7 +545,6 @@ class Requests {
 		$requests = [];
 		while ($row = $result->fetch()) {
 			if (!isset($requests[$row['request_id']])) {
-				// TODO: Use simpler query that doesn't fetch all recipients.
 				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
 				if (!$requests[$row['request_id']]) {
 					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending download of ' . $row['type'] . ' ' . $row['value'], [
@@ -562,6 +572,7 @@ class Requests {
 		$pending = [];
 		$recipients = [];
 		while ($row = $result->fetch()) {
+			$row['recipients'] = $this->getRecipients($row);
 			$recipients[] = $row;
 		}
 		$result->closeCursor();
@@ -577,7 +588,6 @@ class Requests {
 		$requests = [];
 		while ($row = $result->fetch()) {
 			if (!isset($requests[$row['request_id']])) {
-				// TODO: Use simpler query that doesn't fetch all recipients.
 				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
 				if (!$requests[$row['request_id']]) {
 					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending signature of ' . $row['type'] . ' ' . $row['value'], [
