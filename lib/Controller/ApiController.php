@@ -855,6 +855,22 @@ class ApiController extends OCSController {
 			],
 		];
 
+		$clientInfo = [
+			'clientip' => $this->request->getRemoteAddress(),
+		];
+		if (!empty($this->request->getHeader('User-Agent'))) {
+			$clientInfo['useragent'] = $this->request->getHeader('User-Agent');
+		}
+		$multipart[] = [
+			'name' => 'metadata',
+			'contents' => json_encode([
+				'client' => $clientInfo,
+			]),
+			'headers' => [
+				'Content-Type' => 'application/json',
+			],
+		];
+
 		try {
 			$data = $this->client->signFile($row['esig_file_id'], $multipart, $account, $row['esig_server']);
 		} catch (ConnectException $e) {
