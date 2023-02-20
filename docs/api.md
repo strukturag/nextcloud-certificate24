@@ -213,7 +213,8 @@ in their `recipients` entry.
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
 This method can also be accessed by anonymous users if file was shared with
-an email address.
+an email address. In this case, an additional url query parameter `email` must
+be given with the email address of the user that is fetching the information.
 
 
 ## Sign file

@@ -389,7 +389,7 @@ class ApiController extends OCSController {
 		return new DataResponse($response);
 	}
 
-	private function filterMetadata(array $request, IUser $user): array {
+	private function filterMetadata(array $request, string $type, string $value): array {
 		$metadata = $request['metadata'];
 		if (empty($metadata) || !isset($metadata['signature_fields'])) {
 			return $metadata;
@@ -404,7 +404,7 @@ class ApiController extends OCSController {
 		$found = -1;
 		foreach ($recipients as $recipient) {
 			$idx++;
-			if ($recipient['type'] === 'user' && $recipient['value'] === $user->getUID()) {
+			if ($recipient['type'] === $type && $recipient['value'] === $value) {
 				$found = $idx;
 				break;
 			}
@@ -462,7 +462,7 @@ class ApiController extends OCSController {
 			if ($mime) {
 				$mime = strtolower($mime);
 			}
-			$metadata = $this->filterMetadata($request, $user);
+			$metadata = $this->filterMetadata($request, 'user', $user->getUID());
 			$r = [
 				'request_id' => $request['id'],
 				'created' => $this->formatDateTime($request['created']),
@@ -577,10 +577,21 @@ class ApiController extends OCSController {
 	 * @param string $id
 	 * @return DataResponse
 	 */
-	public function getIncomingRequest(string $id): DataResponse {
+	public function getIncomingRequest(string $id, ?string $email = null): DataResponse {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		$user = $this->userSession->getUser();
+		if (!empty($email)) {
+			$type = 'email';
+			$value = $email;
+		} else if ($user) {
+			$type = 'user';
+			$value = $user->getUID();
+		} else {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$request = $this->requests->getRequestById($id);
@@ -590,9 +601,18 @@ class ApiController extends OCSController {
 			return $response;
 		}
 
-		$user = $this->userSession->getUser();
-		if (!$this->requests->mayAccess($user, $request)) {
-			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		$found = false;
+		foreach ($request['recipients'] as $recipient) {
+			if ($recipient['type'] !== $type || $recipient['value'] !== $value) {
+				continue;
+			}
+
+			$found = true;
+			break;
+		}
+
+		if (!$found) {
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
 			$response->throttle();
 			return $response;
 		}
@@ -614,7 +634,7 @@ class ApiController extends OCSController {
 		if ($mime) {
 			$mime = strtolower($mime);
 		}
-		$metadata = $this->filterMetadata($request, $user);
+		$metadata = $this->filterMetadata($request, $type, $value);
 		$response = [
 			'request_id' => $id,
 			'created' => $this->formatDateTime($request['created']),
@@ -640,7 +660,7 @@ class ApiController extends OCSController {
 				$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 			}
 
-			if ($recipient['type'] === 'user' && $recipient['value'] === $user->getUID()) {
+			if ($recipient['type'] === $type && $recipient['value'] === $value) {
 				$response['own_signed'] = $signed;
 			}
 		}
