@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace OCA\Esig;
 
+use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Tokens;
+use OCP\App\IAppManager;
 use OCP\Files\File;
 use OCP\Http\Client\IClientService;
+use OCP\IConfig;
 use OCP\ILogger;
 
 class Client {
@@ -14,23 +17,39 @@ class Client {
 	private ILogger $logger;
 	private IClientService $clientService;
 	private Tokens $tokens;
+	private string $nextcloudVersion;
+	private string $appVersion;
 
 	public function __construct(ILogger $logger,
 								IClientService $clientService,
+								IAppManager $appManager,
+								IConfig $systemConfig,
 								Tokens $tokens) {
 		$this->logger = $logger;
 		$this->clientService = $clientService;
 		$this->tokens = $tokens;
+		$this->appVersion = $appManager->getAppVersion(Application::APP_ID);
+		$this->nextcloudVersion = $systemConfig->getSystemValueString('version', '0.0.0');
+	}
+
+	private function getHeaders(?array $headers = null): array {
+		if (!$headers) {
+			$headers = [];
+		}
+		if (!isset($headers['User-Agent'])) {
+			$headers['User-Agent'] = Application::APP_ID . '/' . $this->appVersion . ' Nextcloud/' . $this->nextcloudVersion;
+		}
+		return $headers;
 	}
 
 	public function shareFile(File $file, array $recipients, ?array $metadata, array $account, string $server): array {
 		$token = $this->tokens->getToken($account, $file->getName(), 'upload');
 
 		$client = $this->clientService->newClient();
-		$headers = [
+		$headers = $this->getHeaders([
 			'X-Vinegar-Token' => $token,
 			'X-Vinegar-API' => 'true',
-		];
+		]);
 		$multipart = [
 			[
 				'name' => 'file',
@@ -73,10 +92,10 @@ class Client {
 		$token = $this->tokens->getToken($account, $id, 'sign');
 
 		$client = $this->clientService->newClient();
-		$headers = [
+		$headers = $headers = $this->getHeaders([
 			'X-Vinegar-Token' => $token,
 			'X-Vinegar-API' => 'true',
-		];
+		]);
 		$response = $client->post($server . 'api/v1/files/' . rawurlencode($account['id']) . '/sign/' . rawurlencode($id), [
 			'headers' => $headers,
 			'multipart' => $multipart,
@@ -93,10 +112,10 @@ class Client {
 		$token = $this->tokens->getToken($account, $id, 'delete');
 
 		$client = $this->clientService->newClient();
-		$headers = [
+		$headers = $headers = $this->getHeaders([
 			'X-Vinegar-Token' => $token,
 			'X-Vinegar-API' => 'true',
-		];
+		]);
 		$response = $client->delete($server . 'api/v1/files/' . rawurlencode($account['id']) . '/' . rawurlencode($id), [
 			'headers' => $headers,
 			'verify' => false,
@@ -131,8 +150,10 @@ class Client {
 
 	public function downloadSignedFile(string $id, array $account, string $server): string {
 		$url = $this->getSignedUrl($id, $account, $server);
+		$headers = $this->getHeaders();
 		$client = $this->clientService->newClient();
 		$response = $client->get($url, [
+			'headers' => $headers,
 			'verify' => false,
 			'nextcloud' => [
 				'allow_local_address' => true,
@@ -147,8 +168,10 @@ class Client {
 		$token = $this->tokens->getToken($account, $signature_id, 'signature-details');
 		$url .= '?token=' . urlencode($token);
 
+		$headers = $this->getHeaders();
 		$client = $this->clientService->newClient();
 		$response = $client->get($url, [
+			'headers' => $headers,
 			'verify' => false,
 			'nextcloud' => [
 				'allow_local_address' => true,
