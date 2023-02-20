@@ -115,33 +115,52 @@ class Listener implements IEventListener {
 			$this->notificationManager->notify($notification);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
-			if ($shouldFlush) {
-				$this->notificationManager->flush();
-			}
 		}
 
 		if ($event->isLastSignature()) {
-			$notification = $this->notificationManager->createNotification();
-			$shouldFlush = $this->notificationManager->defer();
-			try {
-				$notification->setApp(Application::APP_ID)
-					->setDateTime($event->getSigned())
-					->setUser($request['user_id'])
-					->setObject('request', $event->getRequestId())
-					->setSubject('last_signature', [
-						'request' => $request,
-						'request_id' => $event->getRequestId(),
-						'recipient' => $event->getRecipient(),
-						'recipient_type' => $event->getRecipientType(),
-						'user' => $user ? $user->getUID() : null,
-					]);
-				$this->notificationManager->notify($notification);
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error($e->getMessage(), ['exception' => $e]);
-				if ($shouldFlush) {
-					$this->notificationManager->flush();
+			$notified = [];
+			foreach ($request['recipients'] as $recipient) {
+				if ($recipient['type'] === 'email') {
+					continue;
+				}
+
+				$notification = $this->notificationManager->createNotification();
+				try {
+					$notification->setApp(Application::APP_ID)
+						->setDateTime($event->getSigned())
+						->setUser($recipient['value'])
+						->setObject('request', $event->getRequestId())
+						->setSubject('last_signature', [
+							'request' => $request,
+							'request_id' => $event->getRequestId(),
+						]);
+					$this->notificationManager->notify($notification);
+					$notified[$recipient['value']] = true;
+				} catch (\InvalidArgumentException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
 				}
 			}
+
+			if (!isset($notified[$request['user_id']])) {
+				$notification = $this->notificationManager->createNotification();
+				try {
+					$notification->setApp(Application::APP_ID)
+						->setDateTime($event->getSigned())
+						->setUser($request['user_id'])
+						->setObject('request', $event->getRequestId())
+						->setSubject('last_signature', [
+							'request' => $request,
+							'request_id' => $event->getRequestId(),
+						]);
+					$this->notificationManager->notify($notification);
+					$notified[$recipient['value']] = true;
+				} catch (\InvalidArgumentException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
+				}
+			}
+		}
+		if ($shouldFlush) {
+			$this->notificationManager->flush();
 		}
 	}
 

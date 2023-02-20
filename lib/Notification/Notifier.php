@@ -200,12 +200,16 @@ class Notifier implements INotifier {
 	 */
 	protected function parseLastSignature(INotification $notification, IL10N $l): INotification {
 		$parameters = $notification->getSubjectParameters();
-		$notification
-			->setLink($this->url->linkToRouteAbsolute('esig.Page.index') . '#outgoing-' . $parameters['request_id']);
+		$request = $parameters['request'];
+		if ($notification->getUser() === $request['user_id'])  {
+			$url = $this->url->linkToRouteAbsolute('esig.Page.index') . '#outgoing-' . $parameters['request_id'];
+		} else {
+			$url = $this->url->linkToRouteAbsolute('esig.Page.index') . '#incoming-' . $parameters['request_id'];
+		}
+		$notification->setLink($url);
 
 		$message = $l->t('The file "{filename}" was signed by all recipients');
 
-		$request = $parameters['request'];
 		$rosParameters = [
 			'filename' => [
 				'type' => 'highlight',
