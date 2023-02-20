@@ -911,7 +911,6 @@ class ApiController extends OCSController {
 		return new DataResponse([
 			'request_id' => $id,
 			'signed' => $this->formatDateTime($signed),
-			'signed_url' => $this->client->getSignedUrl($row['esig_file_id'], $account, $row['esig_server']),
 		]);
 	}
 

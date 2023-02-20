@@ -239,7 +239,6 @@ an email address.
     |---------------------|---------|------------------------------------------------------------------|
     | `request_id`        | string  | The id of the signing request.                                   |
     | `signed`            | iso8601 | The timestamp when the file was signed.                          |
-    | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
 This method can also be accessed by anonymous users if file was shared with
 an email address.
