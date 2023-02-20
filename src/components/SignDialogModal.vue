@@ -124,7 +124,11 @@ export default {
 							embed_user_signature: this.embedSignature,
 						})
 						const data = response.data.ocs?.data || {}
-						request.signed = data.signed
+						request.own_signed = data.signed
+						if (data.details_url) {
+							request.signed = data.signed
+							request.details_url = data.details_url
+						}
 						showSuccess(t('esig', 'Request signed.'))
 						this.$emit('close', arguments)
 					} catch (error) {

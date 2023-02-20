@@ -928,10 +928,14 @@ class ApiController extends OCSController {
 			$this->manager->saveSignedResult($row, $signed, $user, $account);
 		}
 
-		return new DataResponse([
+		$response = [
 			'request_id' => $id,
 			'signed' => $this->formatDateTime($signed),
-		]);
+		];
+		if ($isLast && $row['esig_signature_result_id']) {
+			$response['details_url'] = $this->client->getDetailsUrl($row['esig_signature_result_id'], $row['esig_server']);
+		}
+		return new DataResponse($response);
 	}
 
 	/**

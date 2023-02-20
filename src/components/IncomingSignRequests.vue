@@ -51,7 +51,7 @@
 						</td>
 						<td>
 							<div class="grid">
-								<NcButton v-if="!request.own_signed"
+								<NcButton v-show="!request.own_signed"
 									:disabled="request.loading"
 									type="primary"
 									@click="signRequest(request)">
@@ -61,7 +61,7 @@
 										<FileSign v-show="!request.loading" :size="20" />
 									</template>
 								</NcButton>
-								<NcButton v-if="request.signed"
+								<NcButton v-show="request.signed"
 									type="primary"
 									:href="downloadSignedUrl(request)">
 									{{ t('esig', 'Download signed') }}
@@ -69,7 +69,7 @@
 										<Download :size="20" />
 									</template>
 								</NcButton>
-								<NcButton v-if="request.details_url"
+								<NcButton v-show="request.details_url"
 									type="primary"
 									@click="openWindow(request.details_url)">
 									{{ t('esig', 'Show details') }}
@@ -77,7 +77,7 @@
 										<OpenInNew :size="20" />
 									</template>
 								</NcButton>
-								<div v-if="!request.signed && request.own_signed">
+								<div v-show="request.own_signed && !request.signed">
 									{{ t('esig', 'Waiting for other signatures.') }}
 								</div>
 								<SignDialogModal v-if="signDialog === request"
