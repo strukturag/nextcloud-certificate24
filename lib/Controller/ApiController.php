@@ -39,8 +39,6 @@ function str_to_stream(string $string) {
 
 class ApiController extends OCSController {
 
-	const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
-
 	const PDF_MIME_TYPES = [
 		'application/pdf',
 	];
@@ -96,42 +94,12 @@ class ApiController extends OCSController {
 		$this->manager = $manager;
 	}
 
-	private function parseDateTime($s) {
-		if (!$s) {
-			return null;
-		}
-		if ($s[strlen($s) - 1] === 'Z') {
-			$s = substr($s, 0, strlen($s) - 1) . '+00:00';
-		}
-		if ($s[strlen($s) - 3] !== ':') {
-			$s = $s . ':00';
-		}
-		if ($s[10] === ' ') {
-			$s[10] = 'T';
-		}
-		if (strlen($s) === 19) {
-			// SQLite backend stores without timezone, e.g. "2022-10-12 06:54:54".
-			$s .= '+00:00';
-		}
-		$dt = \DateTime::createFromFormat(\DateTime::ISO8601, $s);
-		if (!$dt) {
-			$dt = \DateTime::createFromFormat(self::ISO8601_EXTENDED, $s);
-		}
-		if (!$dt) {
-			$this->logger->error('Could not convert ' . $s . ' to datetime', [
-				'app' => Application::APP_ID,
-			]);
-			$dt = null;
-		}
-		return $dt;
-	}
-
 	private function formatDateTime($dt) {
 		if (!$dt) {
 			return null;
 		}
 		if (is_string($dt)) {
-			$dt = $this->parseDateTime($dt);
+			$dt = $this->requests->parseDateTime($dt);
 			if (!$dt) {
 				return null;
 			}
@@ -311,7 +279,8 @@ class ApiController extends OCSController {
 		}
 
 		$recipients = $data['recipients'] ?? $recipients;
-		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id);
+		$esig_signature_result_id = $data['signature_id'] ?? null;
+		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id, $esig_signature_result_id);
 
 		$this->metadata->storeMetadata($user, $file, $metadata);
 
@@ -393,8 +362,10 @@ class ApiController extends OCSController {
 				'metadata' => $request['metadata'],
 			];
 			if ($include_signed) {
+				$allSigned = true;
 				foreach ($request['recipients'] as $recipient) {
 					if (!isset($recipient['signed'])) {
+						$allSigned = false;
 						continue;
 					}
 
@@ -406,13 +377,19 @@ class ApiController extends OCSController {
 						$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 					}
 				}
+				if (!$allSigned) {
+					unset($r['signed']);
+					unset($r['signed_url']);
+				} else if ($request['esig_signature_result_id']) {
+					$r['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
+				}
 			}
 			$response[] = $r;
 		}
 		return new DataResponse($response);
 	}
 
-	private function filterMetadata(array $request, IUser $user): array {
+	private function filterMetadata(array $request, string $type, string $value): array {
 		$metadata = $request['metadata'];
 		if (empty($metadata) || !isset($metadata['signature_fields'])) {
 			return $metadata;
@@ -427,7 +404,7 @@ class ApiController extends OCSController {
 		$found = -1;
 		foreach ($recipients as $recipient) {
 			$idx++;
-			if ($recipient['type'] === 'user' && $recipient['value'] === $user->getUID()) {
+			if ($recipient['type'] === $type && $recipient['value'] === $value) {
 				$found = $idx;
 				break;
 			}
@@ -485,7 +462,7 @@ class ApiController extends OCSController {
 			if ($mime) {
 				$mime = strtolower($mime);
 			}
-			$metadata = $this->filterMetadata($request, $user);
+			$metadata = $this->filterMetadata($request, 'user', $user->getUID());
 			$r = [
 				'request_id' => $request['id'],
 				'created' => $this->formatDateTime($request['created']),
@@ -497,16 +474,30 @@ class ApiController extends OCSController {
 				'metadata' => $metadata,
 			];
 			if ($include_signed) {
+				$allSigned = true;
 				foreach ($request['recipients'] as $recipient) {
-					if ($recipient['type'] !== 'user' || $recipient['value'] !== $user->getUID()) {
+					if (!$recipient['signed']) {
+						$allSigned = false;
 						continue;
 					}
 
-					if ($recipient['signed']) {
-						$r['signed'] = $this->formatDateTime($recipient['signed']);
+					$signed = $this->formatDateTime($recipient['signed']);
+					if (!isset($r['signed']) || $signed > $r['signed']) {
+						$r['signed'] = $signed;
+					}
+					if (!isset($r['signed_url'])) {
 						$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 					}
-					break;
+
+					if ($recipient['type'] === 'user' && $recipient['value'] === $user->getUID()) {
+						$r['own_signed'] = $signed;
+					}
+				}
+				if (!$allSigned) {
+					unset($r['signed']);
+					unset($r['signed_url']);
+				} else if ($request['esig_signature_result_id']) {
+					$r['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
 				}
 			}
 			$response[] = $r;
@@ -555,8 +546,10 @@ class ApiController extends OCSController {
 			'recipients' => $this->formatRecipients($request['recipients']),
 			'metadata' => $request['metadata'],
 		];
+		$allSigned = true;
 		foreach ($request['recipients'] as $recipient) {
 			if (!isset($recipient['signed'])) {
+				$allSigned = false;
 				continue;
 			}
 
@@ -565,8 +558,14 @@ class ApiController extends OCSController {
 				$response['signed'] = $signed;
 			}
 			if (!isset($response['signed_url'])) {
-				$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
+				$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 			}
+		}
+		if (!$allSigned) {
+			unset($response['signed']);
+			unset($response['signed_url']);
+		} else if ($request['esig_signature_result_id']) {
+			$response['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
 		}
 		return new DataResponse($response);
 	}
@@ -578,10 +577,21 @@ class ApiController extends OCSController {
 	 * @param string $id
 	 * @return DataResponse
 	 */
-	public function getIncomingRequest(string $id): DataResponse {
+	public function getIncomingRequest(string $id, ?string $email = null): DataResponse {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		$user = $this->userSession->getUser();
+		if (!empty($email)) {
+			$type = 'email';
+			$value = $email;
+		} else if ($user) {
+			$type = 'user';
+			$value = $user->getUID();
+		} else {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$request = $this->requests->getRequestById($id);
@@ -591,9 +601,18 @@ class ApiController extends OCSController {
 			return $response;
 		}
 
-		$user = $this->userSession->getUser();
-		if (!$this->requests->mayAccess($user, $request)) {
-			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		$found = false;
+		foreach ($request['recipients'] as $recipient) {
+			if ($recipient['type'] !== $type || $recipient['value'] !== $value) {
+				continue;
+			}
+
+			$found = true;
+			break;
+		}
+
+		if (!$found) {
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
 			$response->throttle();
 			return $response;
 		}
@@ -615,7 +634,7 @@ class ApiController extends OCSController {
 		if ($mime) {
 			$mime = strtolower($mime);
 		}
-		$metadata = $this->filterMetadata($request, $user);
+		$metadata = $this->filterMetadata($request, $type, $value);
 		$response = [
 			'request_id' => $id,
 			'created' => $this->formatDateTime($request['created']),
@@ -626,16 +645,30 @@ class ApiController extends OCSController {
 			'download_url' => $this->client->getSourceUrl($request['esig_file_id'], $account, $request['esig_server']),
 			'metadata' => $metadata,
 		];
+		$allSigned = true;
 		foreach ($request['recipients'] as $recipient) {
-			if ($recipient['type'] !== 'user' || $recipient['value'] !== $user->getUID()) {
+			if (!$recipient['signed']) {
+				$allSigned = false;
 				continue;
 			}
 
-			if ($recipient['signed']) {
-				$response['signed'] = $this->formatDateTime($recipient['signed']);
+			$signed = $this->formatDateTime($recipient['signed']);
+			if (!isset($response['signed']) || $signed > $response['signed']) {
+				$response['signed'] = $signed;
+			}
+			if (!isset($response['signed_url'])) {
 				$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
 			}
-			break;
+
+			if ($recipient['type'] === $type && $recipient['value'] === $value) {
+				$response['own_signed'] = $signed;
+			}
+		}
+		if (!$allSigned) {
+			unset($response['signed']);
+			unset($response['signed_url']);
+		} else if ($request['esig_signature_result_id']) {
+			$response['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
 		}
 		return new DataResponse($response);
 	}
@@ -842,6 +875,22 @@ class ApiController extends OCSController {
 			],
 		];
 
+		$clientInfo = [
+			'clientip' => $this->request->getRemoteAddress(),
+		];
+		if (!empty($this->request->getHeader('User-Agent'))) {
+			$clientInfo['useragent'] = $this->request->getHeader('User-Agent');
+		}
+		$multipart[] = [
+			'name' => 'metadata',
+			'contents' => json_encode([
+				'client' => $clientInfo,
+			]),
+			'headers' => [
+				'Content-Type' => 'application/json',
+			],
+		];
+
 		try {
 			$data = $this->client->signFile($row['esig_file_id'], $multipart, $account, $row['esig_server']);
 		} catch (ConnectException $e) {
@@ -864,24 +913,29 @@ class ApiController extends OCSController {
 
 		$signed = $data['signed'] ?? null;
 		if (is_string($signed)) {
-			$signed = $this->parseDateTime($signed);
+			$signed = $this->requests->parseDateTime($signed);
 		}
 		if (!$signed) {
 			$signed = new \DateTime();
 		}
 
-		$this->requests->markRequestSignedById($id, $type, $value, $signed);
+		$isLast = $this->requests->markRequestSignedById($id, $type, $value, $signed);
 
-		$event = new SignEvent($id, $row, $type, $value, $signed, $user);
+		$event = new SignEvent($id, $row, $type, $value, $signed, $user, $isLast);
 		$this->dispatcher->dispatch(SignEvent::class, $event);
 
-		$this->manager->saveSignedResult($row, $type, $value, $signed, $user, $account);
+		if ($isLast) {
+			$this->manager->saveSignedResult($row, $signed, $user, $account);
+		}
 
-		return new DataResponse([
+		$response = [
 			'request_id' => $id,
 			'signed' => $this->formatDateTime($signed),
-			'signed_url' => $this->client->getSignedUrl($row['esig_file_id'], $account, $row['esig_server']),
-		]);
+		];
+		if ($isLast && $row['esig_signature_result_id']) {
+			$response['details_url'] = $this->client->getDetailsUrl($row['esig_signature_result_id'], $row['esig_server']);
+		}
+		return new DataResponse($response);
 	}
 
 	/**

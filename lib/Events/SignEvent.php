@@ -15,8 +15,9 @@ class SignEvent extends Event {
 	private string $value;
 	private \DateTime $signed;
 	private ?IUser $user;
+	private bool $lastSignature;
 
-	public function __construct(string $request_id, array $request, string $type, string $value, \DateTime $signed, ?IUser $user) {
+	public function __construct(string $request_id, array $request, string $type, string $value, \DateTime $signed, ?IUser $user, bool $lastSignature) {
 		parent::__construct();
 		$this->request_id = $request_id;
 		$this->request = $request;
@@ -24,6 +25,7 @@ class SignEvent extends Event {
 		$this->value = $value;
 		$this->signed = $signed;
 		$this->user = $user;
+		$this->lastSignature = $lastSignature;
 	}
 
 	/**
@@ -62,10 +64,19 @@ class SignEvent extends Event {
 	}
 
 	/**
+	 * The user that performed the signature or null if signed anonymously.
+	 *
 	 * @return ?IUser
 	 */
 	public function getUser(): ?IUser {
 		return $this->user;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isLastSignature(): bool {
+		return $this->lastSignature;
 	}
 
 }

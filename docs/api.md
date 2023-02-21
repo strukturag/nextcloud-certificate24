@@ -110,7 +110,7 @@ should sign the field.
     | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
     | `recipients`        | array   | List of recipients the file was shared with.                     |
     | `metadata`          | array   | Optional request JSON metadata (see above).                      |
-    | `signed`            | iso8601 | The timestamp when the file was last signed or `null`.           |
+    | `signed`            | iso8601 | The timestamp when the file was signed completely.               |
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
 The field `signed` is only returned if `include_signed` was passed as `true` in
@@ -144,7 +144,7 @@ field `signed` in their `recipients` entry.
     | `mimetype`          | string  | Mimetype of the shared file.                                     |
     | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
     | `metadata`          | array   | Optional request JSON metadata (see above).                      |
-    | `signed`            | iso8601 | The timestamp when the file was signed (if already signed).      |
+    | `signed`            | iso8601 | The timestamp when the file was signed completely.               |
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
 The field `signed` is only returned if `include_signed` was passed as `true` in
@@ -182,7 +182,7 @@ the request.
     | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
     | `recipients`        | array   | List of recipients the file was shared with.                     |
     | `metadata`          | array   | Optional request JSON metadata (see above).                      |
-    | `signed`            | iso8601 | The timestamp when the file was last signed (if already signed). |
+    | `signed`            | iso8601 | The timestamp when the file was signed completely.               |
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
 Recipients that already signed the file will have an additional field `signed`
@@ -209,11 +209,12 @@ in their `recipients` entry.
     | `mimetype`          | string  | Mimetype of the shared file.                                     |
     | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
     | `metadata`          | array   | Optional JSON request metadata (see above).                      |
-    | `signed`            | iso8601 | The timestamp when the file was signed (if already signed).      |
+    | `signed`            | iso8601 | The timestamp when the file was signed completely.               |
     | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
 This method can also be accessed by anonymous users if file was shared with
-an email address.
+an email address. In this case, an additional url query parameter `email` must
+be given with the email address of the user that is fetching the information.
 
 
 ## Sign file
@@ -239,7 +240,6 @@ an email address.
     |---------------------|---------|------------------------------------------------------------------|
     | `request_id`        | string  | The id of the signing request.                                   |
     | `signed`            | iso8601 | The timestamp when the file was signed.                          |
-    | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
 
 This method can also be accessed by anonymous users if file was shared with
 an email address.

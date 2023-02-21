@@ -154,6 +154,19 @@ class DownloadController extends Controller {
 			return $response;
 		}
 
+		$allSigned = true;
+		foreach ($req['recipients'] as $recipient) {
+			if (!$recipient['signed']) {
+				$allSigned = false;
+				break;
+			}
+		}
+
+		if (!$allSigned) {
+			// Document must be signed by all recipients to allow downloads.
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
 		$url = $this->client->getSignedUrl($req['esig_file_id'], $account, $req['esig_server']);
 		$url .= (strpos($url, '?') === false) ? '?' : '&';
 		$url .= 'download=1';

@@ -104,4 +104,50 @@ class Mails {
 		]);
 	}
 
+	public function sendLastSignatureMail(string $id, array $request, IUser $user, File $file, array $recipient) {
+		$signature_id = $request['esig_signature_result_id'] ?? null;
+		if (!$signature_id) {
+			$this->logger->error('No signature result id found for request ' . $id . ' to send mail to ' . $recipient['value'], [
+				'app' => Application::APP_ID,
+			]);
+			return;
+		}
+
+		$server = $request['esig_server'];
+		if ($server && $server[strlen($server)-1] != '/') {
+			$server = $server . '/';
+		}
+
+		$lang = $this->l10n->getLanguageCode();
+		$templateOptions = [
+			'file' => $file,
+			'user' => $user,
+			'recipient' => $recipient['value'],
+			'request_id' => $id,
+			'url' => $server . 'details/' . urlencode($signature_id),
+		];
+		$body = $this->renderTemplate('email.lastsignature.body', $templateOptions, $lang);
+		$subject = $this->renderTemplate('email.lastsignature.subject', $templateOptions, $lang);
+
+		$from = Util::getDefaultEmailAddress('noreply');
+		/** @var \OC\Mail\Message $message */
+		$message = $this->mailer->createMessage();
+		$message->setFrom([$from => $this->defaults->getName()]);
+		$message->setTo([$recipient['value']]);
+		$message->setSubject($subject);
+		$message->setPlainBody($body);
+		$failed_recipients = $this->mailer->send($message);
+		if (!empty($failed_recipients)) {
+			$this->logger->error('Could not send last signature email for request ' . $id . ' to ' . $recipient['value'], [
+				'app' => Application::APP_ID,
+			]);
+			// TODO: Retry sending email.
+			return;
+		}
+
+		$this->logger->info('Sent last signature email for request ' . $id . ' to ' . $recipient['value'], [
+			'app' => Application::APP_ID,
+		]);
+	}
+
 }

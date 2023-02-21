@@ -88,6 +88,8 @@ class Notifier implements INotifier {
 				return $this->parseShare($notification, $l);
 			case 'sign':
 				return $this->parseSign($notification, $l);
+			case 'last_signature':
+				return $this->parseLastSignature($notification, $l);
 			}
 
 		$this->notificationManager->markProcessed($notification);
@@ -176,6 +178,45 @@ class Notifier implements INotifier {
 				];
 				break;
 		}
+
+		$placeholders = $replacements = [];
+		foreach ($rosParameters as $placeholder => $parameter) {
+			$placeholders[] = '{' . $placeholder .'}';
+			if ($parameter['type'] === 'user') {
+				$replacements[] = '@' . $parameter['name'];
+			} else {
+				$replacements[] = $parameter['name'];
+			}
+		}
+
+		$notification->setParsedSubject(str_replace($placeholders, $replacements, $message));
+		$notification->setRichSubject($message, $rosParameters);
+
+		return $notification;
+	}
+
+	/**
+	 * @throws HintException
+	 */
+	protected function parseLastSignature(INotification $notification, IL10N $l): INotification {
+		$parameters = $notification->getSubjectParameters();
+		$request = $parameters['request'];
+		if ($notification->getUser() === $request['user_id'])  {
+			$url = $this->url->linkToRouteAbsolute('esig.Page.index') . '#outgoing-' . $parameters['request_id'];
+		} else {
+			$url = $this->url->linkToRouteAbsolute('esig.Page.index') . '#incoming-' . $parameters['request_id'];
+		}
+		$notification->setLink($url);
+
+		$message = $l->t('The file "{filename}" was signed by all recipients');
+
+		$rosParameters = [
+			'filename' => [
+				'type' => 'highlight',
+				'id' => $request['filename'],
+				'name' => $request['filename'],
+			],
+		];
 
 		$placeholders = $replacements = [];
 		foreach ($rosParameters as $placeholder => $parameter) {

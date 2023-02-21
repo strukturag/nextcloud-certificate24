@@ -4,7 +4,7 @@
 			:aria-label="t('esig', 'Request signature')"
 			:title="t('esig', 'Request signature')"
 			@close="closeModal">
-			<div class="modal__content">
+			<div ref="content" class="modal__content">
 				<h1>{{ t('esig', 'Request signature') }}</h1>
 				<div v-if="error" class="error">
 					{{ error }}
@@ -243,7 +243,7 @@ export default {
 
 	watch: {
 		'recipient_type'(newValue) {
-			this.error = ''
+			this.clearError()
 			this.$nextTick(() => {
 				if (newValue === 'user') {
 					this.abortUserSearch()
@@ -274,6 +274,7 @@ export default {
 			this.shareLoading = false
 			this.signaturePositions = []
 			this.recipients = []
+			this.clearError()
 			if (newValue) {
 				const metadata = await getMetadata(newValue.id)
 				if (metadata && metadata.signature_fields) {
@@ -285,7 +286,7 @@ export default {
 
 	methods: {
 		handleUserInput() {
-			this.error = ''
+			this.clearError()
 			this.noUserResults = false
 			this.usersLoading = true
 			this.userResults = {}
@@ -335,7 +336,7 @@ export default {
 		},
 
 		handleEmailInput() {
-			this.error = ''
+			this.clearError()
 			this.noEmailResults = false
 			this.emailsLoading = true
 			this.emailResults = {}
@@ -422,12 +423,14 @@ export default {
 			}
 
 			this.recipients.push(recipient)
+			this.clearError()
 		},
 
 		deleteRecipient(recipient) {
 			this.recipients = this.recipients.filter((elem) => {
 				return elem.type !== recipient.type || elem.value !== recipient.value
 			})
+			this.clearError()
 		},
 
 		addUser(item) {
@@ -461,6 +464,15 @@ export default {
 			this.noEmailResults = false
 		},
 
+		clearError() {
+			this.error = ''
+		},
+
+		renderError(error) {
+			this.error = error
+			this.$refs.content.parentNode.scrollTo(0, 0)
+		},
+
 		async requestSignature() {
 			if (!this.fileModel) {
 				showError(t('esig', 'No file selected.'))
@@ -468,7 +480,7 @@ export default {
 			}
 
 			if (!this.recipients.length) {
-				this.error = t('esig', 'Please add at least one recipient first.')
+				this.renderError(t('esig', 'Please add at least one recipient first.'))
 				return
 			}
 
@@ -479,7 +491,7 @@ export default {
 				}
 			})
 
-			this.error = ''
+			this.clearError()
 			this.shareLoading = true
 			try {
 				let metadata
@@ -490,6 +502,17 @@ export default {
 							delete e.recipient_idx
 							return e
 						})
+					} else {
+						let missingIndexes = false
+						signaturePositions.forEach((e) => {
+							if (!Object.prototype.hasOwnProperty.call(e, 'recipient_idx') || e.recipient_idx === -1) {
+								missingIndexes = true
+							}
+						})
+						if (missingIndexes) {
+							this.renderError(t('esig', 'At least one field has no recipient assigned.'))
+							return
+						}
 					}
 					metadata = {
 						version: '1.0',
@@ -500,7 +523,6 @@ export default {
 					signed_save_mode: this.signed_save_mode,
 				}
 				await shareFile(this.fileModel.id, recipients, options, metadata)
-				this.shareLoading = false
 				this.closeModal()
 				showSuccess(t('esig', 'Requested signature.'))
 			} catch (error) {
@@ -508,19 +530,23 @@ export default {
 				console.error('Could not request signature', this.fileModel, error)
 				const response = error.response
 				const data = response.data.ocs?.data || {}
+				let errorMessage = ''
 				switch (data.error) {
 				case 'unknown_user':
-					this.error = t('esig', 'Unknown user.')
+					errorMessage = t('esig', 'Unknown user.')
 					break
 				case 'invalid_email':
-					this.error = t('esig', 'Invalid email address.')
+					errorMessage = t('esig', 'Invalid email address.')
 					break
 				case 'error_connecting':
-					this.error = t('esig', 'Error connecting to esig service.')
+					errorMessage = t('esig', 'Error connecting to esig service.')
 					break
 				default:
-					this.error = t('esig', 'Error while requesting signature.')
+					errorMessage = t('esig', 'Error while requesting signature.')
 				}
+				this.renderError(errorMessage)
+			} finally {
+				this.shareLoading = false
 			}
 		},
 

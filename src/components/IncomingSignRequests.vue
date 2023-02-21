@@ -40,7 +40,7 @@
 							{{ request.created }}
 						</td>
 						<td>
-							{{ request.signed }}
+							{{ request.own_signed }}
 						</td>
 						<td>
 							<NcAvatar :user="request.user_id"
@@ -51,7 +51,7 @@
 						</td>
 						<td>
 							<div class="grid">
-								<NcButton v-if="!request.signed"
+								<NcButton v-show="!request.own_signed"
 									:disabled="request.loading"
 									type="primary"
 									@click="signRequest(request)">
@@ -61,7 +61,7 @@
 										<FileSign v-show="!request.loading" :size="20" />
 									</template>
 								</NcButton>
-								<NcButton v-if="request.signed"
+								<NcButton v-show="request.signed"
 									type="primary"
 									:href="downloadSignedUrl(request)">
 									{{ t('esig', 'Download signed') }}
@@ -69,6 +69,17 @@
 										<Download :size="20" />
 									</template>
 								</NcButton>
+								<NcButton v-show="request.details_url"
+									type="primary"
+									@click="openWindow(request.details_url)">
+									{{ t('esig', 'Show details') }}
+									<template #icon>
+										<OpenInNew :size="20" />
+									</template>
+								</NcButton>
+								<div v-show="request.own_signed && !request.signed">
+									{{ t('esig', 'Waiting for other signatures.') }}
+								</div>
 								<SignDialogModal v-if="signDialog === request"
 									:request="request"
 									@close="closeDialog" />
@@ -87,6 +98,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import Download from 'vue-material-design-icons/Download.vue'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
+import OpenInNew from 'vue-material-design-icons/OpenInNew.vue'
 import { showError } from '@nextcloud/dialogs'
 
 import SignDialogModal from './SignDialogModal.vue'
@@ -102,6 +114,7 @@ export default {
 		NcLoadingIcon,
 		Download,
 		FileSign,
+		OpenInNew,
 		SignDialogModal,
 	},
 
@@ -169,6 +182,19 @@ export default {
 		closeDialog() {
 			this.signDialog = null
 		},
+
+		openWindow(url) {
+			window.open(url, '_blank')
+		},
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.grid {
+	display: flex;
+	column-gap: 12px;
+	position: relative;
+	margin: 12px 0;
+}
+</style>
