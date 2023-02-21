@@ -10,6 +10,7 @@ fi
 docker build \
 	--rm \
 	--pull \
+	--progress plain \
 	--tag nextcloud-esig:$TAG \
 	-f docker/Dockerfile \
 	.
