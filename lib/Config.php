@@ -55,7 +55,7 @@ class Config {
 	}
 
 	public function isIntranetInstance(): bool {
-		return $this->config->getAppValue('esig', 'intranet_instance', 'true') === 'true';
+		return $this->config->getAppValue('esig', 'intranet_instance', 'false') === 'true';
 	}
 
 	public function getSignatureImage(IUser $user): ?ISimpleFile {
