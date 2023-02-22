@@ -54,6 +54,10 @@ class Config {
 		return $this->config->getAppValue('esig', 'signed_save_mode', self::DEFAULT_SAVE_MODE);
 	}
 
+	public function isIntranetInstance(): bool {
+		return $this->config->getAppValue('esig', 'intranet_instance', 'true') === 'true';
+	}
+
 	public function getSignatureImage(IUser $user): ?ISimpleFile {
 		try {
 			$folder = $this->appData->getFolder($user->getUID());
