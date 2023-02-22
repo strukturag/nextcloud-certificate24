@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Esig;
 
 use OCA\Esig\AppInfo\Application;
+use OCA\Esig\Config;
 use OCA\Esig\Requests;
 use OCA\Esig\TranslatedTemplate;
 use OCP\Defaults;
@@ -25,6 +26,7 @@ class Mails {
 	private IFactory $l10nFactory;
 	private ILogger $logger;
 	private IURLGenerator $urlGenerator;
+	private Config $config;
 	private Requests $requests;
 
 	public function __construct(
@@ -34,6 +36,7 @@ class Mails {
 								IFactory $l10nFactory,
 								ILogger $logger,
 								IURLGenerator $urlGenerator,
+								Config $config,
 								Requests $requests) {
 		$this->mailer = $mailer;
 		$this->defaults = $defaults;
@@ -41,6 +44,7 @@ class Mails {
 		$this->l10nFactory = $l10nFactory;
 		$this->logger = $logger;
 		$this->urlGenerator = $urlGenerator;
+		$this->config = $config;
 		$this->requests = $requests;
 	}
 
@@ -80,6 +84,11 @@ class Mails {
 			'request_id' => $id,
 			'url' => $server . 's/' . urlencode($signature_id),
 		];
+
+		if (!$this->config->isIntranetInstance()) {
+			$templateOptions['ios_url'] = 'nextcloud://open-signature?id=' . urlencode($id) . '&user=' . urlencode($recipient['value']) . '&url=' . urlencode($this->urlGenerator->getAbsoluteURL(''));
+		}
+
 		$body = $this->renderTemplate('email.share.body', $templateOptions, $lang);
 		$subject = $this->renderTemplate('email.share.subject', $templateOptions, $lang);
 
