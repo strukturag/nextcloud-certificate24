@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\Esig;
 
+use OC\Mail\Message;
 use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Config;
 use OCA\Esig\Requests;
@@ -93,7 +94,7 @@ class Mails {
 		$subject = $this->renderTemplate('email.share.subject', $templateOptions, $lang);
 
 		$from = Util::getDefaultEmailAddress('noreply');
-		/** @var \OC\Mail\Message $message */
+		/** @var Message $message */
 		$message = $this->mailer->createMessage();
 		$message->setFrom([$from => $this->defaults->getName()]);
 		$message->setTo([$recipient['value']]);
@@ -139,7 +140,7 @@ class Mails {
 		$subject = $this->renderTemplate('email.lastsignature.subject', $templateOptions, $lang);
 
 		$from = Util::getDefaultEmailAddress('noreply');
-		/** @var \OC\Mail\Message $message */
+		/** @var Message $message */
 		$message = $this->mailer->createMessage();
 		$message->setFrom([$from => $this->defaults->getName()]);
 		$message->setTo([$recipient['value']]);

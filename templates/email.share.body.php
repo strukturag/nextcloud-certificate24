@@ -1,8 +1,8 @@
 <?php
-
+use OC;
 use OCP\Defaults;
 
-$defaults = \OC::$server->query(Defaults::class);
+$defaults = OC::$server->query(Defaults::class);
 
 $file = $_['file'];
 $user = $_['user'];
