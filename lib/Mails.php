@@ -87,7 +87,7 @@ class Mails {
 		];
 
 		if (!$this->config->isIntranetInstance()) {
-			$templateOptions['ios_url'] = 'nextcloud://open-signature?id=' . urlencode($id) . '&user=' . urlencode($recipient['value']) . '&url=' . urlencode($this->urlGenerator->getAbsoluteURL(''));
+			$templateOptions['ios_url'] = 'nextcloudpro://open-signature?id=' . urlencode($id) . '&user=' . urlencode($recipient['value']) . '&url=' . urlencode($this->urlGenerator->getAbsoluteURL(''));
 		}
 
 		$body = $this->renderTemplate('email.share.body', $templateOptions, $lang);
