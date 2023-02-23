@@ -9,19 +9,16 @@ use GuzzleHttp\Exception\RequestException;
 use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Client;
 use OCA\Esig\Config;
-use OCA\Esig\Events\SignEvent;
 use OCA\Esig\Manager;
 use OCA\Esig\Requests;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCP\BackgroundJob\IJob;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ILogger;
 
 class FetchSigned extends TimedJob {
 
 	private ILogger $logger;
-	private IEventDispatcher $dispatcher;
 	private Config $config;
 	private Requests $requests;
 	private Client $client;
@@ -29,7 +26,6 @@ class FetchSigned extends TimedJob {
 
 	public function __construct(ITimeFactory $timeFactory,
 								ILogger $logger,
-								IEventDispatcher $dispatcher,
 								Config $config,
 								Requests $requests,
 								Client $client,
@@ -41,7 +37,6 @@ class FetchSigned extends TimedJob {
 		$this->setTimeSensitivity(IJob::TIME_SENSITIVE);
 
 		$this->logger = $logger;
-		$this->dispatcher = $dispatcher;
 		$this->config = $config;
 		$this->requests = $requests;
 		$this->client = $client;
@@ -121,20 +116,7 @@ class FetchSigned extends TimedJob {
 				continue;
 			}
 
-			$signed = $this->requests->parseDateTime($details['signed'] ?? null);
-			if ($signed) {
-				$isLast = $this->requests->markRequestSignedById($request['id'], $request['recipient_type'], $request['recipient'], $signed);
-				$this->logger->info('Request ' . $request['id'] . ' was signed by ' . $request['recipient_type'] . ' ' . $request['recipient'] . ' on ' . $signed->format(Requests::ISO8601_EXTENDED), [
-					'app' => Application::APP_ID,
-				]);
-
-				$event = new SignEvent($request['id'], $request, $request['recipient_type'], $request['recipient'], $signed, null, $isLast);
-				$this->dispatcher->dispatch(SignEvent::class, $event);
-
-				if ($isLast) {
-					$this->manager->saveSignedResult($request, $signed, null, $account);
-				}
-			}
+			$this->manager->processSignatureDetails($request, $account, $request['recipient_type'], $request['recipient'], $details);
 		}
 
 		foreach ($pending['multi'] as $entry) {
@@ -156,20 +138,7 @@ class FetchSigned extends TimedJob {
 				continue;
 			}
 
-			$signed = $this->requests->parseDateTime($details['signed'] ?? null);
-			if ($signed) {
-				$isLast = $this->requests->markRequestSignedById($request['id'], $entry['type'], $entry['value'], $signed);
-				$this->logger->info('Request ' . $request['id'] . ' was signed by ' . $entry['type'] . ' ' . $entry['value'] . ' on ' . $signed->format(Requests::ISO8601_EXTENDED), [
-					'app' => Application::APP_ID,
-				]);
-
-				$event = new SignEvent($request['id'], $request, $entry['type'], $entry['value'], $signed, null, $isLast);
-				$this->dispatcher->dispatch(SignEvent::class, $event);
-
-				if ($isLast) {
-					$this->manager->saveSignedResult($request, $signed, null, $account);
-				}
-			}
+			$this->manager->processSignatureDetails($request, $account, $entry['type'], $entry['value'], $details);
 		}
 	}
 }

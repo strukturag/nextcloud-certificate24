@@ -99,6 +99,12 @@ return [
 			'requirements' => $requirements,
 		],
 		[
+			'name' => 'Api#notifySigned',
+			'url' => '/api/{apiVersion}/share/{id}/signed/{signature}',
+			'verb' => 'POST',
+			'requirements' => $requirements,
+		],
+		[
 			'name' => 'Api#search',
 			'url' => '/api/{apiVersion}/search',
 			'verb' => 'POST',

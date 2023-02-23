@@ -203,6 +203,26 @@ class Requests {
 		return $row;
 	}
 
+	public function getRequestByEsigFileId(string $fileId): ?array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_requests')
+			->where($query->expr()->eq('esig_file_id', $query->createNamedParameter($fileId)))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+		if ($row === false) {
+			return null;
+		}
+
+		if ($row['metadata']) {
+			$row['metadata'] = json_decode($row['metadata'], true);
+		}
+		$row['recipients'] = $this->getRecipients($row);
+		return $row;
+	}
+
 	public function getOwnRequests(IUser $user, bool $include_signed): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')

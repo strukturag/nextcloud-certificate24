@@ -21,6 +21,7 @@ use OCP\IUserManager;
 class Manager {
 
 	private ILogger $logger;
+	private IEventDispatcher $dispatcher;
 	private IL10N $l10n;
 	private IUserManager $userManager;
 	private IRootFolder $root;
@@ -30,6 +31,7 @@ class Manager {
 	private Mails $mails;
 
 	public function __construct(ILogger $logger,
+								IEventDispatcher $dispatcher,
 								IL10N $l10n,
 								IUserManager $userManager,
 								IRootFolder $root,
@@ -38,6 +40,7 @@ class Manager {
 								Requests $requests,
 								Mails $mails) {
 		$this->logger = $logger;
+		$this->dispatcher = $dispatcher;
 		$this->l10n = $l10n;
 		$this->userManager = $userManager;
 		$this->root = $root;
@@ -184,6 +187,25 @@ class Manager {
 				'message' => 'Error processing signed result of request ' . $request['id'],
 				'app' => Application::APP_ID,
 			]);
+		}
+	}
+
+	public function processSignatureDetails(array $request, array $account, string $type, string $value, array $details) {
+		$signed = $this->requests->parseDateTime($details['signed'] ?? null);
+		if (!$signed) {
+			return;
+		}
+
+		$isLast = $this->requests->markRequestSignedById($request['id'], $type, $value, $signed);
+		$this->logger->info('Request ' . $request['id'] . ' was signed by ' . $type . ' ' . $value . ' on ' . $signed->format(Requests::ISO8601_EXTENDED), [
+			'app' => Application::APP_ID,
+		]);
+
+		$event = new SignEvent($request['id'], $request, $type, $value, $signed, null, $isLast);
+		$this->dispatcher->dispatch(SignEvent::class, $event);
+
+		if ($isLast) {
+			$this->saveSignedResult($request, $signed, null, $account);
 		}
 	}
 
