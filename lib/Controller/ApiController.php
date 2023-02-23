@@ -334,7 +334,9 @@ class ApiController extends OCSController {
 	public function getRequests(?bool $include_signed = false): DataResponse {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([
+				'error' => 'unconfigured',
+			], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		$user = $this->userSession->getUser();
@@ -441,7 +443,9 @@ class ApiController extends OCSController {
 	public function getIncomingRequests(?bool $include_signed = false): DataResponse {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([
+				'error' => 'unconfigured',
+			], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		$user = $this->userSession->getUser();
@@ -519,7 +523,9 @@ class ApiController extends OCSController {
 	public function getRequest(string $id): DataResponse {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([
+				'error' => 'unconfigured',
+			], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		$user = $this->userSession->getUser();
@@ -584,7 +590,9 @@ class ApiController extends OCSController {
 	public function getIncomingRequest(string $id, ?string $email = null): DataResponse {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([
+				'error' => 'unconfigured',
+			], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		$user = $this->userSession->getUser();
@@ -595,7 +603,9 @@ class ApiController extends OCSController {
 			$type = 'user';
 			$value = $user->getUID();
 		} else {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse([
+				'error' => 'unknown_recipient',
+			], Http::STATUS_BAD_REQUEST);
 		}
 
 		$request = $this->requests->getRequestById($id);
@@ -692,15 +702,21 @@ class ApiController extends OCSController {
 
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([
+				'error' => 'unconfigured',
+			], Http::STATUS_PRECONDITION_FAILED);
 		} else if ($account['id'] !== $row['esig_account_id']) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([
+				'error' => 'invalid_account',
+			], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		try {
 			$data = $this->client->deleteFile($row['esig_file_id'], $account, $row['esig_server']);
 		} catch (ConnectException $e) {
-			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
+			return new DataResponse([
+				'error' => 'error_connecting'
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {
 			return new DataResponse(['error' => $e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
@@ -727,7 +743,9 @@ class ApiController extends OCSController {
 		if ($optionsData) {
 			$options = json_decode($optionsData, true);
 			if (json_last_error() !== JSON_ERROR_NONE) {
-				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+				return new DataResponse([
+					'error' => 'invalid_options_format',
+				], Http::STATUS_BAD_REQUEST);
 			}
 		}
 
@@ -740,7 +758,9 @@ class ApiController extends OCSController {
 			$type = 'user';
 			$value = $user->getUID();
 		} else {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse([
+				'error' => 'unknown_recipient',
+			], Http::STATUS_BAD_REQUEST);
 		}
 
 		$row = $this->requests->getRequestById($id);
@@ -759,7 +779,9 @@ class ApiController extends OCSController {
 			}
 
 			if ($recipient['signed']) {
-				return new DataResponse([], Http::STATUS_CONFLICT);
+				return new DataResponse([
+					'error' => 'already_signed',
+				], Http::STATUS_CONFLICT);
 			}
 
 			$found = true;
@@ -774,9 +796,13 @@ class ApiController extends OCSController {
 
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([
+				'error' => 'unconfigured',
+			], Http::STATUS_PRECONDITION_FAILED);
 		} else if ($account['id'] !== $row['esig_account_id']) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([
+				'error' => 'invalid_account',
+			], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		$multipart = [];
@@ -812,21 +838,33 @@ class ApiController extends OCSController {
 				$image = $this->request->getUploadedFile($fieldId);
 				if ($image) {
 					if (!isset($image['error']) || is_array($image['error'])) {
-						return new DataResponse([], Http::STATUS_BAD_REQUEST);
+						return new DataResponse([
+							'error' => 'invalid_field',
+							'field' => $fieldId,
+						], Http::STATUS_BAD_REQUEST);
 					}
 
 					if ($image['error'] !== UPLOAD_ERR_OK || !is_uploaded_file($image['tmp_name'])) {
-						return new DataResponse([], Http::STATUS_BAD_REQUEST);
+						return new DataResponse([
+							'error' => 'no_uploaded_file',
+							'field' => $fieldId,
+						], Http::STATUS_BAD_REQUEST);
 					}
 
 					if ($image['size'] > self::MAX_IMAGE_SIZE) {
-						return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+						return new DataResponse([
+							'error' => 'image_too_large',
+							'field' => $fieldId,
+						], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 					}
 
 					$data = file_get_contents($image['tmp_name']);
 					$img = new Image();
 					if (!$img->loadFromData($data) || !$img->valid()) {
-						return new DataResponse([], Http::STATUS_BAD_REQUEST);
+						return new DataResponse([
+							'error' => 'error_loading_image',
+							'field' => $fieldId,
+						], Http::STATUS_BAD_REQUEST);
 					}
 
 					// Use uploaded image.
@@ -909,12 +947,16 @@ class ApiController extends OCSController {
 		try {
 			$data = $this->client->signFile($row['esig_file_id'], $multipart, $account, $row['esig_server']);
 		} catch (ConnectException $e) {
-			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
+			return new DataResponse([
+				'error' => 'error_connecting'
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		} catch (\Exception $e) {
 			switch ($e->getCode()) {
 				case Http::STATUS_CONFLICT:
 					// Document was already signed. Signature information will be fetched by background job.
-					return new DataResponse([], Http::STATUS_CONFLICT);
+					return new DataResponse([
+						'error' => 'already_signed',
+					], Http::STATUS_CONFLICT);
 				default:
 					return new DataResponse(['error' => $e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
 			}
