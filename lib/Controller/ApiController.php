@@ -13,6 +13,7 @@ use OCA\Esig\Mails;
 use OCA\Esig\Manager;
 use OCA\Esig\Metadata;
 use OCA\Esig\Requests;
+use OCA\Esig\Tokens;
 use OCA\Esig\Validator;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -60,6 +61,7 @@ class ApiController extends OCSController {
 	private Validator $validator;
 	private Mails $mails;
 	private Manager $manager;
+	private Tokens $tokens;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -76,7 +78,8 @@ class ApiController extends OCSController {
 								Metadata $metadata,
 								Validator $validator,
 								Mails $mails,
-								Manager $manager) {
+								Manager $manager,
+								Tokens $tokens) {
 		parent::__construct($appName, $request);
 		$this->logger = $logger;
 		$this->userManager = $userManager;
@@ -92,6 +95,7 @@ class ApiController extends OCSController {
 		$this->validator = $validator;
 		$this->mails = $mails;
 		$this->manager = $manager;
+		$this->tokens = $tokens;
 	}
 
 	private function formatDateTime($dt) {
@@ -1009,6 +1013,59 @@ class ApiController extends OCSController {
 			$metadata = new \stdClass();
 		}
 		return new DataResponse($metadata);
+	}
+
+	/**
+	 * @PublicPage
+	 * @BruteForceProtection(action=esig_file)
+	 *
+	 * @param string $id
+	 * @param string $signature
+	 * @return DataResponse
+	 */
+	public function notifySigned(string $id, string $signature) {
+		$account = $this->config->getAccount();
+		$token = $this->request->getHeader('X-Vinegar-Token');
+		if (!$this->tokens->validateToken($token, $account, $signature, 'notify-signed')) {
+			$response = new DataResponse([], Http::STATUS_FORBIDDEN);
+			$response->throttle();
+			return $response;
+		}
+
+		$request = $this->requests->getRequestByEsigFileId($id);
+		if (!$request) {
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle();
+			return $response;
+		}
+
+		$found = null;
+		foreach ($request['recipients'] as $recipient) {
+			if ($recipient['esig_signature_id'] === $signature) {
+				if ($recipient['signed']) {
+					// Already flagged as "signed" while processing the request.
+					return new DataResponse([], Http::STATUS_OK);
+				}
+
+				$found = $recipient;
+				break;
+			}
+		}
+
+		if (!$found) {
+			// Don't throttle, request was authenticated.
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			return $response;
+		}
+
+		$body = file_get_contents('php://input');
+		$details = json_decode($body, true);
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$this->manager->processSignatureDetails($request, $account, $recipient['type'], $recipient['value'], $details);
+		return new DataResponse([], Http::STATUS_OK);
 	}
 
 }
