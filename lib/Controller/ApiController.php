@@ -747,8 +747,10 @@ class ApiController extends OCSController {
 		}
 
 		$found = false;
+		$recipient_idx = 0;
 		foreach ($row['recipients'] as $recipient) {
 			if ($recipient['type'] !== $type || $recipient['value'] !== $value) {
+				$recipient_idx++;
 				continue;
 			}
 
@@ -786,8 +788,12 @@ class ApiController extends OCSController {
 			}
 
 			$imageId = null;
+			$checkRecipientIdx = count($row['recipients']) > 1;
 			foreach ($fields as $field) {
 				$fieldId = $field['id'];
+				if ($checkRecipientIdx && isset($field['recipient_idx']) && $field['recipient_idx'] !== $recipient_idx) {
+					continue;
+				}
 
 				$ref = $this->request->getParam($fieldId);
 				if ($ref) {
@@ -857,6 +863,11 @@ class ApiController extends OCSController {
 							'Content-Type' => $mime,
 						],
 					];
+				} else {
+					// Required signature image not given.
+					return new DataResponse([
+						'error' => 'signature_images_missing',
+					], Http::STATUS_PRECONDITION_FAILED);
 				}
 			};
 		}
@@ -898,8 +909,7 @@ class ApiController extends OCSController {
 		} catch (\Exception $e) {
 			switch ($e->getCode()) {
 				case Http::STATUS_CONFLICT:
-					// Document was already signed.
-					// TODO: Mark as signed in database.
+					// Document was already signed. Signature information will be fetched by background job.
 					return new DataResponse([], Http::STATUS_CONFLICT);
 				default:
 					return new DataResponse(['error' => $e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
