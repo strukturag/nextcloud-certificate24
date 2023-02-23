@@ -233,6 +233,7 @@ be given with the email address of the user that is fetching the information.
     + `403 Forbidden` When the user is not allowed to sign the file.
     + `404 Not Found` When no such request exists.
     + `409 Conflict` File was already signed.
+    + `412 Precondition Failed` Not all signature fields are filled out.
     + `413 Request Entity Too Large` Image is too large.
     + `504 Gateway Timeout` When the signing backend took too long.
   - Data:

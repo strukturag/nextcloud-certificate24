@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
 	<NcModal :aria-label="t('esig', 'Sign {filename}', {filename: request.filename})"
 		size="large"
@@ -17,13 +18,15 @@
 					@loading:start="loading++"
 					@loading:stop="loading--" />
 			</div>
-			<NcCheckboxRadioSwitch v-if="signature_fields && settings['has-signature-image']"
+			<NcCheckboxRadioSwitch v-if="canEmbedImages"
 				:disabled="loading > 0"
 				:checked.sync="embedSignature">
 				{{ t('esig', 'Embed personal signature in fields') }}
 			</NcCheckboxRadioSwitch>
+			<div v-if="signature_fields && !canEmbedImages"
+				v-html="uploadMessage" />
 			<NcButton type="primary"
-				:disabled="loading > 0"
+				:disabled="submitDisabled"
 				@click="sign(request)">
 				{{ t('esig', 'Sign') }}
 				<template #icon>
@@ -43,6 +46,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
 import { loadState } from '@nextcloud/initial-state'
+import { generateUrl } from '@nextcloud/router'
 
 import { signRequest, getSourceUrl } from '../services/apiservice.js'
 
@@ -81,6 +85,27 @@ export default {
 	computed: {
 		signature_fields() {
 			return this.request.metadata?.signature_fields || null
+		},
+		canEmbedImages() {
+			return this.signature_fields
+				&& !!this.signature_fields.length
+				&& this.settings['has-signature-image']
+		},
+		submitDisabled() {
+			return this.loading > 0
+				|| (
+					this.signature_fields
+					&& !!this.signature_fields.length
+					&& (
+						!this.settings['has-signature-image']
+						|| !this.embedSignature
+					)
+				)
+		},
+		uploadMessage() {
+			return t('esig', 'Please upload a signature image in the <a href="{link}">personal settings</a> to sign this file.', {
+				link: generateUrl('/settings/user/esig'),
+			})
 		},
 	},
 
@@ -158,5 +183,13 @@ h1 {
 
 .document {
 	margin-bottom: 1em;
+}
+
+.modal__content:deep a {
+	color: var(--color-primary-default);
+
+	&:hover {
+		color: var(--color-primary-hover);
+	}
 }
 </style>
