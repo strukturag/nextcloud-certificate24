@@ -86,10 +86,6 @@ class Mails {
 			'url' => $server . 's/' . urlencode($signature_id),
 		];
 
-		if (!$this->config->isIntranetInstance()) {
-			$templateOptions['ios_url'] = 'nextcloudpro://open-signature?id=' . urlencode($id) . '&email=' . urlencode($recipient['value']) . '&url=' . urlencode($this->urlGenerator->getAbsoluteURL(''));
-		}
-
 		$body = $this->renderTemplate('email.share.body', $templateOptions, $lang);
 		$subject = $this->renderTemplate('email.share.subject', $templateOptions, $lang);
 

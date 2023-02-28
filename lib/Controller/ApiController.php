@@ -631,6 +631,48 @@ class ApiController extends OCSController {
 			return $response;
 		}
 
+		return $this->returnIncomingRequest($request, $type, $value, $account);
+	}
+
+	/**
+	 * @PublicPage
+	 * @BruteForceProtection(action=esig_signature)
+	 *
+	 * @param string $id
+	 * @return DataResponse
+	 */
+	public function getSignatureRequest(string $id): DataResponse {
+		$account = $this->config->getAccount();
+		if (!$account['id'] || !$account['secret']) {
+			return new DataResponse([
+				'error' => 'unconfigured',
+			], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		$request = $this->requests->getRequestByEsigSignatureId($id);
+		if (!$request) {
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle();
+			return $response;
+		}
+
+		$r = null;
+		foreach ($request['recipients'] as $recipient) {
+			if ($recipient['esig_signature_id'] === $id) {
+				$r = $recipient;
+				break;
+			}
+		}
+		if (!$r) {
+			// Should not happen, we queried the request based on the signature id.
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			return $response;
+		}
+
+		return $this->returnIncomingRequest($request, $r['type'], $r['value'], $account);
+	}
+
+	private function returnIncomingRequest(array $request, string $type, string $value, array $account) {
 		$owner = $this->userManager->get($request['user_id']);
 		if (!$owner) {
 			// Should not happen, owned requests are deleted when users are.
@@ -650,7 +692,7 @@ class ApiController extends OCSController {
 		}
 		$metadata = $this->filterMetadata($request, $type, $value);
 		$response = [
-			'request_id' => $id,
+			'request_id' => $request['id'],
 			'created' => $this->formatDateTime($request['created']),
 			'user_id' => $request['user_id'],
 			'display_name' => $owner ? $owner->getDisplayName() : null,

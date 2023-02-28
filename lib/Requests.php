@@ -223,6 +223,38 @@ class Requests {
 		return $row;
 	}
 
+	public function getRequestByEsigSignatureId(string $signatureId): ?array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_requests')
+			->where($query->expr()->eq('esig_signature_id', $query->createNamedParameter($signatureId)))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+		if ($row) {
+			// Simple case, one recipient.
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+			$row['recipients'] = $this->getRecipients($row);
+			return $row;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('request_id')
+			->from('esig_recipients')
+			->where($query->expr()->eq('esig_signature_id', $query->createNamedParameter($signatureId)));
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+		if ($row === false) {
+			return null;
+		}
+
+		return $this->getRequestById($row['request_id']);
+	}
+
 	public function getOwnRequests(IUser $user, bool $include_signed): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')

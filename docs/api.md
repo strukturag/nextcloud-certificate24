@@ -217,6 +217,30 @@ an email address. In this case, an additional url query parameter `email` must
 be given with the email address of the user that is fetching the information.
 
 
+## Get details on file based on signature id
+
+* Method: `GET`
+* Endpoint: `/api/v1/signature/<signature_id>`
+* Response:
+  - Status code:
+    + `200 OK`
+    + `401 Unauthorized` When the user is not allowed to access the request.
+    + `404 Not Found` When no such request exists.
+  - Data:
+    | field               | type    | description                                                      |
+    |---------------------|---------|------------------------------------------------------------------|
+    | `request_id`        | string  | The id of the signing request.                                   |
+    | `created`           | iso8601 | The timestamp when the file was shared.                          |
+    | `user_id`           | string  | The id of the user that shared the file.                         |
+    | `display_name`      | string  | The display name of the user that shared the file.               |
+    | `filename`          | string  | Filename that was shared.                                        |
+    | `mimetype`          | string  | Mimetype of the shared file.                                     |
+    | `download_url`      | string  | A temporary URL that can be used to download the original file.  |
+    | `metadata`          | array   | Optional JSON request metadata (see above).                      |
+    | `signed`            | iso8601 | The timestamp when the file was signed completely.               |
+    | `signed_url`        | string  | A temporary URL that can be used to download the signed file.    |
+
+
 ## Sign file
 
 * Method: `POST`
@@ -305,3 +329,34 @@ Example:
 
     signature-01
     --abcdefg--
+
+
+# Backend APIs
+
+In some cases, it might be necessary to request information directly from the
+signature backend server. One example would be querying details of anonymous
+signatures based on the signature id of the backend service (e.g. from the
+signing request email to anonymous users).
+
+
+## Get details on anonymous signature
+
+* Method: `GET`
+* Endpoint: `/api/v1/signatures/<signature_id>`
+* Headers:
+   - `X-Vinegar-API`: `true`
+* Response:
+  - Status code:
+    + `200 OK`
+    + `404 Not Found` When no such signature exists.
+    + `409 Conflict` When the signature was already performed.
+  - Data:
+    | field               | type    | description                                                      |
+    |---------------------|---------|------------------------------------------------------------------|
+    | `status`            | string  | `success`                                                        |
+    | `url`               | string  | The URL of the Nextcloud instance for this signature request.    |
+    | `signature_id`      | string  | The id of the signature request for this recipient.              |
+    | `recipient`         | array   | Information on the recipient of the signature request.           |
+
+The `signature_id` can be used to query information about the request (use the
+"Get details on file based on signature id" API from above).

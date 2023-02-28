@@ -93,6 +93,12 @@ return [
 			'requirements' => $requirements,
 		],
 		[
+			'name' => 'Api#getSignatureRequest',
+			'url' => '/api/{apiVersion}/signature/{id}',
+			'verb' => 'GET',
+			'requirements' => $requirements,
+		],
+		[
 			'name' => 'Api#getFileMetadata',
 			'url' => '/api/{apiVersion}/metadata/{id}',
 			'verb' => 'GET',
