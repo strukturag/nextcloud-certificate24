@@ -441,7 +441,7 @@ class Requests {
 			$query->executeStatement();
 
 			$query = $this->db->getQueryBuilder();
-			$query->selectAlias($query->func()->count('1'), 'count')
+			$query->select($query->func()->count('*', 'count'))
 				->from('esig_recipients')
 				->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
 				->andWhere($query->expr()->isNull('signed'));
