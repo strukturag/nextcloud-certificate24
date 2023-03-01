@@ -1,16 +1,14 @@
 <?php
+
 namespace OCA\Esig\Migration;
 
-use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
 class Version1000Date20230130153618 extends SimpleMigrationStep {
-
 	protected IDBConnection $db;
 
 	public function __construct(IDBConnection $db) {
@@ -55,5 +53,4 @@ class Version1000Date20230130153618 extends SimpleMigrationStep {
 			->where($update->expr()->eq('type', $update->createNamedParameter('email')));
 		$update->executeStatement();
 	}
-
 }

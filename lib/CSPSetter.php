@@ -4,21 +4,17 @@ declare(strict_types=1);
 
 namespace OCA\Esig;
 
-use OCA\Files\Event\LoadAdditionalScriptsEvent;
-use OCA\Esig\Config;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
-use OCP\Util;
 
 /**
  * @template-implements IEventListener<Event>
  */
 class CSPSetter implements IEventListener {
-
 	protected IInitialState $initialState;
 	protected Config $config;
 
@@ -57,5 +53,4 @@ class CSPSetter implements IEventListener {
 		$csp->addAllowedWorkerSrcDomain("'self'");
 		$event->addPolicy($csp);
 	}
-
 }

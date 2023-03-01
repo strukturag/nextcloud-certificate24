@@ -9,7 +9,6 @@ use OCP\Files\File;
 use OCP\IUser;
 
 class ShareEvent extends Event {
-
 	private File $file;
 	private IUser $user;
 	private array $recipients;
@@ -50,5 +49,4 @@ class ShareEvent extends Event {
 	public function getRequestId(): string {
 		return $this->request_id;
 	}
-
 }

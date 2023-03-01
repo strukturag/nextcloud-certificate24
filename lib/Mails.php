@@ -6,9 +6,6 @@ namespace OCA\Esig;
 
 use OC\Mail\Message;
 use OCA\Esig\AppInfo\Application;
-use OCA\Esig\Config;
-use OCA\Esig\Requests;
-use OCA\Esig\TranslatedTemplate;
 use OCP\Defaults;
 use OCP\Files\File;
 use OCP\IL10N;
@@ -20,7 +17,6 @@ use OCP\Mail\IMailer;
 use OCP\Util;
 
 class Mails {
-
 	private IMailer $mailer;
 	private Defaults $defaults;
 	private IL10N $l10n;
@@ -73,7 +69,7 @@ class Mails {
 			return;
 		}
 
-		if ($server && $server[strlen($server)-1] != '/') {
+		if ($server && $server[strlen($server) - 1] != '/') {
 			$server = $server . '/';
 		}
 
@@ -120,7 +116,7 @@ class Mails {
 		}
 
 		$server = $request['esig_server'];
-		if ($server && $server[strlen($server)-1] != '/') {
+		if ($server && $server[strlen($server) - 1] != '/') {
 			$server = $server . '/';
 		}
 
@@ -155,5 +151,4 @@ class Mails {
 			'app' => Application::APP_ID,
 		]);
 	}
-
 }

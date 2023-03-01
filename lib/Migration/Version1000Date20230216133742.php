@@ -1,11 +1,8 @@
 <?php
+
 namespace OCA\Esig\Migration;
 
-use Doctrine\DBAL\Types\Type;
-use Doctrine\DBAL\Types\Types;
 use OCA\Esig\AppInfo\Application;
-use OCP\DB\ISchemaWrapper;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\ILogger;
 use OCP\Migration\SimpleMigrationStep;
@@ -13,8 +10,7 @@ use OCP\Migration\IOutput;
 use Throwable;
 
 class Version1000Date20230216133742 extends SimpleMigrationStep {
-
-	const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
+	public const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
 
 	private ILogger $logger;
 	private IDBConnection $db;
@@ -118,5 +114,4 @@ class Version1000Date20230216133742 extends SimpleMigrationStep {
 			throw $e;
 		}
 	}
-
 }

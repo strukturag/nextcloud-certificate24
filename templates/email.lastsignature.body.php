@@ -1,4 +1,5 @@
 <?php
+
 use OCP\Defaults;
 
 $defaults = \OC::$server->query(Defaults::class);
@@ -9,8 +10,8 @@ $recipient = $_['recipient'];
 $request_id = $_['request_id'];
 $url = $_['url'];
 
-$pEol = function() {
-  p("\n");
+$pEol = function () {
+	p("\n");
 };
 
 p($l->t('Hello %1$s,', [$recipient]));
@@ -18,8 +19,8 @@ $pEol();
 $pEol();
 
 print_unescaped($l->t('all recipients have signed "%1$s" on %2$s.', [
-  $file->getName(),
-  $defaults->getName(),
+	$file->getName(),
+	$defaults->getName(),
 ]));
 $pEol();
 $pEol();

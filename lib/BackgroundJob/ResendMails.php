@@ -13,7 +13,6 @@ use OCP\Files\IRootFolder;
 use OCP\IUserManager;
 
 class ResendMails extends TimedJob {
-
 	private IUserManager $userManager;
 	private IRootFolder $root;
 	private Requests $requests;

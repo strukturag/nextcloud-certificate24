@@ -7,17 +7,14 @@ namespace OCA\Esig\Controller;
 use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Config;
 use OCP\AppFramework\Controller;
-use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\HintException;
 use OCP\IRequest;
 use OCP\IUserSession;
-use OCP\Util;
 
 class PageController extends Controller {
-
 	private IInitialState $initialState;
 	private IUserSession $userSession;
 	private Config $config;
@@ -69,7 +66,7 @@ class PageController extends Controller {
 		return $response;
 	}
 
-		/**
+	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
@@ -90,5 +87,4 @@ class PageController extends Controller {
 		], 'blank');
 		return $response;
 	}
-
 }

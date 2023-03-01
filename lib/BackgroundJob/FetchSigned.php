@@ -17,7 +17,6 @@ use OCP\BackgroundJob\IJob;
 use OCP\ILogger;
 
 class FetchSigned extends TimedJob {
-
 	private ILogger $logger;
 	private Config $config;
 	private Requests $requests;

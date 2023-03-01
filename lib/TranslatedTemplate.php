@@ -16,7 +16,6 @@ use OCP\Util;
 require_once \OC::$SERVERROOT.'/lib/private/legacy/template/functions.php';
 
 class TranslatedTemplate extends TemplateBase {
-
 	/**
 	 * @param string $app
 	 * @param string $name
@@ -55,5 +54,4 @@ class TranslatedTemplate extends TemplateBase {
 		$path = $locator->getPath();
 		return array($path, $template);
 	}
-
 }

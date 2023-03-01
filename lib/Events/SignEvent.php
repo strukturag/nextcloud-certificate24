@@ -8,7 +8,6 @@ use OCP\EventDispatcher\Event;
 use OCP\IUser;
 
 class SignEvent extends Event {
-
 	private string $request_id;
 	private array $request;
 	private string $type;
@@ -78,5 +77,4 @@ class SignEvent extends Event {
 	public function isLastSignature(): bool {
 		return $this->lastSignature;
 	}
-
 }

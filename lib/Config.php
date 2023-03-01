@@ -12,7 +12,6 @@ use OCP\IConfig;
 use OCP\IUser;
 
 class Config {
-
 	public const DEFAULT_SERVER = "https://api.certificate24.com/";
 	public const DEFAULT_SAVE_MODE = 'new';
 
@@ -31,7 +30,7 @@ class Config {
 			$server = self::DEFAULT_SERVER;
 		}
 
-		if ($server[strlen($server)-1] != '/') {
+		if ($server[strlen($server) - 1] != '/') {
 			$server = $server . '/';
 		}
 		return $server;
@@ -105,5 +104,4 @@ class Config {
 			return null;
 		}
 	}
-
 }

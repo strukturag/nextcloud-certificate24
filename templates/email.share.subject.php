@@ -1,4 +1,5 @@
 <?php
+
 use OCP\Defaults;
 
 $defaults = \OC::$server->query(Defaults::class);

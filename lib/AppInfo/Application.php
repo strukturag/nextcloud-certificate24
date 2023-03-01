@@ -64,5 +64,4 @@ class Application extends App implements IBootstrap {
 		$manager = $server->getNotificationManager();
 		$manager->registerNotifierService(Notifier::class);
 	}
-
 }

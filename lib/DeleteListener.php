@@ -5,22 +5,17 @@ declare(strict_types=1);
 namespace OCA\Esig;
 
 use OCA\Esig\AppInfo\Application;
-use OCA\Esig\Client;
-use OCA\Esig\Config;
-use OCA\Esig\Requests;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\NodeDeletedEvent;
 use OCP\User\Events\UserDeletedEvent;
 use OCP\ILogger;
-use OCP\IUser;
 
 /**
  * @template-implements IEventListener<Event>
  */
 class DeleteListener implements IEventListener {
-
 	protected ILogger $logger;
 	protected Requests $requests;
 	protected Client $client;
@@ -101,5 +96,4 @@ class DeleteListener implements IEventListener {
 			}
 		}
 	}
-
 }

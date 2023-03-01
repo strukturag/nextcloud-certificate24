@@ -25,27 +25,25 @@ use OCP\Files\IRootFolder;
 use OCP\ILogger;
 use OCP\Image;
 use OCP\IRequest;
-use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Mail\IMailer;
 use OCP\Share\IShare;
 
 function str_to_stream(string $string) {
-	$stream = fopen('php://memory','r+');
+	$stream = fopen('php://memory', 'r+');
 	fwrite($stream, $string);
 	rewind($stream);
 	return $stream;
 }
 
 class ApiController extends OCSController {
-
-	const PDF_MIME_TYPES = [
+	public const PDF_MIME_TYPES = [
 		'application/pdf',
 	];
 
-	const MAX_SIGN_OPTIONS_SIZE = 8 * 1024;
-	const MAX_IMAGE_SIZE = 1024 * 1024;
+	public const MAX_SIGN_OPTIONS_SIZE = 8 * 1024;
+	public const MAX_IMAGE_SIZE = 1024 * 1024;
 
 	private ILogger $logger;
 	private IUserManager $userManager;
@@ -157,7 +155,7 @@ class ApiController extends OCSController {
 						return new DataResponse([
 							'error' => 'duplicate_email',
 						], Http::STATUS_BAD_REQUEST);
-					} else if (!$recipient || !$this->mailer->validateMailAddress($recipient)) {
+					} elseif (!$recipient || !$this->mailer->validateMailAddress($recipient)) {
 						return new DataResponse([
 							'error' => 'invalid_email',
 						], Http::STATUS_BAD_REQUEST);
@@ -208,7 +206,7 @@ class ApiController extends OCSController {
 							'error' => 'invalid_metadata',
 							'details' => ['field has no recipient_idx'],
 						], Http::STATUS_BAD_REQUEST);
-					} else if ($idx >= count($recipients)) {
+					} elseif ($idx >= count($recipients)) {
 						return new DataResponse([
 							'error' => 'invalid_metadata',
 							'details' => ['recipient_idx is out of bounds'],
@@ -386,7 +384,7 @@ class ApiController extends OCSController {
 				if (!$allSigned) {
 					unset($r['signed']);
 					unset($r['signed_url']);
-				} else if ($request['esig_signature_result_id']) {
+				} elseif ($request['esig_signature_result_id']) {
 					$r['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
 				}
 			}
@@ -507,7 +505,7 @@ class ApiController extends OCSController {
 				if (!$allSigned) {
 					unset($r['signed']);
 					unset($r['signed_url']);
-				} else if ($request['esig_signature_result_id']) {
+				} elseif ($request['esig_signature_result_id']) {
 					$r['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
 				}
 			}
@@ -577,7 +575,7 @@ class ApiController extends OCSController {
 		if (!$allSigned) {
 			unset($response['signed']);
 			unset($response['signed_url']);
-		} else if ($request['esig_signature_result_id']) {
+		} elseif ($request['esig_signature_result_id']) {
 			$response['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
 		}
 		return new DataResponse($response);
@@ -602,7 +600,7 @@ class ApiController extends OCSController {
 		if (!empty($email)) {
 			$type = 'email';
 			$value = $email;
-		} else if ($user) {
+		} elseif ($user) {
 			$type = 'user';
 			$value = $user->getUID();
 		} else {
@@ -726,7 +724,7 @@ class ApiController extends OCSController {
 		if (!$allSigned) {
 			unset($response['signed']);
 			unset($response['signed_url']);
-		} else if ($request['esig_signature_result_id']) {
+		} elseif ($request['esig_signature_result_id']) {
 			$response['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
 		}
 		return new DataResponse($response);
@@ -750,7 +748,7 @@ class ApiController extends OCSController {
 			return new DataResponse([
 				'error' => 'unconfigured',
 			], Http::STATUS_PRECONDITION_FAILED);
-		} else if ($account['id'] !== $row['esig_account_id']) {
+		} elseif ($account['id'] !== $row['esig_account_id']) {
 			return new DataResponse([
 				'error' => 'invalid_account',
 			], Http::STATUS_PRECONDITION_FAILED);
@@ -799,7 +797,7 @@ class ApiController extends OCSController {
 		if ($email) {
 			$type = 'email';
 			$value = $email;
-		} else if ($user) {
+		} elseif ($user) {
 			$type = 'user';
 			$value = $user->getUID();
 		} else {
@@ -844,7 +842,7 @@ class ApiController extends OCSController {
 			return new DataResponse([
 				'error' => 'unconfigured',
 			], Http::STATUS_PRECONDITION_FAILED);
-		} else if ($account['id'] !== $row['esig_account_id']) {
+		} elseif ($account['id'] !== $row['esig_account_id']) {
 			return new DataResponse([
 				'error' => 'invalid_account',
 			], Http::STATUS_PRECONDITION_FAILED);
@@ -930,7 +928,7 @@ class ApiController extends OCSController {
 						'name' => $fieldId,
 						'contents' => $imageId,
 					];
-				} else if ($imageFile) {
+				} elseif ($imageFile) {
 					// Use configured personal signature image.
 					$content = $imageFile->getContent();
 					$mime = $imageFile->getMimetype();
@@ -1154,5 +1152,4 @@ class ApiController extends OCSController {
 		$this->manager->processSignatureDetails($request, $account, $recipient['type'], $recipient['value'], $details);
 		return new DataResponse([], Http::STATUS_OK);
 	}
-
 }

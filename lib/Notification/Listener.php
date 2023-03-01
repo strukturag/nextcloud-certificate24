@@ -19,7 +19,6 @@ use Psr\Log\LoggerInterface;
  * @template-implements IEventListener<Event>
  */
 class Listener implements IEventListener {
-
 	protected IManager $notificationManager;
 	protected IEventDispatcher $dispatcher;
 	protected ITimeFactory $timeFactory;
@@ -175,5 +174,4 @@ class Listener implements IEventListener {
 			$this->onSignEvent($event);
 		}
 	}
-
 }

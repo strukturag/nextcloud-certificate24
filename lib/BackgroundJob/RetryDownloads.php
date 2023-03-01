@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OCA\Esig\BackgroundJob;
 
-use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Config;
 use OCA\Esig\Manager;
 use OCA\Esig\Requests;
@@ -15,7 +14,6 @@ use OCP\ILogger;
 use OCP\IUserManager;
 
 class RetryDownloads extends TimedJob {
-
 	private ILogger $logger;
 	private IUserManager $userManager;
 	private Config $config;

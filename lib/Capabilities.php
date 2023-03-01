@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OCA\Esig;
 
-use OCA\Esig\Config;
 use OCP\Capabilities\IPublicCapability;
 use OCP\IUserSession;
 use OCP\App\IAppManager;

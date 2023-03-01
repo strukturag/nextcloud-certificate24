@@ -1,14 +1,13 @@
 <?php
+
 namespace OCA\Esig\Migration;
 
-use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
 class Version1000Date20221102161153 extends SimpleMigrationStep {
-
 	/**
 	 * @param IOutput $output
 	 * @param \Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
@@ -27,5 +26,4 @@ class Version1000Date20221102161153 extends SimpleMigrationStep {
 		}
 		return $schema;
 	}
-
 }
