@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace OCA\Esig;
 
-use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Esig\Config;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;

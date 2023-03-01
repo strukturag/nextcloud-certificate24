@@ -11,6 +11,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\HintException;
 use OCP\IRequest;
 use OCP\IUserSession;
 use OCP\Util;

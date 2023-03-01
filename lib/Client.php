@@ -148,7 +148,10 @@ class Client {
 		return $url;
 	}
 
-	public function downloadSignedFile(string $id, array $account, string $server): string {
+	/**
+	 * @return string|resource
+	 */
+	public function downloadSignedFile(string $id, array $account, string $server) {
 		$url = $this->getSignedUrl($id, $account, $server);
 		$headers = $this->getHeaders();
 		$client = $this->clientService->newClient();
@@ -163,7 +166,10 @@ class Client {
 		return $body;
 	}
 
-	public function getSignatureDetails(string $id, array $account, string $server, string $signature_id): string {
+	/**
+	 * @return string|resource
+	 */
+	public function getSignatureDetails(string $id, array $account, string $server, string $signature_id) {
 		$url = $server . 'api/v1/files/' . rawurlencode($account['id']) . '/' . rawurlencode($id) . '/' . rawurlencode($signature_id) . '/details';
 		$token = $this->tokens->getToken($account, $signature_id, 'signature-details');
 		$url .= '?token=' . urlencode($token);
