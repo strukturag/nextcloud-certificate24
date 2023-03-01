@@ -110,7 +110,7 @@ class Listener {
 		$id = $event->getRequestId();
 		$request = $event->getRequest();
 
-		if ($event->getRecipientType() === 'user' && $event->getRecipient() !== $request['user_id']) {
+		if ($event->getRecipientType() !== 'user' || ($event->getRecipientType() === 'user' && $event->getRecipient() !== $request['user_id'])) {
 			// Add activity for sender that the recipient has signed (only if not requested from themselves).
 			$activity = $this->activityManager->generateEvent();
 			try {
@@ -187,7 +187,8 @@ class Listener {
 		if ($event->isLastSignature()) {
 			foreach ($request['recipients'] as $recipient) {
 				$type = $recipient['type'];
-				if ($type !== 'user') {
+				$value = $recipient['value'];
+				if ($type !== 'user' || $value === $request['user_id']) {
 					continue;
 				}
 
@@ -197,7 +198,7 @@ class Listener {
 						->setType('finished_request')
 						->setObject('finished_request', 0, $id)
 						->setTimestamp($event->getSigned()->getTimestamp())
-						->setAffectedUser($recipient['value'])
+						->setAffectedUser($value)
 						->setSubject('last_signature', [
 							'request' => $request,
 							'request_id' => $id,
@@ -207,6 +208,32 @@ class Listener {
 					continue;
 				}
 
+				try {
+					$this->activityManager->publish($activity);
+				} catch (\BadMethodCallException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
+				} catch (\InvalidArgumentException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
+				}
+			}
+
+			$activity = $this->activityManager->generateEvent();
+			try {
+				$activity->setApp('esig')
+					->setType('finished_request')
+					->setObject('finished_request', 0, $id)
+					->setTimestamp($event->getSigned()->getTimestamp())
+					->setAffectedUser($request['user_id'])
+					->setSubject('last_signature', [
+						'request' => $request,
+						'request_id' => $id,
+					]);
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
+				$activity = null;
+			}
+
+			if ($activity) {
 				try {
 					$this->activityManager->publish($activity);
 				} catch (\BadMethodCallException $e) {
