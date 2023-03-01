@@ -2,3 +2,5 @@ js
 lib/Vendor
 node_modules
 vendor
+
+.php-cs-fixer.cache
