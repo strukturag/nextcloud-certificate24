@@ -1,4 +1,9 @@
 {
+	"autoload-dev": {
+		"psr-4": {
+			"OCP\\": "vendor/nextcloud/ocp/OCP"
+		}
+	},
 	"autoload": {
 		"psr-4": {
 			"OCA\\Esig\\": "lib/"
@@ -35,6 +40,10 @@
 			"composer dump-autoload"
 		],
 		"test": "cd tests/php/ && phpunit -c phpunit.xml"
+	},
+	"require-dev": {
+		"nextcloud/ocp": "dev-stable25",
+		"roave/security-advisories": "dev-latest"
 	},
 	"require": {
 		"bamarni/composer-bin-plugin": "^1.8",
