@@ -66,9 +66,9 @@ class Listener {
 		$activity = $this->activityManager->generateEvent();
 		try {
 			$activity->setApp('esig')
-				->setType('esig')
+				->setType('incoming_request')
 				->setAuthor($sender->getUID())
-				->setObject('file', $file->getId())
+				->setObject('incoming_request', 0, $event->getRequestId())
 				->setTimestamp($this->timeFactory->getTime())
 				->setSubject('share', [
 					'file_id' => $file->getId(),
@@ -113,8 +113,8 @@ class Listener {
 		$activity = $this->activityManager->generateEvent();
 		try {
 			$activity->setApp('esig')
-				->setType('esig')
-				->setObject('file', (int) $request['file_id'])
+				->setType('outgoing_request')
+				->setObject('outgoing_request', 0, $id)
 				->setTimestamp($event->getSigned()->getTimestamp())
 				->setAffectedUser($request['user_id'])
 				->setSubject('sign', [
