@@ -71,7 +71,7 @@ class Listener implements IEventListener {
 				$notification->setApp(Application::APP_ID)
 					->setDateTime($dateTime)
 					->setUser($recipient['value'])
-					->setObject('file', (string) $file->getId())
+					->setObject('incoming_request', $event->getRequestId())
 					->setSubject('share', [
 						'file_id' => $file->getId(),
 						'filename' => $file->getName(),
@@ -104,7 +104,7 @@ class Listener implements IEventListener {
 			$notification->setApp(Application::APP_ID)
 				->setDateTime($event->getSigned())
 				->setUser($request['user_id'])
-				->setObject('request', $event->getRequestId())
+				->setObject('outgoing_request', $event->getRequestId())
 				->setSubject('sign', [
 					'request' => $request,
 					'request_id' => $event->getRequestId(),
@@ -129,7 +129,7 @@ class Listener implements IEventListener {
 					$notification->setApp(Application::APP_ID)
 						->setDateTime($event->getSigned())
 						->setUser($recipient['value'])
-						->setObject('request', $event->getRequestId())
+						->setObject('finished_request', $event->getRequestId())
 						->setSubject('last_signature', [
 							'request' => $request,
 							'request_id' => $event->getRequestId(),
@@ -147,7 +147,7 @@ class Listener implements IEventListener {
 					$notification->setApp(Application::APP_ID)
 						->setDateTime($event->getSigned())
 						->setUser($request['user_id'])
-						->setObject('request', $event->getRequestId())
+						->setObject('finished_request', $event->getRequestId())
 						->setSubject('last_signature', [
 							'request' => $request,
 							'request_id' => $event->getRequestId(),
