@@ -16,6 +16,9 @@ use OCP\User\Events\UserDeletedEvent;
 use OCP\ILogger;
 use OCP\IUser;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class DeleteListener implements IEventListener {
 
 	protected ILogger $logger;

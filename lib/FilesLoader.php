@@ -12,6 +12,9 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class FilesLoader implements IEventListener {
 
 	protected IInitialState $initialState;

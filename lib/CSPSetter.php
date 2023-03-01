@@ -14,6 +14,9 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Util;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class CSPSetter implements IEventListener {
 
 	protected IInitialState $initialState;
