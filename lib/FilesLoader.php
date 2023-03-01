@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OCA\Esig;
 
-use OCA\Esig\Config;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\Event;
@@ -16,7 +15,6 @@ use OCP\Util;
  * @template-implements IEventListener<Event>
  */
 class FilesLoader implements IEventListener {
-
 	protected IInitialState $initialState;
 	protected Config $config;
 
@@ -54,5 +52,4 @@ class FilesLoader implements IEventListener {
 
 		Util::addScript('esig', 'esig-loader');
 	}
-
 }

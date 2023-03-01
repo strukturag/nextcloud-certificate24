@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OCA\Esig\Controller;
 
-use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Client;
 use OCA\Esig\Config;
 use OCA\Esig\Requests;
@@ -18,18 +17,16 @@ use OCP\Image;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
-use OCP\Util;
 
 function str_to_stream(string $string) {
-	$stream = fopen('php://memory','r+');
+	$stream = fopen('php://memory', 'r+');
 	fwrite($stream, $string);
 	rewind($stream);
 	return $stream;
 }
 
 class DownloadController extends Controller {
-
-	const MAX_IMAGE_SIZE = 1024 * 1024;
+	public const MAX_IMAGE_SIZE = 1024 * 1024;
 
 	protected IUserSession $userSession;
 	protected IURLGenerator $urlGenerator;
@@ -68,7 +65,7 @@ class DownloadController extends Controller {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
-		} else if ($account['id'] !== $req['esig_account_id']) {
+		} elseif ($account['id'] !== $req['esig_account_id']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
@@ -104,7 +101,7 @@ class DownloadController extends Controller {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
-		} else if ($account['id'] !== $req['esig_account_id']) {
+		} elseif ($account['id'] !== $req['esig_account_id']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
@@ -140,7 +137,7 @@ class DownloadController extends Controller {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
-		} else if ($account['id'] !== $req['esig_account_id']) {
+		} elseif ($account['id'] !== $req['esig_account_id']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
@@ -241,5 +238,4 @@ class DownloadController extends Controller {
 		$this->config->storeSignatureImage($user, $data);
 		return new DataResponse([], Http::STATUS_CREATED);
 	}
-
 }

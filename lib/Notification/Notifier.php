@@ -6,7 +6,6 @@ namespace OCA\Esig\Notification;
 
 use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Requests;
-use OCP\Comments\NotFoundException;
 use OCP\HintException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -14,7 +13,6 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Notification\AlreadyProcessedException;
-use OCP\Notification\IAction;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
@@ -90,7 +88,7 @@ class Notifier implements INotifier {
 				return $this->parseSign($notification, $l);
 			case 'last_signature':
 				return $this->parseLastSignature($notification, $l);
-			}
+		}
 
 		$this->notificationManager->markProcessed($notification);
 		throw new \InvalidArgumentException('Unknown subject');
@@ -201,7 +199,7 @@ class Notifier implements INotifier {
 	protected function parseLastSignature(INotification $notification, IL10N $l): INotification {
 		$parameters = $notification->getSubjectParameters();
 		$request = $parameters['request'];
-		if ($notification->getUser() === $request['user_id'])  {
+		if ($notification->getUser() === $request['user_id']) {
 			$url = $this->url->linkToRouteAbsolute('esig.Page.index') . '#outgoing-' . $parameters['request_id'];
 		} else {
 			$url = $this->url->linkToRouteAbsolute('esig.Page.index') . '#incoming-' . $parameters['request_id'];
@@ -233,5 +231,4 @@ class Notifier implements INotifier {
 
 		return $notification;
 	}
-
 }

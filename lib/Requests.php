@@ -6,21 +6,18 @@ namespace OCA\Esig;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCA\Esig\AppInfo\Application;
-use OCA\Esig\Config;
 use OCA\Esig\Events\ShareEvent;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\IDBConnection;
 use OCP\ILogger;
-use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
 use Throwable;
 
 class Requests {
-
-	const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
+	public const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
 
 	// Store signed result as new file next to the original file.
 	public const MODE_SIGNED_NEW = 'new';
@@ -94,7 +91,7 @@ class Requests {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$values = 				[
+		$values = [
 			'id' => $query->createParameter('id'),
 			'file_id' => $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT),
 			'filename' => $query->createNamedParameter($file->getName()),
@@ -379,10 +376,10 @@ class Requests {
 		}
 		$result->closeCursor();
 
-		usort($requests, function($a, $b) {
+		usort($requests, function ($a, $b) {
 			if ($a['created'] < $b['created']) {
 				return -1;
-			} else if ($a['created'] > $b['created']) {
+			} elseif ($a['created'] > $b['created']) {
 				return 1;
 			} else {
 				return 0;
@@ -689,5 +686,4 @@ class Requests {
 		$pending['multi'] = $recipients;
 		return $pending;
 	}
-
 }

@@ -7,7 +7,6 @@ namespace OCA\Esig\Settings\Admin;
 use OCA\Esig\Config;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;

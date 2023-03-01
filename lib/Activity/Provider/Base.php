@@ -7,14 +7,12 @@ namespace OCA\Esig\Activity\Provider;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\Activity\IProvider;
-use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 
 abstract class Base implements IProvider {
-
 	protected IFactory $languageFactory;
 	protected IURLGenerator $urlGenerator;
 	protected IManager $activityManager;

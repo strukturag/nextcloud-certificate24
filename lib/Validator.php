@@ -9,7 +9,6 @@ use OCA\Esig\Vendor\Opis\JsonSchema\Helper;
 use OCA\Esig\Vendor\Opis\JsonSchema\Validator as JsonValidator;
 
 class Validator {
-
 	private function validateWithSchema(string $filename, ?array $data): ?array {
 		if (!$data) {
 			return null;
@@ -38,5 +37,4 @@ class Validator {
 	public function validateShareOptions(?array $options): ?array {
 		return $this->validateWithSchema('request_options.json', $options);
 	}
-
 }

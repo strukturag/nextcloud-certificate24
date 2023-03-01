@@ -6,7 +6,6 @@ namespace OCA\Esig;
 
 use DomainException;
 use OCA\Esig\AppInfo\Application;
-use OCA\Esig\Config;
 use OCA\Esig\Vendor\Firebase\JWT\JWT;
 use OCA\Esig\Vendor\Firebase\JWT\Key;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -15,7 +14,6 @@ use OCP\IURLGenerator;
 use UnexpectedValueException;
 
 class Tokens {
-
 	private ITimeFactory $timeFactory;
 	private IURLGenerator $urlGenerator;
 	private ILogger $logger;
@@ -65,5 +63,4 @@ class Tokens {
 
 		return ($claims->sub === $subject && $claims->act === $action);
 	}
-
 }

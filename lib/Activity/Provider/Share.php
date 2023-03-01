@@ -8,7 +8,6 @@ use OCP\Activity\IEvent;
 use OCP\IL10N;
 
 class Share extends Base {
-
 	/**
 	 * @param string $language
 	 * @param IEvent $event

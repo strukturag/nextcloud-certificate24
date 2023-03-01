@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace OCA\Esig;
 
 use OCA\Esig\AppInfo\Application;
-use OCA\Esig\Tokens;
 use OCP\App\IAppManager;
 use OCP\Files\File;
 use OCP\Http\Client\IClientService;
@@ -13,7 +12,6 @@ use OCP\IConfig;
 use OCP\ILogger;
 
 class Client {
-
 	private ILogger $logger;
 	private IClientService $clientService;
 	private Tokens $tokens;
@@ -191,5 +189,4 @@ class Client {
 		$url = $server . 'details/' . rawurlencode($id);
 		return $url;
 	}
-
 }

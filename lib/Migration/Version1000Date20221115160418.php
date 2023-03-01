@@ -1,7 +1,7 @@
 <?php
+
 namespace OCA\Esig\Migration;
 
-use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use OCA\Esig\Requests;
 use OCP\DB\ISchemaWrapper;
@@ -10,7 +10,6 @@ use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
 class Version1000Date20221115160418 extends SimpleMigrationStep {
-
 	protected IDBConnection $db;
 
 	public function __construct(IDBConnection $db) {
@@ -44,5 +43,4 @@ class Version1000Date20221115160418 extends SimpleMigrationStep {
 			->where($update->expr()->isNull('signed_save_mode'));
 		$update->executeStatement();
 	}
-
 }

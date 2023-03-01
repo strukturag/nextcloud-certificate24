@@ -10,7 +10,6 @@ use OCA\Esig\Requests;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
@@ -246,5 +245,4 @@ class Listener {
 
 		return true;
 	}
-
 }

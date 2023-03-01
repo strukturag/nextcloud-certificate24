@@ -1,11 +1,10 @@
 <?php
+
 namespace OCA\Esig\Migration;
 
-use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use OC\User\NoUserException;
 use OCP\DB\ISchemaWrapper;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
 use OCP\IDBConnection;
@@ -13,7 +12,6 @@ use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
 class Version1000Date20221018102419 extends SimpleMigrationStep {
-
 	protected IDBConnection $db;
 	protected IRootFolder $root;
 
@@ -97,5 +95,4 @@ class Version1000Date20221018102419 extends SimpleMigrationStep {
 		}
 		$result->closeCursor();
 	}
-
 }

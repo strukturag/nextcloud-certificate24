@@ -5,18 +5,14 @@ declare(strict_types=1);
 namespace OCA\Esig;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use OCA\Esig\Config;
-use OCA\Esig\Events\ShareEvent;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\IDBConnection;
 use OCP\ILogger;
-use OCP\IURLGenerator;
 use OCP\IUser;
 
 class Metadata {
-
 	private ILogger $logger;
 	private IDBConnection $db;
 	private IEventDispatcher $dispatcher;
@@ -90,5 +86,4 @@ class Metadata {
 			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
 		$query->executeStatement();
 	}
-
 }

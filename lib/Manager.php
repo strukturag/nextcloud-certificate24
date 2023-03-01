@@ -5,11 +5,7 @@ declare(strict_types=1);
 namespace OCA\Esig;
 
 use OCA\Esig\AppInfo\Application;
-use OCA\Esig\Client;
-use OCA\Esig\Config;
 use OCA\Esig\Events\SignEvent;
-use OCA\Esig\Mails;
-use OCA\Esig\Requests;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
@@ -20,7 +16,6 @@ use OCP\IUser;
 use OCP\IUserManager;
 
 class Manager {
-
 	private ILogger $logger;
 	private IEventDispatcher $dispatcher;
 	private IL10N $l10n;
@@ -209,5 +204,4 @@ class Manager {
 			$this->saveSignedResult($request, $signed, null, $account);
 		}
 	}
-
 }

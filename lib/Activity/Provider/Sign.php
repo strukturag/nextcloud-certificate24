@@ -8,7 +8,6 @@ use OCP\Activity\IEvent;
 use OCP\IL10N;
 
 class Sign extends Base {
-
 	/**
 	 * @param string $language
 	 * @param IEvent $event
@@ -26,7 +25,7 @@ class Sign extends Base {
 
 			$result = $this->parseSign($event, $l);
 			$this->setSubjects($event, $result['subject'], $result['params']);
-		} else if ($event->getSubject() === 'last_signature') {
+		} elseif ($event->getSubject() === 'last_signature') {
 			$l = $this->languageFactory->get('esig', $language);
 			$parameters = $event->getSubjectParameters();
 

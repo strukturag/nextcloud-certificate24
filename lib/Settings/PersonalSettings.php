@@ -7,7 +7,6 @@ namespace OCA\Esig\Settings;
 use OCA\Esig\Config;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
-use OCP\IConfig;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
