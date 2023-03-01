@@ -15,6 +15,9 @@ use OCP\Notification\IManager;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class Listener implements IEventListener {
 
 	protected IManager $notificationManager;
