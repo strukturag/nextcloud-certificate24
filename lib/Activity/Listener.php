@@ -126,20 +126,55 @@ class Listener {
 				]);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
-			return false;
+			$activity = null;
 		}
 
-		$user = $event->getUser();
-		if ($user) {
-			$activity->setAuthor($user->getUID());
+		if ($activity) {
+			$user = $event->getUser();
+			if ($user) {
+				$activity->setAuthor($user->getUID());
+			}
+
+			try {
+				$this->activityManager->publish($activity);
+			} catch (\BadMethodCallException $e) {
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
+			}
 		}
 
-		try {
-			$this->activityManager->publish($activity);
-		} catch (\BadMethodCallException $e) {
-			$this->logger->error($e->getMessage(), ['exception' => $e]);
-		} catch (\InvalidArgumentException $e) {
-			$this->logger->error($e->getMessage(), ['exception' => $e]);
+		if ($event->isLastSignature()) {
+			foreach ($request['recipients'] as $recipient) {
+				$type = $recipient['type'];
+				if ($type !== 'user') {
+					continue;
+				}
+
+				$activity = $this->activityManager->generateEvent();
+				try {
+					$activity->setApp('esig')
+						->setType('finished_request')
+						->setObject('finished_request', 0, $id)
+						->setTimestamp($event->getSigned()->getTimestamp())
+						->setAffectedUser($recipient['value'])
+						->setSubject('last_signature', [
+							'request' => $request,
+							'request_id' => $id,
+						]);
+				} catch (\InvalidArgumentException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
+					continue;
+				}
+
+				try {
+					$this->activityManager->publish($activity);
+				} catch (\BadMethodCallException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
+				} catch (\InvalidArgumentException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
+				}
+			}
 		}
 
 		return true;

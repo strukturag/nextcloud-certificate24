@@ -26,6 +26,12 @@ class Sign extends Base {
 
 			$result = $this->parseSign($event, $l);
 			$this->setSubjects($event, $result['subject'], $result['params']);
+		} else if ($event->getSubject() === 'last_signature') {
+			$l = $this->languageFactory->get('esig', $language);
+			$parameters = $event->getSubjectParameters();
+
+			$result = $this->parseLastSignature($event, $l);
+			$this->setSubjects($event, $result['subject'], $result['params']);
 		} else {
 			throw new \InvalidArgumentException('Wrong subject');
 		}
@@ -48,6 +54,20 @@ class Sign extends Base {
 				$params['user'] = $this->getHighlight($parameters['recipient']);
 				break;
 		}
+
+		return [
+			'subject' => $subject,
+			'params' => $params,
+		];
+	}
+
+	protected function parseLastSignature(IEvent $event, IL10N $l): array {
+		$parameters = $event->getSubjectParameters();
+		$request = $parameters['request'];
+		$subject = $l->t('The file "{filename}" was signed by all recipients');
+		$params = [
+			'filename' => $this->getHighlight($request['filename']),
+		];
 
 		return [
 			'subject' => $subject,
