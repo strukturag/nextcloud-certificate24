@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.27.0@faf106e717c37b8c81721845dba9de3d8deed8ff">
+  <file src="lib/BackgroundJob/FetchSigned.php">
+    <InvalidArgument occurrences="2">
+      <code>$e</code>
+    </InvalidArgument>
+  </file>
+  <file src="lib/BackgroundJob/ResendMails.php">
+    <MissingDependency occurrences="4">
+      <code>IRootFolder</code>
+    </MissingDependency>
+  </file>
+  <file src="lib/Controller/ApiController.php">
+    <InvalidArgument occurrences="1">
+      <code>$e</code>
+    </InvalidArgument>
+    <MissingDependency occurrences="14">
+      <code>IRootFolder</code>
+    </MissingDependency>
+    <UndefinedMethod occurrences="3">
+      <code>loadFromData</code>
+      <code>mimeType</code>
+      <code>valid</code>
+    </UndefinedMethod>
+  </file>
+  <file src="lib/Controller/DownloadController.php">
+    <NullArgument occurrences="1">
+      <code>null</code>
+    </NullArgument>
+    <MissingDependency occurrences="2">
+      <code>Image</code>
+    </MissingDependency>
+  </file>
+  <file src="lib/CSPSetter.php">
+    <InvalidArgument occurrences="1">
+      <code>addServiceListener</code>
+    </InvalidArgument>
+  </file>
+  <file src="lib/FilesLoader.php">
+    <InvalidArgument occurrences="1">
+      <code>addServiceListener</code>
+    </InvalidArgument>
+  </file>
+  <file src="lib/DeleteListener.php">
+    <InvalidArgument occurrences="2">
+      <code>NodeDeletedEvent::class</code>
+    </InvalidArgument>
+  </file>
+  <file src="lib/Mails.php">
+    <InvalidArgument occurrences="2">
+      <code>$message</code>
+    </InvalidArgument>
+    <MissingDependency occurrences="2">
+      <code>TranslatedTemplate</code>
+    </MissingDependency>
+    <UndefinedDocblockClass occurrences="10">
+      <code>Message</code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="lib/Manager.php">
+    <InvalidArgument occurrences="1">
+      <code>self::class</code>
+    </InvalidArgument>
+    <MissingDependency occurrences="5">
+      <code>IRootFolder</code>
+    </MissingDependency>
+  </file>
+  <file src="lib/Migration/Version1000Date20221018102419.php">
+    <MissingDependency occurrences="3">
+      <code>IRootFolder</code>
+    </MissingDependency>
+    <UndefinedClass occurrences="1">
+      <code>NoUserException</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/TranslatedTemplate.php">
+    <UndefinedClass occurrences="1">
+      <code>TemplateBase</code>
+    </UndefinedClass>
+  </file>
+</files>

@@ -12,12 +12,13 @@ use OCA\Esig\FilesLoader;
 use OCA\Esig\Manager;
 use OCA\Esig\Notification\Listener as NotificationListener;
 use OCA\Esig\Notification\Notifier;
-use OCA\Files\Event\LoadAdditionalScriptsEvent;
+use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IUser;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 
 class Application extends App implements IBootstrap {

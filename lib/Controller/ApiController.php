@@ -395,7 +395,10 @@ class ApiController extends OCSController {
 		return new DataResponse($response);
 	}
 
-	private function filterMetadata(array $request, string $type, string $value): ?array {
+	/**
+	 * @returns array|null
+	 */
+	private function filterMetadata(array $request, string $type, string $value) {
 		$metadata = $request['metadata'];
 		if (empty($metadata) || !isset($metadata['signature_fields'])) {
 			return $metadata;

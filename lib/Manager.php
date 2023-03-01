@@ -12,6 +12,7 @@ use OCA\Esig\Mails;
 use OCA\Esig\Requests;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\ILogger;
