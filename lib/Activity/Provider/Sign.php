@@ -41,18 +41,22 @@ class Sign extends Base {
 
 	protected function parseSign(IEvent $event, IL10N $l): array {
 		$parameters = $event->getSubjectParameters();
-		$subject = $l->t('The file "{filename}" was signed by {user}');
 		$params = [
 			'filename' => $this->getHighlight($parameters['filename']),
 		];
+		if ($parameters['recipient_type'] === 'user' && $event->getAffectedUser() === $parameters['recipient']) {
+			$subject = $l->t('You signed the file "{filename}"');
+		} else {
+			$subject = $l->t('The file "{filename}" was signed by {user}');
 
-		switch ($parameters['recipient_type']) {
-			case 'user':
-				$params['user'] = $this->getUser($parameters['recipient']);
-				break;
-			case 'email':
-				$params['user'] = $this->getHighlight($parameters['recipient']);
-				break;
+			switch ($parameters['recipient_type']) {
+				case 'user':
+					$params['user'] = $this->getUser($parameters['recipient']);
+					break;
+				case 'email':
+					$params['user'] = $this->getHighlight($parameters['recipient']);
+					break;
+			}
 		}
 
 		return [

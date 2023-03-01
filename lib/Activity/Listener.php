@@ -110,37 +110,77 @@ class Listener {
 		$id = $event->getRequestId();
 		$request = $event->getRequest();
 
-		$activity = $this->activityManager->generateEvent();
-		try {
-			$activity->setApp('esig')
-				->setType('outgoing_request')
-				->setObject('outgoing_request', 0, $id)
-				->setTimestamp($event->getSigned()->getTimestamp())
-				->setAffectedUser($request['user_id'])
-				->setSubject('sign', [
-					'file_id' => $request['file_id'],
-					'filename' => $request['filename'],
-					'recipient' => $event->getRecipient(),
-					'recipient_type' => $event->getRecipientType(),
-					'request_id' => $id,
-				]);
-		} catch (\InvalidArgumentException $e) {
-			$this->logger->error($e->getMessage(), ['exception' => $e]);
-			$activity = null;
-		}
-
-		if ($activity) {
-			$user = $event->getUser();
-			if ($user) {
-				$activity->setAuthor($user->getUID());
-			}
-
+		if ($event->getRecipientType() === 'user' && $event->getRecipient() !== $request['user_id']) {
+			// Add activity for sender that the recipient has signed (only if not requested from themselves).
+			$activity = $this->activityManager->generateEvent();
 			try {
-				$this->activityManager->publish($activity);
-			} catch (\BadMethodCallException $e) {
-				$this->logger->error($e->getMessage(), ['exception' => $e]);
+				$activity->setApp('esig')
+					->setType('recipient_signed')
+					->setObject('outgoing_request', 0, $id)
+					->setTimestamp($event->getSigned()->getTimestamp())
+					->setAffectedUser($request['user_id'])
+					->setSubject('sign', [
+						'file_id' => $request['file_id'],
+						'filename' => $request['filename'],
+						'recipient' => $event->getRecipient(),
+						'recipient_type' => $event->getRecipientType(),
+						'request_id' => $id,
+					]);
 			} catch (\InvalidArgumentException $e) {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);
+				$activity = null;
+			}
+
+			if ($activity) {
+				$user = $event->getUser();
+				if ($user) {
+					$activity->setAuthor($user->getUID());
+				}
+
+				try {
+					$this->activityManager->publish($activity);
+				} catch (\BadMethodCallException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
+				} catch (\InvalidArgumentException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
+				}
+			}
+		}
+
+		if ($event->getRecipientType() === 'user') {
+			// Add activity for recipient that they have signed.
+			$activity = $this->activityManager->generateEvent();
+			try {
+				$activity->setApp('esig')
+					->setType('own_signed')
+					->setObject('incoming_request', 0, $id)
+					->setTimestamp($event->getSigned()->getTimestamp())
+					->setAffectedUser($event->getRecipient())
+					->setSubject('sign', [
+						'file_id' => $request['file_id'],
+						'filename' => $request['filename'],
+						'recipient' => $event->getRecipient(),
+						'recipient_type' => $event->getRecipientType(),
+						'request_id' => $id,
+					]);
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
+				$activity = null;
+			}
+
+			if ($activity) {
+				$user = $event->getUser();
+				if ($user) {
+					$activity->setAuthor($user->getUID());
+				}
+
+				try {
+					$this->activityManager->publish($activity);
+				} catch (\BadMethodCallException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
+				} catch (\InvalidArgumentException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
+				}
 			}
 		}
 
