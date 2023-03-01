@@ -22,7 +22,7 @@ import Vue from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
 import { Tooltip } from '@nextcloud/vue'
 
-import '@nextcloud/dialogs/styles/toast.scss'
+import '@nextcloud/dialogs/dist/index.css'
 
 import ShareDialogView from './views/ShareDialogView.vue'
 import './styles/loader.scss'

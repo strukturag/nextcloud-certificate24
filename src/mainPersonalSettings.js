@@ -2,7 +2,7 @@ import Vue from 'vue'
 import PersonalSettings from './views/PersonalSettings.vue'
 
 // Styles
-import '@nextcloud/dialogs/styles/toast.scss'
+import '@nextcloud/dialogs/dist/index.css'
 
 Vue.prototype.t = t
 Vue.prototype.n = n

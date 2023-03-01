@@ -3,7 +3,7 @@ import App from './App.vue'
 import { Tooltip } from '@nextcloud/vue'
 
 // Styles
-import '@nextcloud/dialogs/styles/toast.scss'
+import '@nextcloud/dialogs/dist/index.css'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
