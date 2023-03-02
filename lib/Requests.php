@@ -155,12 +155,16 @@ class Requests {
 
 	private function getRecipients(array $row): ?array {
 		if ($row['recipient']) {
+			$signed = $row['signed'];
+			if (is_string($signed)) {
+				$signed = $this->parseDateTime($signed);
+			}
 			return [
 				[
 					'type' => $row['recipient_type'],
 					'value' => $row['recipient'],
 					'esig_signature_id' => $row['esig_signature_id'],
-					'signed' => $row['signed'],
+					'signed' => $signed,
 				],
 			];
 		}
@@ -174,6 +178,11 @@ class Requests {
 
 		$recipients = [];
 		while ($row = $result->fetch()) {
+			$signed = $row['signed'];
+			if (is_string($signed)) {
+				$signed = $this->parseDateTime($signed);
+			}
+			$row['signed'] = $signed;
 			$recipients[] = $row;
 		}
 		$result->closeCursor();
@@ -407,6 +416,7 @@ class Requests {
 				$row['metadata'] = json_decode($row['metadata'], true);
 			}
 
+			$row['recipients'] = $this->getRecipients($row);
 			$requests[] = $row;
 		}
 		$result->closeCursor();
