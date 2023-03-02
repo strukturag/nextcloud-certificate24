@@ -155,12 +155,16 @@ class Requests {
 
 	private function getRecipients(array $row): ?array {
 		if ($row['recipient']) {
+			$signed = $row['signed'];
+			if (is_string($signed)) {
+				$signed = $this->parseDateTime($signed);
+			}
 			return [
 				[
 					'type' => $row['recipient_type'],
 					'value' => $row['recipient'],
 					'esig_signature_id' => $row['esig_signature_id'],
-					'signed' => $row['signed'],
+					'signed' => $signed,
 				],
 			];
 		}
@@ -174,6 +178,11 @@ class Requests {
 
 		$recipients = [];
 		while ($row = $result->fetch()) {
+			$signed = $row['signed'];
+			if (is_string($signed)) {
+				$signed = $this->parseDateTime($signed);
+			}
+			$row['signed'] = $signed;
 			$recipients[] = $row;
 		}
 		$result->closeCursor();
@@ -407,6 +416,20 @@ class Requests {
 				$row['metadata'] = json_decode($row['metadata'], true);
 			}
 
+			$row['recipients'] = $this->getRecipients($row);
+			if (!$include_signed && count($row['recipients']) > 1) {
+				$allSigned = true;
+				foreach ($row['recipients'] as $r) {
+					if (!$r['signed']) {
+						$allSigned = false;
+						break;
+					}
+				}
+
+				if ($allSigned) {
+					continue;
+				}
+			}
 			$requests[] = $row;
 		}
 		$result->closeCursor();
@@ -563,6 +586,10 @@ class Requests {
 		$pending = [];
 		$recipients = [];
 		while ($row = $result->fetch()) {
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+
 			$row['recipients'] = $this->getRecipients($row);
 			$recipients[] = $row;
 		}
@@ -587,6 +614,10 @@ class Requests {
 					continue;
 				}
 			}
+			$signed = $row['signed'];
+			if (is_string($signed)) {
+				$row['signed'] = $this->parseDateTime($signed);
+			}
 			$row['request'] = $requests[$row['request_id']];
 			$recipients[] = $row;
 		}
@@ -605,8 +636,16 @@ class Requests {
 
 		$pending = [];
 		while ($row = $result->fetch()) {
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+
 			$row['recipients'] = $this->getRecipients($row);
-			$row['last_signed'] = $row['signed'];
+			$signed = $row['signed'];
+			if (is_string($signed)) {
+				$signed = $this->parseDateTime($signed);
+			}
+			$row['last_signed'] = $signed;
 			$pending[] = $row;
 		}
 		$result->closeCursor();
@@ -619,6 +658,10 @@ class Requests {
 			->andWhere('not exists (select * from oc_esig_recipients p where r.id = p.request_id and p.signed is null)');
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+
 			$row['recipients'] = $this->getRecipients($row);
 			$last_signed = null;
 			foreach ($row['recipients'] as $recipient) {
@@ -655,6 +698,10 @@ class Requests {
 		$pending = [];
 		$recipients = [];
 		while ($row = $result->fetch()) {
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+
 			$row['recipients'] = $this->getRecipients($row);
 			$recipients[] = $row;
 		}
