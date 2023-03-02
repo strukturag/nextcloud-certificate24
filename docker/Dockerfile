@@ -30,7 +30,8 @@ RUN npm ci && \
 		rm -rf docker/ && \
 		rm -rf docs/ && \
 		rm -rf node_modules/ && \
-		rm -rf src/
+		rm -rf src/ && \
+		rm -rf tests/
 
 
 FROM nextcloud:25-apache
