@@ -4,3 +4,5 @@ node_modules
 vendor
 
 .php-cs-fixer.cache
+tests/php/.phpunit.result.cache
+tests/php/clover.xml
