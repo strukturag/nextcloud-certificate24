@@ -1021,7 +1021,7 @@ class ApiController extends OCSController {
 		$isLast = $this->requests->markRequestSignedById($id, $type, $value, $signed);
 
 		$event = new SignEvent($id, $row, $type, $value, $signed, $user, $isLast);
-		$this->dispatcher->dispatch(SignEvent::class, $event);
+		$this->dispatcher->dispatchTyped($event);
 
 		if ($isLast) {
 			$this->manager->saveSignedResult($row, $signed, $user, $account);

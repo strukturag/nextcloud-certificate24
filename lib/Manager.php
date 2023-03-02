@@ -198,7 +198,7 @@ class Manager {
 		]);
 
 		$event = new SignEvent($request['id'], $request, $type, $value, $signed, null, $isLast);
-		$this->dispatcher->dispatch(SignEvent::class, $event);
+		$this->dispatcher->dispatchTyped($event);
 
 		if ($isLast) {
 			$this->saveSignedResult($request, $signed, null, $account);

@@ -149,7 +149,7 @@ class Requests {
 		}
 
 		$event = new ShareEvent($file, $user, $recipients, $id);
-		$this->dispatcher->dispatch(ShareEvent::class, $event);
+		$this->dispatcher->dispatchTyped($event);
 		return $id;
 	}
 
