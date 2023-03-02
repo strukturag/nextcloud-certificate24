@@ -417,6 +417,19 @@ class Requests {
 			}
 
 			$row['recipients'] = $this->getRecipients($row);
+			if (!$include_signed && count($row['recipients']) > 1) {
+				$allSigned = true;
+				foreach ($row['recipients'] as $r) {
+					if (!$r['signed']) {
+						$allSigned = false;
+						break;
+					}
+				}
+
+				if ($allSigned) {
+					continue;
+				}
+			}
 			$requests[] = $row;
 		}
 		$result->closeCursor();
