@@ -23,6 +23,9 @@ class Share extends Base {
 			$l = $this->languageFactory->get('esig', $language);
 			$parameters = $event->getSubjectParameters();
 
+			$url = $this->urlGenerator->linkToRouteAbsolute('esig.Page.index') . '#incoming-' . $parameters['request_id'];
+			$event->setLink($url);
+
 			$result = $this->parseShare($event, $l);
 			$this->setSubjects($event, $result['subject'], $result['params']);
 		} else {
