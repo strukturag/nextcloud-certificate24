@@ -9,19 +9,19 @@ use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Vendor\Firebase\JWT\JWT;
 use OCA\Esig\Vendor\Firebase\JWT\Key;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\ILogger;
 use OCP\IURLGenerator;
+use Psr\Log\LoggerInterface;
 use UnexpectedValueException;
 
 class Tokens {
 	private ITimeFactory $timeFactory;
 	private IURLGenerator $urlGenerator;
-	private ILogger $logger;
+	private LoggerInterface $logger;
 	private Config $config;
 
 	public function __construct(ITimeFactory $timeFactory,
 								IURLGenerator $urlGenerator,
-								ILogger $logger,
+								LoggerInterface $logger,
 								Config $config) {
 		$this->timeFactory = $timeFactory;
 		$this->urlGenerator = $urlGenerator;
@@ -54,8 +54,8 @@ class Tokens {
 		} catch (UnexpectedValueException $e) {
 			return false;
 		} catch (DomainException $e) {
-			$this->logger->logException($e, [
-				'message' => 'Could not decode token ' . $token,
+			$this->logger->error('Could not decode token ' . $token, [
+				'exception' => $e,
 				'app' => Application::APP_ID,
 			]);
 			return false;

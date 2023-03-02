@@ -9,16 +9,16 @@ use OCP\App\IAppManager;
 use OCP\Files\File;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 class Client {
-	private ILogger $logger;
+	private LoggerInterface $logger;
 	private IClientService $clientService;
 	private Tokens $tokens;
 	private string $nextcloudVersion;
 	private string $appVersion;
 
-	public function __construct(ILogger $logger,
+	public function __construct(LoggerInterface $logger,
 								IClientService $clientService,
 								IAppManager $appManager,
 								IConfig $systemConfig,

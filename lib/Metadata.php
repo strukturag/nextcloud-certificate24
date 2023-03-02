@@ -9,15 +9,15 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\IDBConnection;
-use OCP\ILogger;
 use OCP\IUser;
+use Psr\Log\LoggerInterface;
 
 class Metadata {
-	private ILogger $logger;
+	private LoggerInterface $logger;
 	private IDBConnection $db;
 	private IEventDispatcher $dispatcher;
 
-	public function __construct(ILogger $logger,
+	public function __construct(LoggerInterface $logger,
 								IDBConnection $db,
 								IEventDispatcher $dispatcher) {
 		$this->logger = $logger;

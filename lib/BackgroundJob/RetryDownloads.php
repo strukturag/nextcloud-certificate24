@@ -10,18 +10,18 @@ use OCA\Esig\Requests;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCP\BackgroundJob\IJob;
-use OCP\ILogger;
 use OCP\IUserManager;
+use Psr\Log\LoggerInterface;
 
 class RetryDownloads extends TimedJob {
-	private ILogger $logger;
+	private LoggerInterface $logger;
 	private IUserManager $userManager;
 	private Config $config;
 	private Requests $requests;
 	private Manager $manager;
 
 	public function __construct(ITimeFactory $timeFactory,
-								ILogger $logger,
+								LoggerInterface $logger,
 								IUserManager $userManager,
 								Config $config,
 								Requests $requests,

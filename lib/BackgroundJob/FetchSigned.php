@@ -14,17 +14,17 @@ use OCA\Esig\Requests;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCP\BackgroundJob\IJob;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 class FetchSigned extends TimedJob {
-	private ILogger $logger;
+	private LoggerInterface $logger;
 	private Config $config;
 	private Requests $requests;
 	private Client $client;
 	private Manager $manager;
 
 	public function __construct(ITimeFactory $timeFactory,
-								ILogger $logger,
+								LoggerInterface $logger,
 								Config $config,
 								Requests $requests,
 								Client $client,
@@ -46,8 +46,8 @@ class FetchSigned extends TimedJob {
 		try {
 			$details = $this->client->getSignatureDetails($file_id, $account, $server, $signature_id);
 		} catch (ConnectException $e) {
-			$this->logger->logException($e, [
-				'message' => 'Error connecting to ' . $server,
+			$this->logger->error('Error connecting to ' . $server, [
+				'exception' => $e,
 				'app' => Application::APP_ID,
 			]);
 			return null;
@@ -67,14 +67,14 @@ class FetchSigned extends TimedJob {
 				}
 			}
 
-			$this->logger->logException($e, [
-				'message' => 'Error sending request to ' . $server . ': ' . print_r($body, true),
+			$this->logger->error('Error sending request to ' . $server . ': ' . print_r($body, true), [
+				'exception' => $e,
 				'app' => Application::APP_ID,
 			]);
 			return null;
 		} catch (\Exception $e) {
-			$this->logger->logException($e, [
-				'message' => 'Error sending request to ' . $server,
+			$this->logger->error('Error sending request to ' . $server, [
+				'exception' => $e,
 				'app' => Application::APP_ID,
 			]);
 			return null;

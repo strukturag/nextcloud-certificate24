@@ -5,9 +5,9 @@ namespace OCA\Esig\Tests\php;
 use OCA\Esig\Config;
 use OCA\Esig\Tokens;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\ILogger;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class TokensTest extends TestCase {
@@ -21,7 +21,7 @@ class TokensTest extends TestCase {
 
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$urlGenerator = \OC::$server->query(IURLGenerator::class);
-		$logger = $this->createMock(ILogger::class);
+		$logger = $this->createMock(LoggerInterface::class);
 		$config = $this->createMock(Config::class);
 
 		$this->tokens = new Tokens($this->timeFactory, $urlGenerator, $logger, $config);

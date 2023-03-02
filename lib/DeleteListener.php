@@ -10,18 +10,18 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\NodeDeletedEvent;
 use OCP\User\Events\UserDeletedEvent;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 /**
  * @template-implements IEventListener<Event>
  */
 class DeleteListener implements IEventListener {
-	protected ILogger $logger;
+	protected LoggerInterface $logger;
 	protected Requests $requests;
 	protected Client $client;
 	protected Config $config;
 
-	public function __construct(ILogger $logger,
+	public function __construct(LoggerInterface $logger,
 								Requests $requests,
 								Client $client,
 								Config $config) {
@@ -49,9 +49,9 @@ class DeleteListener implements IEventListener {
 		try {
 			$data = $this->client->deleteFile($request['esig_file_id'], $account, $request['esig_server']);
 		} catch (\Exception $e) {
-			$this->logger->logException($e, [
+			$this->logger->error('Error deleting request ' . $request['id'] . ' of user ' . $request['user_id'], [
 				'app' => Application::APP_ID,
-				'message' => 'Error deleting request ' . $request['id'] . ' of user ' . $request['user_id'],
+				'exception' => $e,
 			]);
 			// TODO: Add cronjob to delete in the background.
 			$this->requests->markRequestDeletedById($request['id']);
