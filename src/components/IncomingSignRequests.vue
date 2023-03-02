@@ -30,7 +30,9 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="request in requests" :key="request.request_id">
+					<tr v-for="request in requests"
+						:key="request.request_id"
+						:class="{'selected': request.request_id === selectedRequest}">
 						<td>
 							<a :id="getLinkName(request)" />
 							<a v-if="!request.signed" :href="downloadOriginalUrl(request)">{{ request.filename }}</a>
@@ -123,14 +125,58 @@ export default {
 			requests: [],
 			loading: false,
 			signDialog: null,
+			hash: '',
 		}
 	},
 
+	computed: {
+		selectedRequest() {
+			let r = this.hash
+			let pos = r.indexOf('incoming-')
+			if (pos === -1) {
+				return ''
+			}
+			r = r.substring(pos + 9)
+			pos = r.indexOf('&')
+			if (pos !== -1) {
+				r = r.substring(0, pos)
+			}
+			return r
+		},
+	},
+
 	async mounted() {
+		window.addEventListener('hashchange', this.onHashChange)
+		this.hash = location.hash
 		this.fetchRequests()
 	},
 
+	beforeDestroy() {
+		window.removeEventListener('hashchange', this.onHashChange)
+	},
+
 	methods: {
+		onHashChange() {
+			this.hash = location.hash
+			this.$nextTick(() => {
+				this.scrollToSelected()
+			})
+		},
+
+		scrollToSelected() {
+			const selected = this.selectedRequest
+			if (!selected) {
+				return
+			}
+
+			const elem = document.getElementById('incoming-' + selected)
+			if (!elem) {
+				return
+			}
+
+			elem.scrollIntoView()
+		},
+
 		async fetchRequests() {
 			this.loading = true
 			let response
@@ -140,6 +186,9 @@ export default {
 				this.loading = false
 			}
 			this.requests = response.data.ocs.data
+			this.$nextTick(() => {
+				this.scrollToSelected()
+			})
 		},
 
 		async signRequest(request) {
@@ -196,5 +245,9 @@ export default {
 	column-gap: 12px;
 	position: relative;
 	margin: 12px 0;
+}
+
+tr.selected {
+	background-color: var(--color-background-darker);
 }
 </style>
