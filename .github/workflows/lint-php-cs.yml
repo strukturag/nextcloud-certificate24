@@ -5,7 +5,17 @@
 
 name: Lint
 
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/lint-php-cs.yml'
+      - 'appinfo/**'
+      - 'lib/**'
+      - 'templates/**'
+      - 'tests/**'
+      - '.php-cs-fixer.dist.php'
+      - 'composer.json'
+      - 'composer.lock'
 
 permissions:
   contents: read
