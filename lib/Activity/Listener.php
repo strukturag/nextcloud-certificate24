@@ -123,6 +123,7 @@ class Listener {
 						'filename' => $request['filename'],
 						'recipient' => $event->getRecipient(),
 						'recipient_type' => $event->getRecipientType(),
+						'request' => $request,
 						'request_id' => $id,
 					]);
 			} catch (\InvalidArgumentException $e) {
@@ -160,6 +161,7 @@ class Listener {
 						'filename' => $request['filename'],
 						'recipient' => $event->getRecipient(),
 						'recipient_type' => $event->getRecipientType(),
+						'request' => $request,
 						'request_id' => $id,
 					]);
 			} catch (\InvalidArgumentException $e) {
