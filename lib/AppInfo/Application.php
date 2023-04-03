@@ -32,9 +32,6 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPSetter::class);
 		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesLoader::class);
 		$context->registerCapability(Capabilities::class);
-
-		// Register the composer autoloader for packages shipped by this app
-		include_once __DIR__ . '/../../vendor/autoload.php';
 	}
 
 	public function boot(IBootContext $context): void {

@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
 			apt-transport-https \
 			ca-certificates \
 			lsb-release \
+			rsync \
 			&& \
 		wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
 		echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list && \
@@ -21,19 +22,11 @@ RUN apt-get update && apt-get install -y \
 			&& \
 		curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN npm ci && \
-		npm run build && \
-		composer install && \
-		rm -rf composer.* && \
-		rm -rf package* && \
-		rm -rf *.js && \
-		rm -rf js/*.map && \
-		\
-		rm -rf docker/ && \
-		rm -rf docs/ && \
-		rm -rf node_modules/ && \
-		rm -rf src/ && \
-		rm -rf tests/
+RUN make npm-init && \
+		make build-production && \
+		make appstore && \
+		mkdir build/output && \
+		tar -C build/output -xf build/artifacts/esig.tar.gz
 
 
 FROM nextcloud:25-apache
@@ -46,7 +39,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY docker/supervisord.conf /
 COPY docker/prepare.sh /
-COPY --from=builder /workdir /usr/src/nextcloud/custom_apps/esig/
+COPY --from=builder /workdir/build/output/esig /usr/src/nextcloud/custom_apps/esig/
 
 ENV NEXTCLOUD_UPDATE=1
 
