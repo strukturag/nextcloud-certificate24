@@ -7,17 +7,17 @@ use OCA\Esig\AppInfo\Application;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
-use OCP\ILogger;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use Psr\Log\LoggerInterface;
 
 class Version1000Date20230131095219 extends SimpleMigrationStep {
 	public const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
 
-	private ILogger $logger;
+	private LoggerInterface $logger;
 	private IDBConnection $db;
 
-	public function __construct(ILogger $logger, IDBConnection $db) {
+	public function __construct(LoggerInterface $logger, IDBConnection $db) {
 		$this->logger = $logger;
 		$this->db = $db;
 	}

@@ -6,10 +6,10 @@ use OCA\Esig\Config;
 use OCA\Esig\Requests;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
-use OCP\ILogger;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 /**
@@ -22,7 +22,7 @@ class RequestsTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$logger = $this->createMock(ILogger::class);
+		$logger = $this->createMock(LoggerInterface::class);
 		$secureRandom = \OC::$server->query(ISecureRandom::class);
 		$db = \OC::$server->getDatabaseConnection();
 		$dispatcher = $this->createMock(IEventDispatcher::class);

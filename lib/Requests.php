@@ -11,9 +11,9 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\IDBConnection;
-use OCP\ILogger;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 class Requests {
@@ -26,13 +26,13 @@ class Requests {
 	// Don't process signed result.
 	public const MODE_SIGNED_NONE = 'none';
 
-	private ILogger $logger;
+	private LoggerInterface $logger;
 	private ISecureRandom $secureRandom;
 	private IDBConnection $db;
 	private IEventDispatcher $dispatcher;
 	private Config $config;
 
-	public function __construct(ILogger $logger,
+	public function __construct(LoggerInterface $logger,
 								ISecureRandom $secureRandom,
 								IDBConnection $db,
 								IEventDispatcher $dispatcher,
@@ -149,7 +149,7 @@ class Requests {
 		}
 
 		$event = new ShareEvent($file, $user, $recipients, $id);
-		$this->dispatcher->dispatch(ShareEvent::class, $event);
+		$this->dispatcher->dispatchTyped($event);
 		return $id;
 	}
 

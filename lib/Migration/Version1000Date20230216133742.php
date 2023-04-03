@@ -4,18 +4,18 @@ namespace OCA\Esig\Migration;
 
 use OCA\Esig\AppInfo\Application;
 use OCP\IDBConnection;
-use OCP\ILogger;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 class Version1000Date20230216133742 extends SimpleMigrationStep {
 	public const ISO8601_EXTENDED = "Y-m-d\TH:i:s.uP";
 
-	private ILogger $logger;
+	private LoggerInterface $logger;
 	private IDBConnection $db;
 
-	public function __construct(ILogger $logger, IDBConnection $db) {
+	public function __construct(LoggerInterface $logger, IDBConnection $db) {
 		$this->logger = $logger;
 		$this->db = $db;
 	}

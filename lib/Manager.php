@@ -11,12 +11,12 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IUser;
 use OCP\IUserManager;
+use Psr\Log\LoggerInterface;
 
 class Manager {
-	private ILogger $logger;
+	private LoggerInterface $logger;
 	private IEventDispatcher $dispatcher;
 	private IL10N $l10n;
 	private IUserManager $userManager;
@@ -26,7 +26,7 @@ class Manager {
 	private Requests $requests;
 	private Mails $mails;
 
-	public function __construct(ILogger $logger,
+	public function __construct(LoggerInterface $logger,
 								IEventDispatcher $dispatcher,
 								IL10N $l10n,
 								IUserManager $userManager,
@@ -179,8 +179,8 @@ class Manager {
 				'app' => Application::APP_ID,
 			]);
 		} catch (\Exception $e) {
-			$this->logger->logException($e, [
-				'message' => 'Error processing signed result of request ' . $request['id'],
+			$this->logger->error('Error processing signed result of request ' . $request['id'], [
+				'exception' => $e,
 				'app' => Application::APP_ID,
 			]);
 		}
@@ -198,7 +198,7 @@ class Manager {
 		]);
 
 		$event = new SignEvent($request['id'], $request, $type, $value, $signed, null, $isLast);
-		$this->dispatcher->dispatch(SignEvent::class, $event);
+		$this->dispatcher->dispatchTyped($event);
 
 		if ($isLast) {
 			$this->saveSignedResult($request, $signed, null, $account);

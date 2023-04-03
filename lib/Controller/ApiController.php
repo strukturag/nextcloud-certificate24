@@ -22,13 +22,13 @@ use OCP\Collaboration\Collaborators\ISearch;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
-use OCP\ILogger;
 use OCP\Image;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Mail\IMailer;
 use OCP\Share\IShare;
+use Psr\Log\LoggerInterface;
 
 function str_to_stream(string $string) {
 	$stream = fopen('php://memory', 'r+');
@@ -45,7 +45,7 @@ class ApiController extends OCSController {
 	public const MAX_SIGN_OPTIONS_SIZE = 8 * 1024;
 	public const MAX_IMAGE_SIZE = 1024 * 1024;
 
-	private ILogger $logger;
+	private LoggerInterface $logger;
 	private IUserManager $userManager;
 	private IUserSession $userSession;
 	private IRootFolder $root;
@@ -63,7 +63,7 @@ class ApiController extends OCSController {
 
 	public function __construct(string $appName,
 								IRequest $request,
-								ILogger $logger,
+								LoggerInterface $logger,
 								IUserManager $userManager,
 								IUserSession $userSession,
 								IRootFolder $root,
@@ -262,14 +262,14 @@ class ApiController extends OCSController {
 		try {
 			$data = $this->client->shareFile($file, $recipients, $metadata, $account, $server);
 		} catch (ConnectException $e) {
-			$this->logger->logException($e, [
-				'message' => 'Error connecting to ' . $server,
+			$this->logger->error('Error connecting to ' . $server, [
+				'exception' => $e,
 				'app' => Application::APP_ID,
 			]);
 			return new DataResponse(['error' => 'error_connecting'], Http::STATUS_BAD_GATEWAY);
 		} catch (\Exception $e) {
-			$this->logger->logException($e, [
-				'message' => 'Error sending request to ' . $server,
+			$this->logger->error('Error sending request to ' . $server, [
+				'exception' => $e,
 				'app' => Application::APP_ID,
 			]);
 			return new DataResponse(['error' => $e->getCode()], Http::STATUS_BAD_GATEWAY);
@@ -1021,7 +1021,7 @@ class ApiController extends OCSController {
 		$isLast = $this->requests->markRequestSignedById($id, $type, $value, $signed);
 
 		$event = new SignEvent($id, $row, $type, $value, $signed, $user, $isLast);
-		$this->dispatcher->dispatch(SignEvent::class, $event);
+		$this->dispatcher->dispatchTyped($event);
 
 		if ($isLast) {
 			$this->manager->saveSignedResult($row, $signed, $user, $account);

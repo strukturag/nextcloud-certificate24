@@ -9,19 +9,19 @@ use OCA\Esig\AppInfo\Application;
 use OCP\Defaults;
 use OCP\Files\File;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\L10N\IFactory;
 use OCP\Mail\IMailer;
 use OCP\Util;
+use Psr\Log\LoggerInterface;
 
 class Mails {
 	private IMailer $mailer;
 	private Defaults $defaults;
 	private IL10N $l10n;
 	private IFactory $l10nFactory;
-	private ILogger $logger;
+	private LoggerInterface $logger;
 	private IURLGenerator $urlGenerator;
 	private Config $config;
 	private Requests $requests;
@@ -31,7 +31,7 @@ class Mails {
 								Defaults $defaults,
 								IL10N $l10n,
 								IFactory $l10nFactory,
-								ILogger $logger,
+								LoggerInterface $logger,
 								IURLGenerator $urlGenerator,
 								Config $config,
 								Requests $requests) {
