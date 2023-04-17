@@ -17,6 +17,8 @@ on:
       - 'psalm.xml'
       - 'composer.json'
       - 'composer.lock'
+      - '**/composer.json'
+      - '**/composer.lock'
   push:
     branches:
       - main
