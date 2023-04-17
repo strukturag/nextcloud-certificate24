@@ -7,8 +7,8 @@ namespace OCA\Esig\BackgroundJob;
 use OCA\Esig\Mails;
 use OCA\Esig\Requests;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\TimedJob;
 use OCP\BackgroundJob\IJob;
+use OCP\BackgroundJob\TimedJob;
 use OCP\Files\IRootFolder;
 use OCP\IUserManager;
 
@@ -19,10 +19,10 @@ class ResendMails extends TimedJob {
 	private Mails $mails;
 
 	public function __construct(ITimeFactory $timeFactory,
-								IUserManager $userManager,
-								IRootFolder $root,
-								Requests $requests,
-								Mails $mails) {
+		IUserManager $userManager,
+		IRootFolder $root,
+		Requests $requests,
+		Mails $mails) {
 		parent::__construct($timeFactory);
 
 		// Every 5 minutes

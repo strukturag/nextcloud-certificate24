@@ -4,8 +4,8 @@ namespace OCA\Esig\Migration;
 
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 use Throwable;
 
 class Version1000Date20230213115732 extends SimpleMigrationStep {

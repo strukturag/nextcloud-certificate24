@@ -62,22 +62,22 @@ class ApiController extends OCSController {
 	private Tokens $tokens;
 
 	public function __construct(string $appName,
-								IRequest $request,
-								LoggerInterface $logger,
-								IUserManager $userManager,
-								IUserSession $userSession,
-								IRootFolder $root,
-								ISearch $search,
-								IMailer $mailer,
-								IEventDispatcher $dispatcher,
-								Client $client,
-								Config $config,
-								Requests $requests,
-								Metadata $metadata,
-								Validator $validator,
-								Mails $mails,
-								Manager $manager,
-								Tokens $tokens) {
+		IRequest $request,
+		LoggerInterface $logger,
+		IUserManager $userManager,
+		IUserSession $userSession,
+		IRootFolder $root,
+		ISearch $search,
+		IMailer $mailer,
+		IEventDispatcher $dispatcher,
+		Client $client,
+		Config $config,
+		Requests $requests,
+		Metadata $metadata,
+		Validator $validator,
+		Mails $mails,
+		Manager $manager,
+		Tokens $tokens) {
 		parent::__construct($appName, $request);
 		$this->logger = $logger;
 		$this->userManager = $userManager;

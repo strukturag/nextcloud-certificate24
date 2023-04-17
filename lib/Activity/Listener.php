@@ -26,10 +26,10 @@ class Listener {
 	protected Requests $requests;
 
 	public function __construct(IManager $activityManager,
-								IUserSession $userSession,
-								LoggerInterface $logger,
-								ITimeFactory $timeFactory,
-								Requests $requests) {
+		IUserSession $userSession,
+		LoggerInterface $logger,
+		ITimeFactory $timeFactory,
+		Requests $requests) {
 		$this->activityManager = $activityManager;
 		$this->userSession = $userSession;
 		$this->logger = $logger;

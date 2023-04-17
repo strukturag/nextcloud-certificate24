@@ -4,8 +4,8 @@ namespace OCA\Esig\Migration;
 
 use OCA\Esig\AppInfo\Application;
 use OCP\IDBConnection;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 use Psr\Log\LoggerInterface;
 use Throwable;
 

@@ -27,14 +27,14 @@ class Manager {
 	private Mails $mails;
 
 	public function __construct(LoggerInterface $logger,
-								IEventDispatcher $dispatcher,
-								IL10N $l10n,
-								IUserManager $userManager,
-								IRootFolder $root,
-								Client $client,
-								Config $config,
-								Requests $requests,
-								Mails $mails) {
+		IEventDispatcher $dispatcher,
+		IL10N $l10n,
+		IUserManager $userManager,
+		IRootFolder $root,
+		Client $client,
+		Config $config,
+		Requests $requests,
+		Mails $mails) {
 		$this->logger = $logger;
 		$this->dispatcher = $dispatcher;
 		$this->l10n = $l10n;

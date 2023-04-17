@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace OCA\Esig;
 
+use OCP\App\IAppManager;
 use OCP\Capabilities\IPublicCapability;
 use OCP\IUserSession;
-use OCP\App\IAppManager;
 
 class Capabilities implements IPublicCapability {
 	protected Config $config;
@@ -14,8 +14,8 @@ class Capabilities implements IPublicCapability {
 	private IAppManager $appManager;
 
 	public function __construct(Config $config,
-								IUserSession $userSession,
-								IAppManager $appManager) {
+		IUserSession $userSession,
+		IAppManager $appManager) {
 		$this->config = $config;
 		$this->userSession = $userSession;
 		$this->appManager = $appManager;

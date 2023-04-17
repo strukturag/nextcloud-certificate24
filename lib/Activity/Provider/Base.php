@@ -19,9 +19,9 @@ abstract class Base implements IProvider {
 	protected IUserManager $userManager;
 
 	public function __construct(IFactory $languageFactory,
-								IURLGenerator $urlGenerator,
-								IManager $activityManager,
-								IUserManager $userManager) {
+		IURLGenerator $urlGenerator,
+		IManager $activityManager,
+		IUserManager $userManager) {
 		$this->languageFactory = $languageFactory;
 		$this->urlGenerator = $urlGenerator;
 		$this->activityManager = $activityManager;

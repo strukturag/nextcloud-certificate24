@@ -24,11 +24,11 @@ class AdminSettings implements ISettings {
 	private IURLGenerator $urlGenerator;
 
 	public function __construct(Config $config,
-								IInitialState $initialState,
-								IUserSession $userSession,
-								IL10N $l10n,
-								IFactory $l10nFactory,
-								IURLGenerator $urlGenerator) {
+		IInitialState $initialState,
+		IUserSession $userSession,
+		IL10N $l10n,
+		IFactory $l10nFactory,
+		IURLGenerator $urlGenerator) {
 		$this->config = $config;
 		$this->initialState = $initialState;
 		$this->currentUser = $userSession->getUser();

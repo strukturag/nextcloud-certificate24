@@ -8,8 +8,8 @@ use OCP\DB\ISchemaWrapper;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
 use OCP\IDBConnection;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 class Version1000Date20221018102419 extends SimpleMigrationStep {
 	protected IDBConnection $db;

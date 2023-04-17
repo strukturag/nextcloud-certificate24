@@ -12,8 +12,8 @@ use OCA\Esig\Config;
 use OCA\Esig\Manager;
 use OCA\Esig\Requests;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\TimedJob;
 use OCP\BackgroundJob\IJob;
+use OCP\BackgroundJob\TimedJob;
 use Psr\Log\LoggerInterface;
 
 class FetchSigned extends TimedJob {
@@ -24,11 +24,11 @@ class FetchSigned extends TimedJob {
 	private Manager $manager;
 
 	public function __construct(ITimeFactory $timeFactory,
-								LoggerInterface $logger,
-								Config $config,
-								Requests $requests,
-								Client $client,
-								Manager $manager) {
+		LoggerInterface $logger,
+		Config $config,
+		Requests $requests,
+		Client $client,
+		Manager $manager) {
 		parent::__construct($timeFactory);
 
 		// Every 5 minutes

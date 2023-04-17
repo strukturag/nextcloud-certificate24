@@ -33,10 +33,10 @@ class Requests {
 	private Config $config;
 
 	public function __construct(LoggerInterface $logger,
-								ISecureRandom $secureRandom,
-								IDBConnection $db,
-								IEventDispatcher $dispatcher,
-								Config $config) {
+		ISecureRandom $secureRandom,
+		IDBConnection $db,
+		IEventDispatcher $dispatcher,
+		Config $config) {
 		$this->logger = $logger;
 		$this->secureRandom = $secureRandom;
 		$this->db = $db;

@@ -19,10 +19,10 @@ class Client {
 	private string $appVersion;
 
 	public function __construct(LoggerInterface $logger,
-								IClientService $clientService,
-								IAppManager $appManager,
-								IConfig $systemConfig,
-								Tokens $tokens) {
+		IClientService $clientService,
+		IAppManager $appManager,
+		IConfig $systemConfig,
+		Tokens $tokens) {
 		$this->logger = $logger;
 		$this->clientService = $clientService;
 		$this->tokens = $tokens;
