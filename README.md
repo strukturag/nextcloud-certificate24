@@ -7,7 +7,7 @@ instance.
 
 - [composer](https://getcomposer.org/) 2.4
 - [node](https://nodejs.org/) 16 with npm 7 or 8
-- Nextcloud 24
+- Nextcloud 24+
 
 
 ## Build
