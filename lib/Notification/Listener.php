@@ -25,9 +25,9 @@ class Listener implements IEventListener {
 	protected LoggerInterface $logger;
 
 	public function __construct(IManager $notificationManager,
-								IEventDispatcher $dispatcher,
-								ITimeFactory $timeFactory,
-								LoggerInterface $logger) {
+		IEventDispatcher $dispatcher,
+		ITimeFactory $timeFactory,
+		LoggerInterface $logger) {
 		$this->notificationManager = $notificationManager;
 		$this->dispatcher = $dispatcher;
 		$this->timeFactory = $timeFactory;

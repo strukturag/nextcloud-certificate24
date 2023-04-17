@@ -19,7 +19,7 @@ class Config {
 	protected IAppData $appData;
 
 	public function __construct(IConfig $config,
-								IAppData $appData) {
+		IAppData $appData) {
 		$this->config = $config;
 		$this->appData = $appData;
 	}

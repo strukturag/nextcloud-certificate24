@@ -7,8 +7,8 @@ use OCA\Esig\AppInfo\Application;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 use Psr\Log\LoggerInterface;
 
 class Version1000Date20230131095219 extends SimpleMigrationStep {

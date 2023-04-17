@@ -27,11 +27,11 @@ class Notifier implements INotifier {
 	protected Requests $requests;
 
 	public function __construct(IFactory $lFactory,
-								IURLGenerator $url,
-								IUserManager $userManager,
-								INotificationManager $notificationManager,
-								Definitions $definitions,
-								Requests $requests) {
+		IURLGenerator $url,
+		IUserManager $userManager,
+		INotificationManager $notificationManager,
+		Definitions $definitions,
+		Requests $requests) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
 		$this->userManager = $userManager;

@@ -19,7 +19,7 @@ class CSPSetter implements IEventListener {
 	protected Config $config;
 
 	public function __construct(IInitialState $initialState,
-								Config $config) {
+		Config $config) {
 		$this->initialState = $initialState;
 		$this->config = $config;
 	}

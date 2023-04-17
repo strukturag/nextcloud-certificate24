@@ -20,9 +20,9 @@ class Tokens {
 	private Config $config;
 
 	public function __construct(ITimeFactory $timeFactory,
-								IURLGenerator $urlGenerator,
-								LoggerInterface $logger,
-								Config $config) {
+		IURLGenerator $urlGenerator,
+		LoggerInterface $logger,
+		Config $config) {
 		$this->timeFactory = $timeFactory;
 		$this->urlGenerator = $urlGenerator;
 		$this->logger = $logger;

@@ -5,8 +5,8 @@ namespace OCA\Esig\Migration;
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 class Version1000Date20221121132914 extends SimpleMigrationStep {
 	protected IDBConnection $db;

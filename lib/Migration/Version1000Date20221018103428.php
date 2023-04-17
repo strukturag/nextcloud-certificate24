@@ -3,8 +3,8 @@
 namespace OCA\Esig\Migration;
 
 use OCP\DB\ISchemaWrapper;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 class Version1000Date20221018103428 extends SimpleMigrationStep {
 	/**

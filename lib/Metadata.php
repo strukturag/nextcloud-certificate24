@@ -18,8 +18,8 @@ class Metadata {
 	private IEventDispatcher $dispatcher;
 
 	public function __construct(LoggerInterface $logger,
-								IDBConnection $db,
-								IEventDispatcher $dispatcher) {
+		IDBConnection $db,
+		IEventDispatcher $dispatcher) {
 		$this->logger = $logger;
 		$this->db = $db;
 		$this->dispatcher = $dispatcher;

@@ -22,9 +22,9 @@ class DeleteListener implements IEventListener {
 	protected Config $config;
 
 	public function __construct(LoggerInterface $logger,
-								Requests $requests,
-								Client $client,
-								Config $config) {
+		Requests $requests,
+		Client $client,
+		Config $config) {
 		$this->logger = $logger;
 		$this->requests = $requests;
 		$this->client = $client;

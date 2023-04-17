@@ -35,12 +35,12 @@ class DownloadController extends Controller {
 	protected Requests $requests;
 
 	public function __construct(string $appName,
-								IRequest $request,
-								IUserSession $userSession,
-								IURLGenerator $urlGenerator,
-								Client $client,
-								Config $config,
-								Requests $requests) {
+		IRequest $request,
+		IUserSession $userSession,
+		IURLGenerator $urlGenerator,
+		Client $client,
+		Config $config,
+		Requests $requests) {
 		parent::__construct($appName, $request);
 		$this->userSession = $userSession;
 		$this->urlGenerator = $urlGenerator;

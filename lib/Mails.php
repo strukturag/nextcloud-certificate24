@@ -27,14 +27,14 @@ class Mails {
 	private Requests $requests;
 
 	public function __construct(
-								IMailer $mailer,
-								Defaults $defaults,
-								IL10N $l10n,
-								IFactory $l10nFactory,
-								LoggerInterface $logger,
-								IURLGenerator $urlGenerator,
-								Config $config,
-								Requests $requests) {
+		IMailer $mailer,
+		Defaults $defaults,
+		IL10N $l10n,
+		IFactory $l10nFactory,
+		LoggerInterface $logger,
+		IURLGenerator $urlGenerator,
+		Config $config,
+		Requests $requests) {
 		$this->mailer = $mailer;
 		$this->defaults = $defaults;
 		$this->l10n = $l10n;

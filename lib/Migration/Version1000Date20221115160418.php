@@ -6,8 +6,8 @@ use Doctrine\DBAL\Types\Types;
 use OCA\Esig\Requests;
 use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 class Version1000Date20221115160418 extends SimpleMigrationStep {
 	protected IDBConnection $db;

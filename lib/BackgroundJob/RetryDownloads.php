@@ -8,8 +8,8 @@ use OCA\Esig\Config;
 use OCA\Esig\Manager;
 use OCA\Esig\Requests;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\TimedJob;
 use OCP\BackgroundJob\IJob;
+use OCP\BackgroundJob\TimedJob;
 use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
@@ -21,11 +21,11 @@ class RetryDownloads extends TimedJob {
 	private Manager $manager;
 
 	public function __construct(ITimeFactory $timeFactory,
-								LoggerInterface $logger,
-								IUserManager $userManager,
-								Config $config,
-								Requests $requests,
-								Manager $manager) {
+		LoggerInterface $logger,
+		IUserManager $userManager,
+		Config $config,
+		Requests $requests,
+		Manager $manager) {
 		parent::__construct($timeFactory);
 
 		// Every 5 minutes

@@ -20,9 +20,9 @@ class PersonalSettings implements ISettings {
 	private IURLGenerator $urlGenerator;
 
 	public function __construct(Config $config,
-								IInitialState $initialState,
-								IUserSession $userSession,
-								IURLGenerator $urlGenerator) {
+		IInitialState $initialState,
+		IUserSession $userSession,
+		IURLGenerator $urlGenerator) {
 		$this->config = $config;
 		$this->initialState = $initialState;
 		$this->currentUser = $userSession->getUser();
