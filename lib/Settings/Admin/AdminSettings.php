@@ -71,6 +71,7 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('settings', [
 			'signed_save_mode' => $this->config->getSignedSaveMode(),
 			'intranet_instance' => $this->config->isIntranetInstance(),
+			'delete_max_age' => $this->config->getDeleteMaxAge(),
 		]);
 
 		Util::addScript('esig', 'esig-admin-settings');
