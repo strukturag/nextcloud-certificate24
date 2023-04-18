@@ -27,6 +27,7 @@ namespace OCA\Esig\AppInfo;
 use OCA\Esig\Activity\Listener as ActivityListener;
 use OCA\Esig\Capabilities;
 use OCA\Esig\CSPSetter;
+use OCA\Esig\Dashboard\EsigWidget;
 use OCA\Esig\DeleteListener;
 use OCA\Esig\FilesLoader;
 use OCA\Esig\Manager;
@@ -52,6 +53,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPSetter::class);
 		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesLoader::class);
 		$context->registerCapability(Capabilities::class);
+		$context->registerDashboardWidget(EsigWidget::class);
 	}
 
 	public function boot(IBootContext $context): void {

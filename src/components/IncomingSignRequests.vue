@@ -19,7 +19,7 @@
 -->
 
 <template>
-	<div id="signing_requests" class="esig section">
+	<div id="incoming_requests" class="esig section">
 		<h2>
 			{{ t('esig', 'Incoming signing requests') }}
 			<NcLoadingIcon v-if="loading" />
