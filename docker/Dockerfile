@@ -16,9 +16,9 @@ RUN apt-get update && apt-get install -y \
 		echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list && \
 		\
 		apt-get update && apt-get install -y \
-			php7.4-cli \
-			php7.4-mbstring \
-			php7.4-xml \
+			php8.2-cli \
+			php8.2-mbstring \
+			php8.2-xml \
 			&& \
 		curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -29,7 +29,7 @@ RUN make npm-init && \
 		tar -C build/output -xf build/artifacts/esig.tar.gz
 
 
-FROM nextcloud:25-apache
+FROM nextcloud:26-apache
 
 RUN apt-get update && apt-get install -y \
 			supervisor \
