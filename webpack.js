@@ -33,4 +33,6 @@ webpackRules.RULE_JS.exclude = BabelLoaderExcludeNodeModulesExcept([
 // Replaces rules array
 webpackConfig.module.rules = Object.values(webpackRules)
 
+webpackConfig.cache = true
+
 module.exports = webpackConfig
