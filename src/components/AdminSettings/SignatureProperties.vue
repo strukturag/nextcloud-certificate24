@@ -45,12 +45,25 @@
 				{{ t('esig', 'Don\'t save signed file automatically') }}
 			</NcCheckboxRadioSwitch>
 		</div>
+		<div>
+			<NcTextField :value.sync="settings.delete_max_age"
+				:label="t('esig', 'Number of days after which fully signed signature requests are deleted.')"
+				:label-visible="true"
+				:error="!!errors.delete_max_age"
+				:helper-text="errors.delete_max_age"
+				type="number"
+				min="0"
+				placeholder="30"
+				:disabled="loading"
+				@update:value="debounceUpdateDeleteMaxAge" />
+		</div>
 	</NcSettingsSection>
 </template>
 
 <script>
 import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
@@ -61,17 +74,22 @@ export default {
 	components: {
 		NcSettingsSection,
 		NcCheckboxRadioSwitch,
+		NcTextField,
 	},
 
 	data() {
 		return {
 			loading: false,
 			settings: {},
+			errors: {},
 		}
 	},
 
 	beforeMount() {
 		this.settings = loadState('esig', 'settings')
+		if (this.settings.delete_max_age) {
+			this.settings.delete_max_age = String(this.settings.delete_max_age)
+		}
 	},
 
 	methods: {
@@ -94,6 +112,44 @@ export default {
 				},
 			})
 		},
+
+		debounceUpdateDeleteMaxAge: debounce(function() {
+			this.updateDeleteMaxAge()
+		}, 500),
+
+		async updateDeleteMaxAge() {
+			this.$delete(this.errors, 'delete_max_age')
+			const val = this.settings.delete_max_age
+			if (!val) {
+				this.$set(this.errors, 'delete_max_age', t('esig', 'The value may not be empty.'))
+				return
+			} else if (val < 0) {
+				this.$set(this.errors, 'delete_max_age', t('esig', 'The value may not be negative.'))
+				return
+			}
+
+			this.loading = true
+
+			const self = this
+			OCP.AppConfig.setValue('esig', 'delete_max_age', this.settings.delete_max_age, {
+				success() {
+					showSuccess(t('esig', 'Settings saved'))
+					self.loading = false
+				},
+				error() {
+					showError(t('esig', 'Could not save settings'))
+					self.loading = false
+				},
+			})
+		},
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.input-field:deep {
+	.input-field__main-wrapper {
+		max-width: 100px;
+	}
+}
+</style>

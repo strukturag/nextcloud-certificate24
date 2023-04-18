@@ -124,4 +124,14 @@ class Config {
 			return null;
 		}
 	}
+
+	public function getDeleteMaxAge(): int {
+		$value = $this->config->getAppValue('esig', 'delete_max_age', '30');
+		if ($value === null || $value === '') {
+			$value = '30';
+		}
+
+		return (int) $value;
+	}
+
 }

@@ -753,4 +753,67 @@ class Requests {
 		$pending['multi'] = $recipients;
 		return $pending;
 	}
+
+	public function getCompletedRequests(\DateTime $maxDate): array {
+		// TODO: This should be possible with a single query for both cases
+		// (single and multiple recipients).
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_requests')
+			->where($query->expr()->lt('signed', $query->createNamedParameter($maxDate, 'datetimetz')))
+			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
+			->andWhere($query->expr()->isNotNull('recipient'))
+			->andWhere($query->expr()->isNotNull('recipient_type'));
+		$result = $query->executeQuery();
+
+		$completed = [];
+		while ($row = $result->fetch()) {
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+
+			$row['recipients'] = $this->getRecipients($row);
+			$completed[] = $row;
+		}
+		$result->closeCursor();
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('esig_requests', 'r')
+			->where($query->expr()->isNull('r.recipient'))
+			->andWhere($query->expr()->eq('r.deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
+			->andWhere($query->expr()->isNull('r.recipient_type'))
+			->andWhere('exists (select * from oc_esig_recipients p where r.id = p.request_id and p.signed is not null)');
+		$result = $query->executeQuery();
+
+		while ($row = $result->fetch()) {
+			$row['recipients'] = $this->getRecipients($row);
+			$maxSigned = null;
+			foreach ($row['recipients'] as $recipient) {
+				if (!$recipient['signed']) {
+					$maxSigned = null;
+					break;
+				}
+
+				if (!$maxSigned || $maxSigned < $recipient['signed']) {
+					$maxSigned = $recipient['signed'];
+				}
+			}
+			if (!$maxSigned) {
+				// Not signed by all recipients yet.
+				continue;
+			} elseif ($maxSigned > $maxDate) {
+				// Signatures are too new.
+				continue;
+			}
+
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+			$completed[] = $row;
+		}
+		$result->closeCursor();
+		return $completed;
+	}
+
 }

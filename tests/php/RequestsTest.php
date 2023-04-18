@@ -477,4 +477,151 @@ class RequestsTest extends TestCase {
 		$this->requests->markRequestDeletedById($id);
 		$this->checkDeletedRequest($id, $recipients2, $esig_file_id, $file, $user);
 	}
+
+	public function testCompletedSingle() {
+		/** @var MockObject|File $file */
+		$file = $this->createMock(File::class);
+		$file
+			->method('getId')
+			->willReturn(1234);
+		/** @var MockObject|IUser $user */
+		$user = $this->createMock(IUser::class);
+		$user
+			->method('getUID')
+			->willReturn('admin');
+		$recipients = [
+			[
+				'type' => 'email',
+				'value' => 'user@domain.invalid',
+				'public_id' => 'user-signature-id',
+			],
+		];
+		$options = null;
+		$metadata = [
+			'foo' => 'bar',
+			'baz' => 123,
+		];
+		$account = [
+			'id' => 'the-account',
+		];
+		$server = 'https://domain.invalid';
+		$esig_file_id = 'the-file';
+		$esig_signature_result_id = 'the-signature-result';
+
+		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id, $esig_signature_result_id);
+		$this->assertNotNull($id);
+		$this->requestIds[] = $id;
+
+		$recipients2 = $recipients;
+		$recipients2[0]['esig_signature_id'] = $recipients[0]['public_id'];
+		unset($recipients2[0]['public_id']);
+		$recipients2[0]['signed'] = null;
+
+		$this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+
+		$completed = $this->requests->getCompletedRequests(new \DateTime());
+		$this->assertEmpty($completed);
+
+		$signed = new \DateTime();
+		$signed = $signed->sub(new \DateInterval('PT1H'));
+		// Round to seconds, required as some databases don't store with sub-second precision.
+		$signed->setTimestamp($signed->getTimestamp());
+		$isLast = $this->requests->markRequestSignedById($id, $recipients[0]['type'], $recipients[0]['value'], $signed);
+		$this->assertTrue($isLast);
+
+		$recipients2[0]['signed'] = $signed;
+		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+
+		$completed = $this->requests->getCompletedRequests(new \DateTime());
+		$this->assertEquals(1, count($completed));
+		$this->assertEquals($request, $completed[0]);
+
+		$this->requests->markRequestDeletedById($id);
+		$completed = $this->requests->getCompletedRequests(new \DateTime());
+		$this->assertEmpty($completed);
+	}
+
+	public function testCompletedMulti() {
+		/** @var MockObject|File $file */
+		$file = $this->createMock(File::class);
+		$file
+			->method('getId')
+			->willReturn(1234);
+		/** @var MockObject|IUser $user */
+		$user = $this->createMock(IUser::class);
+		$user
+			->method('getUID')
+			->willReturn('admin');
+		$recipients = [
+			[
+				'type' => 'user',
+				'value' => 'johndoe',
+				'public_id' => 'john-signature-id',
+			],
+			[
+				'type' => 'email',
+				'value' => 'user@domain.invalid',
+				'public_id' => 'user-signature-id',
+			],
+		];
+		$options = null;
+		$metadata = [
+			'foo' => 'bar',
+			'baz' => 123,
+		];
+		$account = [
+			'id' => 'the-account',
+		];
+		$server = 'https://domain.invalid';
+		$esig_file_id = 'the-file';
+		$esig_signature_result_id = 'the-signature-result';
+
+		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id, $esig_signature_result_id);
+		$this->assertNotNull($id);
+		$this->requestIds[] = $id;
+
+		$recipients2 = $recipients;
+		foreach ($recipients2 as &$r) {
+			$r['esig_signature_id'] = $r['public_id'];
+			unset($r['public_id']);
+			$r['signed'] = null;
+		}
+
+		$this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+
+		$completed = $this->requests->getCompletedRequests(new \DateTime());
+		$this->assertEmpty($completed);
+
+		$signed = new \DateTime();
+		$signed = $signed->sub(new \DateInterval('PT1H'));
+		// Round to seconds, required as some databases don't store with sub-second precision.
+		$signed->setTimestamp($signed->getTimestamp());
+		$isLast = $this->requests->markRequestSignedById($id, $recipients[0]['type'], $recipients[0]['value'], $signed);
+		$this->assertFalse($isLast);
+
+		$recipients2[0]['signed'] = $signed;
+		$this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+
+		$completed = $this->requests->getCompletedRequests(new \DateTime());
+		$this->assertEmpty($completed);
+
+		$signed2 = new \DateTime();
+		$signed2 = $signed2->sub(new \DateInterval('PT2H'));
+		// Round to seconds, required as some databases don't store with sub-second precision.
+		$signed2->setTimestamp($signed2->getTimestamp());
+		$isLast = $this->requests->markRequestSignedById($id, $recipients[1]['type'], $recipients[1]['value'], $signed2);
+		$this->assertTrue($isLast);
+
+		$recipients2[1]['signed'] = $signed2;
+		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+
+		$completed = $this->requests->getCompletedRequests(new \DateTime());
+		$this->assertEquals(1, count($completed));
+		$this->assertEquals($request, $completed[0]);
+
+		$this->requests->markRequestDeletedById($id);
+		$completed = $this->requests->getCompletedRequests(new \DateTime());
+		$this->assertEmpty($completed);
+	}
+
 }

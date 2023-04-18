@@ -6,7 +6,7 @@
 	<summary><![CDATA[eSignatures]]></summary>
 	<description><![CDATA[eSignatures]]></description>
 
-	<version>0.0.21</version>
+	<version>0.0.22</version>
 	<license>agpl</license>
 
 	<author>Joachim Bauch</author>
@@ -21,6 +21,7 @@
 	</types>
 
 	<background-jobs>
+		<job>OCA\Esig\BackgroundJob\DeleteCompleted</job>
 		<job>OCA\Esig\BackgroundJob\FetchSigned</job>
 		<job>OCA\Esig\BackgroundJob\ResendMails</job>
 		<job>OCA\Esig\BackgroundJob\RetryDownloads</job>

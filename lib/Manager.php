@@ -224,4 +224,43 @@ class Manager {
 			$this->saveSignedResult($request, $signed, null, $account);
 		}
 	}
+
+	public function deleteRequest(array $request, array $account) {
+		if ($account['id'] !== $request['esig_account_id']) {
+			$this->logger->error('Request ' . $request['id'] . ' of user ' . $request['user_id'] . ' is from a different account, got ' . $account['id'], [
+				'app' => Application::APP_ID,
+			]);
+			// TODO: Add cronjob to delete in the background.
+			$this->requests->markRequestDeletedById($request['id']);
+			return;
+		}
+
+		try {
+			$data = $this->client->deleteFile($request['esig_file_id'], $account, $request['esig_server']);
+		} catch (\Exception $e) {
+			$this->logger->error('Error deleting request ' . $request['id'] . ' of user ' . $request['user_id'], [
+				'app' => Application::APP_ID,
+				'exception' => $e,
+			]);
+			// TODO: Add cronjob to delete in the background.
+			$this->requests->markRequestDeletedById($request['id']);
+			return;
+		}
+
+		$status = $data['status'] ?? '';
+		if ($status !== 'success') {
+			$this->logger->error('Error deleting request ' . $request['id'] . ' of user ' . $request['user_id'] . ': ' . print_r($data, true), [
+				'app' => Application::APP_ID,
+			]);
+			// TODO: Add cronjob to delete in the background.
+			$this->requests->markRequestDeletedById($request['id']);
+			return;
+		}
+
+		$this->logger->info('Deleted request ' . $request['id'] . ' of user ' . $request['user_id'], [
+			'app' => Application::APP_ID,
+		]);
+		$this->requests->deleteRequestById($request['id']);
+	}
+
 }
