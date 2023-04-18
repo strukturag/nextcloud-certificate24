@@ -13,7 +13,7 @@
 	<namespace>Esig</namespace>
 
 	<dependencies>
-		<nextcloud min-version="24" max-version="25" />
+		<nextcloud min-version="24" max-version="26" />
 	</dependencies>
 
 	<types>
