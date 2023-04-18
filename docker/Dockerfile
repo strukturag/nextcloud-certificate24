@@ -16,9 +16,9 @@ RUN apt-get update && apt-get install -y \
 		echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list && \
 		\
 		apt-get update && apt-get install -y \
-			php7.4-cli \
-			php7.4-mbstring \
-			php7.4-xml \
+			php8.2-cli \
+			php8.2-mbstring \
+			php8.2-xml \
 			&& \
 		curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
