@@ -29,7 +29,7 @@ RUN make npm-init && \
 		tar -C build/output -xf build/artifacts/esig.tar.gz
 
 
-FROM nextcloud:25-apache
+FROM nextcloud:26-apache
 
 RUN apt-get update && apt-get install -y \
 			supervisor \
