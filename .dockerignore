@@ -10,6 +10,7 @@ docker/Dockerfile
 .*y*ml
 *.y*ml
 
+build/
 .git/
 .github/
 js/
