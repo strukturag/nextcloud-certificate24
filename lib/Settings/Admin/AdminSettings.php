@@ -71,6 +71,7 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('settings', [
 			'signed_save_mode' => $this->config->getSignedSaveMode(),
 			'intranet_instance' => $this->config->isIntranetInstance(),
+			'insecure_skip_verify' => $this->config->insecureSkipVerify(),
 			'delete_max_age' => $this->config->getDeleteMaxAge(),
 		]);
 

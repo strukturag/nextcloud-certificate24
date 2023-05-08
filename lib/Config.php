@@ -77,6 +77,10 @@ class Config {
 		return $this->config->getAppValue('esig', 'intranet_instance', 'false') === 'true';
 	}
 
+	public function insecureSkipVerify(): bool {
+		return $this->config->getAppValue('esig', 'insecure_skip_verify', 'false') === 'true';
+	}
+
 	public function getSignatureImage(IUser $user): ?ISimpleFile {
 		try {
 			$folder = $this->appData->getFolder($user->getUID());

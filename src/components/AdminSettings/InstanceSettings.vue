@@ -29,6 +29,14 @@
 				{{ t('esig', 'If this is set, links to the instance will not be sent to external users.') }}
 			</NcCheckboxRadioSwitch>
 		</div>
+		<div>
+			<NcCheckboxRadioSwitch :checked.sync="settings.insecure_skip_verify"
+				type="switch"
+				@update:checked="debounceUpdateInsecureVerify">
+				{{ t('esig', 'Skip verification of certificates when communicating with the backend service.') }}
+				{{ t('esig', 'This is potentially insecure and should only be enabled during development (if necessary).') }}
+			</NcCheckboxRadioSwitch>
+		</div>
 	</NcSettingsSection>
 </template>
 
@@ -68,6 +76,26 @@ export default {
 
 			const self = this
 			OCP.AppConfig.setValue('esig', 'intranet_instance', this.settings.intranet_instance, {
+				success() {
+					showSuccess(t('esig', 'Settings saved'))
+					self.loading = false
+				},
+				error() {
+					showError(t('esig', 'Could not save settings'))
+					self.loading = false
+				},
+			})
+		},
+
+		debounceUpdateInsecureVerify: debounce(function() {
+			this.updateInsecureSkipVerify()
+		}, 500),
+
+		updateInsecureSkipVerify() {
+			this.loading = true
+
+			const self = this
+			OCP.AppConfig.setValue('esig', 'insecure_skip_verify', this.settings.insecure_skip_verify, {
 				success() {
 					showSuccess(t('esig', 'Settings saved'))
 					self.loading = false
