@@ -98,9 +98,6 @@ class Client {
 			'headers' => $headers,
 			'multipart' => $multipart,
 			'verify' => false,
-			'nextcloud' => [
-				'allow_local_address' => true,
-			],
 		]);
 		$body = $response->getBody();
 		return json_decode($body, true);
@@ -118,9 +115,6 @@ class Client {
 			'headers' => $headers,
 			'multipart' => $multipart,
 			'verify' => false,
-			'nextcloud' => [
-				'allow_local_address' => true,
-			],
 		]);
 		$body = $response->getBody();
 		return json_decode($body, true);
@@ -137,9 +131,6 @@ class Client {
 		$response = $client->delete($server . 'api/v1/files/' . rawurlencode($account['id']) . '/' . rawurlencode($id), [
 			'headers' => $headers,
 			'verify' => false,
-			'nextcloud' => [
-				'allow_local_address' => true,
-			],
 		]);
 		$body = $response->getBody();
 		return json_decode($body, true);
@@ -176,9 +167,6 @@ class Client {
 		$response = $client->get($url, [
 			'headers' => $headers,
 			'verify' => false,
-			'nextcloud' => [
-				'allow_local_address' => true,
-			],
 		]);
 		$body = $response->getBody();
 		return $body;
@@ -197,9 +185,6 @@ class Client {
 		$response = $client->get($url, [
 			'headers' => $headers,
 			'verify' => false,
-			'nextcloud' => [
-				'allow_local_address' => true,
-			],
 		]);
 		$body = $response->getBody();
 		return $body;
