@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2022, struktur AG.
+ * @copyright Copyright (c) 2023, struktur AG.
  *
  * @author Joachim Bauch <bauch@struktur.de>
  *
@@ -26,36 +26,31 @@ namespace OCA\Esig;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\IDBConnection;
-use OCP\IUser;
 use Psr\Log\LoggerInterface;
 
-class Metadata {
+class Verify {
 	private LoggerInterface $logger;
 	private IDBConnection $db;
-	private IEventDispatcher $dispatcher;
 
 	public function __construct(LoggerInterface $logger,
-		IDBConnection $db,
-		IEventDispatcher $dispatcher) {
+		IDBConnection $db) {
 		$this->logger = $logger;
 		$this->db = $db;
-		$this->dispatcher = $dispatcher;
 	}
 
-	public function storeMetadata(IUser $user, File $file, ?array $metadata): void {
-		if (empty($metadata)) {
-			$this->deleteMetadata($file);
+	public function storeFileSignatures(File $file, ?array $signatures): void {
+		if (empty($signatures)) {
+			$this->deleteFileSignatures($file);
 			return;
 		}
 
+		$signatures = json_encode($signatures);
 		$update = $this->db->getQueryBuilder();
-		$update->update('esig_file_metadata')
+		$update->update('esig_file_signatures')
 			->set('updated', $update->createFunction('now()'))
-			->set('user_id', $update->createNamedParameter($user->getUID()))
-			->set('metadata', $update->createNamedParameter(!empty($metadata) ? json_encode($metadata) : null))
+			->set('signatures', $update->createNamedParameter($signatures))
 			->where($update->expr()->eq('file_id', $update->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
 		if ($update->executeStatement() > 0) {
 			// Updated existing entry.
@@ -63,14 +58,13 @@ class Metadata {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->insert('esig_file_metadata')
+		$query->insert('esig_file_signatures')
 			->values(
 				[
 					'file_id' => $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT),
 					'created' => $query->createFunction('now()'),
 					'updated' => $query->createFunction('now()'),
-					'user_id' => $query->createNamedParameter($user->getUID()),
-					'metadata' => $query->createNamedParameter(!empty($metadata) ? json_encode($metadata) : null),
+					'signatures' => $query->createNamedParameter($signatures),
 				]
 			);
 
@@ -82,10 +76,10 @@ class Metadata {
 		}
 	}
 
-	public function getMetadata(IUser $user, File $file): ?array {
+	public function getFileSignatures(File $file): ?array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_file_metadata')
+			->from('esig_file_signatures')
 			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
 		$result = $query->executeQuery();
 		$row = $result->fetch();
@@ -94,15 +88,12 @@ class Metadata {
 			return null;
 		}
 
-		if ($row['metadata']) {
-			$row['metadata'] = json_decode($row['metadata'], true);
-		}
-		return $row['metadata'];
+		return json_decode($row['signatures'], true);
 	}
 
-	public function deleteMetadata(File $file): void {
+	public function deleteFileSignatures(File $file): void {
 		$query = $this->db->getQueryBuilder();
-		$query->delete('esig_file_metadata')
+		$query->delete('esig_file_signatures')
 			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
 		$query->executeStatement();
 	}

@@ -28,6 +28,7 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\NodeDeletedEvent;
+use OCP\Files\Events\Node\NodeWrittenEvent;
 use OCP\User\Events\UserDeletedEvent;
 use Psr\Log\LoggerInterface;
 
@@ -39,19 +40,26 @@ class DeleteListener implements IEventListener {
 	protected Requests $requests;
 	protected Config $config;
 	protected Manager $manager;
+	protected Metadata $metadata;
+	protected Verify $verify;
 
 	public function __construct(LoggerInterface $logger,
 		Requests $requests,
 		Config $config,
-		Manager $manager) {
+		Manager $manager,
+		Metadata $metadata,
+		Verify $verify) {
 		$this->logger = $logger;
 		$this->requests = $requests;
 		$this->config = $config;
 		$this->manager = $manager;
+		$this->metadata = $metadata;
+		$this->verify = $verify;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
 		$dispatcher->addServiceListener(NodeDeletedEvent::class, self::class);
+		$dispatcher->addServiceListener(NodeWrittenEvent::class, self::class);
 		$dispatcher->addServiceListener(UserDeletedEvent::class, self::class);
 	}
 
@@ -69,8 +77,10 @@ class DeleteListener implements IEventListener {
 				$this->manager->deleteRequest($account, $request);
 			}
 		}
-		if ($event instanceof NodeDeletedEvent) {
+		if ($event instanceof NodeDeletedEvent || $event instanceof NodeWrittenEvent) {
 			$file = $event->getNode();
+			$this->metadata->deleteMetadata($file);
+			$this->verify->deleteFileSignatures($file);
 			$requests = $this->requests->getRequestsForFile($file, true);
 			foreach ($requests as $request) {
 				$this->manager->deleteRequest($account, $request);

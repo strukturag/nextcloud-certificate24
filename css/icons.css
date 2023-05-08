@@ -1,4 +1,5 @@
-.dashboard-esig-icon {
+.dashboard-esig-icon,
+.icon-esig {
 	background-repeat: no-repeat;
 	background-image: url(../img/app-dark.svg);
 	filter: var(--background-invert-if-dark);

@@ -31,6 +31,14 @@
       <code>Image</code>
     </MissingDependency>
   </file>
+  <file src="lib/Controller/VerifyController.php">
+    <MissingDependency occurrences="3">
+      <code>IRootFolder</code>
+    </MissingDependency>
+    <UndefinedDocblockClass occurrences="2">
+      <code>BadResponseException</code>
+    </UndefinedDocblockClass>
+  </file>
   <file src="lib/CSPSetter.php">
     <InvalidArgument occurrences="1">
       <code>addServiceListener</code>

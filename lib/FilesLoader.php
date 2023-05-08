@@ -71,5 +71,7 @@ class FilesLoader implements IEventListener {
 		);
 
 		Util::addScript('esig', 'esig-loader');
+		Util::addScript('esig', 'esig-files-sidebar');
+		Util::addStyle('esig', 'icons');
 	}
 }
