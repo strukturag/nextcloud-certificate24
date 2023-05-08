@@ -34,6 +34,7 @@ use Psr\Log\LoggerInterface;
 class Client {
 	private LoggerInterface $logger;
 	private IClientService $clientService;
+	private Config $config;
 	private Tokens $tokens;
 	private string $nextcloudVersion;
 	private string $appVersion;
@@ -42,9 +43,11 @@ class Client {
 		IClientService $clientService,
 		IAppManager $appManager,
 		IConfig $systemConfig,
+		Config $config,
 		Tokens $tokens) {
 		$this->logger = $logger;
 		$this->clientService = $clientService;
+		$this->config = $config;
 		$this->tokens = $tokens;
 		$this->appVersion = $appManager->getAppVersion(Application::APP_ID);
 		$this->nextcloudVersion = $systemConfig->getSystemValueString('version', '0.0.0');
@@ -97,7 +100,7 @@ class Client {
 		$response = $client->post($server . 'api/v1/files/' . rawurlencode($account['id']), [
 			'headers' => $headers,
 			'multipart' => $multipart,
-			'verify' => false,
+			'verify' => !$this->config->insecureSkipVerify(),
 		]);
 		$body = $response->getBody();
 		return json_decode($body, true);
@@ -114,7 +117,7 @@ class Client {
 		$response = $client->post($server . 'api/v1/files/' . rawurlencode($account['id']) . '/sign/' . rawurlencode($id), [
 			'headers' => $headers,
 			'multipart' => $multipart,
-			'verify' => false,
+			'verify' => !$this->config->insecureSkipVerify(),
 		]);
 		$body = $response->getBody();
 		return json_decode($body, true);
@@ -130,7 +133,7 @@ class Client {
 		]);
 		$response = $client->delete($server . 'api/v1/files/' . rawurlencode($account['id']) . '/' . rawurlencode($id), [
 			'headers' => $headers,
-			'verify' => false,
+			'verify' => !$this->config->insecureSkipVerify(),
 		]);
 		$body = $response->getBody();
 		return json_decode($body, true);
@@ -166,7 +169,7 @@ class Client {
 		$client = $this->clientService->newClient();
 		$response = $client->get($url, [
 			'headers' => $headers,
-			'verify' => false,
+			'verify' => !$this->config->insecureSkipVerify(),
 		]);
 		$body = $response->getBody();
 		return $body;
@@ -184,7 +187,7 @@ class Client {
 		$client = $this->clientService->newClient();
 		$response = $client->get($url, [
 			'headers' => $headers,
-			'verify' => false,
+			'verify' => !$this->config->insecureSkipVerify(),
 		]);
 		$body = $response->getBody();
 		return $body;
