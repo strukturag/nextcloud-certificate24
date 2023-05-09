@@ -21,6 +21,7 @@
 	</types>
 
 	<background-jobs>
+		<job>OCA\Esig\BackgroundJob\BackgroundVerify</job>
 		<job>OCA\Esig\BackgroundJob\DeleteCompleted</job>
 		<job>OCA\Esig\BackgroundJob\FetchSigned</job>
 		<job>OCA\Esig\BackgroundJob\ResendMails</job>
