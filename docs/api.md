@@ -331,6 +331,61 @@ Example:
     --abcdefg--
 
 
+## Verify signatures of file
+
+* Method: `GET`
+* Endpoint: `/api/v1/verify/<file_id>`
+* Query parameters:
+  - `reverify`: Set to true to force (re-)verification of file.
+* Response:
+  - Status code:
+    + `200 OK`
+    + `403 Forbidden` When the user is not allowed to access the file.
+    + `404 Not Found` File does not exist or does not contain signatures.
+    + `412 Precondition Failed` The file was not verified yet.
+    + `502 Bad Gateway` An error occurred while verifying the signatures.
+  - Data:
+    | field               | type    | description                                                      |
+    |---------------------|---------|------------------------------------------------------------------|
+    | `version`           | string  | Static text `1.0` for the current definition.                    |
+    | `status`            | string  | The status of the files.                                         |
+    | `verified`          | iso8601 | Timestamp when the file was verified.                            |
+    | `validation`        | string  | The validation status of the files signatures (if signed).       |
+    | `signatures`        | array   | The list of signatures (if signed).                              |
+
+Possible values for the field `status` are `signed` or `not_signed`.
+
+The field `validation` can contain one of the following:
+- `valid`: All signatures could be verified successfully.
+- `format_error`: One of the signatures contains an invalid format.
+- `error_validating`: An error occurred while validating the signatures.
+- `certificate_not_valid`: One of the certificates was not valid at the time of signing.
+- `certificate_expired`: One of the certificates was expired at the time of signing.
+- `no_signature_date`: One of the signatures doesn't contain a date of signing.
+- `signature_date_invalid`: One of the signing dates is invalid.
+- `unknown_ca`: The file was signed by an unknown CA.
+- `invalid_signature`: The signature is invalid.
+
+The entries in `signatures` contain these fields:
+
+  | field                  | type    | description                                                      |
+  |------------------------|---------|------------------------------------------------------------------|
+  | `validation`           | string  | The validation status of this signature (see above).             |
+  | `whole_file`           | bool    | Does the signature cover the whole file?                         |
+  | `signed`               | iso8601 | Timestamp of this signature (if available).                      |
+  | `signed_details`       | object  | Details of the signature timestamp (if available).               |
+  | `certificates`         | array   | List of PEM-encoded X.509 certificates for this signature.       |
+
+The following fields are defined for `signed_details` and are available if the
+signature timestamp was signed by a timestamp authority:
+
+  | field                  | type    | description                                                      |
+  |------------------------|---------|------------------------------------------------------------------|
+  | `validation`           | string  | The validation status of this timestamp signature (see above).   |
+  | `qualified`            | bool    | Is the timestamp signature qualified?                            |
+  | `certificates`         | array   | List of PEM-encoded X.509 certificates for this timestamp.       |
+
+
 # Backend APIs
 
 In some cases, it might be necessary to request information directly from the

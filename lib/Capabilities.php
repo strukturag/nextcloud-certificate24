@@ -48,6 +48,7 @@ class Capabilities implements IPublicCapability {
 			'features' => [
 				'multiple-recipients',
 				'sign-anonymous',
+				'verify-signatures',
 			],
 			'config' => [
 				'requests' => [

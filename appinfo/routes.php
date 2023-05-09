@@ -126,6 +126,12 @@ return [
 			'requirements' => $requirements,
 		],
 		[
+			'name' => 'Verify#getFileSignatures',
+			'url' => '/api/{apiVersion}/verify/{id}',
+			'verb' => 'GET',
+			'requirements' => $requirements,
+		],
+		[
 			'name' => 'Api#notifySigned',
 			'url' => '/api/{apiVersion}/share/{id}/signed/{signature}',
 			'verb' => 'POST',

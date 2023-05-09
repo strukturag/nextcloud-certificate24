@@ -9,6 +9,10 @@ webpackConfig.entry = {
 	dashboard: path.join(__dirname, 'src', 'dashboard.js'),
 	main: path.join(__dirname, 'src', 'main.js'),
 	loader: path.join(__dirname, 'src', 'mainLoader.js'),
+	'files-sidebar': [
+		path.join(__dirname, 'src', 'mainFilesSidebar.js'),
+		path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
+	],
 }
 
 webpackConfig.output.assetModuleFilename = '[name][ext]?v=[contenthash]'

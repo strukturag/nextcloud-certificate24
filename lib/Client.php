@@ -197,4 +197,36 @@ class Client {
 		$url = $server . 'details/' . rawurlencode($id);
 		return $url;
 	}
+
+	/**
+	 * @return array
+	 */
+	public function verifySignatures(File $file, array $account, string $server) {
+		$token = $this->tokens->getToken($account, $file->getName(), 'verify');
+
+		$client = $this->clientService->newClient();
+		$headers = $this->getHeaders([
+			'X-Vinegar-Token' => $token,
+			'X-Vinegar-API' => 'true',
+		]);
+		$multipart = [
+			[
+				'name' => 'file',
+				'contents' => $file->getContent(),
+				'filename' => $file->getName(),
+				'headers' => [
+					'Content-Type' => strtolower($file->getMimeType()),
+				],
+			],
+		];
+
+		$response = $client->post($server . 'api/v1/files/' . rawurlencode($account['id']) . '/verify', [
+			'headers' => $headers,
+			'multipart' => $multipart,
+			'verify' => !$this->config->insecureSkipVerify(),
+		]);
+		$body = $response->getBody();
+		return json_decode($body, true);
+	}
+
 }
