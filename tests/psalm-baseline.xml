@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="4.27.0@faf106e717c37b8c81721845dba9de3d8deed8ff">
+  <file src="lib/BackgroundJob/BackgroundVerify.php">
+    <MissingDependency occurrences="3">
+      <code>IRootFolder</code>
+    </MissingDependency>
+    <UndefinedDocblockClass occurrences="2">
+      <code>BadResponseException</code>
+    </UndefinedDocblockClass>
+  </file>
   <file src="lib/BackgroundJob/FetchSigned.php">
     <InvalidArgument occurrences="2">
       <code>$e</code>

@@ -81,6 +81,10 @@ class Config {
 		return $this->config->getAppValue('esig', 'insecure_skip_verify', 'false') === 'true';
 	}
 
+	public function isBackgroundVerifyEnabled(): bool {
+		return $this->config->getAppValue('esig', 'background_verify', 'true') === 'true';
+	}
+
 	public function getSignatureImage(IUser $user): ?ISimpleFile {
 		try {
 			$folder = $this->appData->getFolder($user->getUID());

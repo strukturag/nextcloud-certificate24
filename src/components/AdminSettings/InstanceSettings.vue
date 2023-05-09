@@ -37,6 +37,13 @@
 				{{ t('esig', 'This is potentially insecure and should only be enabled during development (if necessary).') }}
 			</NcCheckboxRadioSwitch>
 		</div>
+		<div>
+			<NcCheckboxRadioSwitch :checked.sync="settings.background_verify"
+				type="switch"
+				@update:checked="debounceUpdateBackgroundVerify">
+				{{ t('esig', 'Verify document signatures in the background.') }}
+			</NcCheckboxRadioSwitch>
+		</div>
 	</NcSettingsSection>
 </template>
 
@@ -96,6 +103,26 @@ export default {
 
 			const self = this
 			OCP.AppConfig.setValue('esig', 'insecure_skip_verify', this.settings.insecure_skip_verify, {
+				success() {
+					showSuccess(t('esig', 'Settings saved'))
+					self.loading = false
+				},
+				error() {
+					showError(t('esig', 'Could not save settings'))
+					self.loading = false
+				},
+			})
+		},
+
+		debounceUpdateBackgroundVerify: debounce(function() {
+			this.updateBackgroundVerify()
+		}, 500),
+
+		updateBackgroundVerify() {
+			this.loading = true
+
+			const self = this
+			OCP.AppConfig.setValue('esig', 'background_verify', this.settings.background_verify, {
 				success() {
 					showSuccess(t('esig', 'Settings saved'))
 					self.loading = false
