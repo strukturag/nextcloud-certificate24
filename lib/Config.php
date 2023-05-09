@@ -73,10 +73,6 @@ class Config {
 		return $this->config->getAppValue('esig', 'signed_save_mode', self::DEFAULT_SAVE_MODE);
 	}
 
-	public function isIntranetInstance(): bool {
-		return $this->config->getAppValue('esig', 'intranet_instance', 'false') === 'true';
-	}
-
 	public function insecureSkipVerify(): bool {
 		return $this->config->getAppValue('esig', 'insecure_skip_verify', 'false') === 'true';
 	}
