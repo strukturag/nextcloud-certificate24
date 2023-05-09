@@ -58,10 +58,10 @@
 							{{ request.filename }}
 						</td>
 						<td>
-							{{ request.created }}
+							{{ formatDate(request.created) }}
 						</td>
 						<td>
-							{{ getLastSignature(request) }}
+							{{ formatDate(getLastSignature(request)) }}
 						</td>
 						<td>
 							<div v-for="recipient in request.recipients" :key="recipient.type + '-' + recipient.value">
@@ -103,6 +103,7 @@
 </template>
 
 <script>
+import moment from '@nextcloud/moment'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -180,6 +181,14 @@ export default {
 			}
 
 			elem.scrollIntoView()
+		},
+
+		formatDate(d) {
+			if (!d) {
+				return d
+			}
+
+			return moment(d).format('LLL')
 		},
 
 		getLastSignature(request) {

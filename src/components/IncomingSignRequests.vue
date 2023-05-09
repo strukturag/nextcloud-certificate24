@@ -59,10 +59,10 @@
 							<span v-if="request.signed">{{ request.filename }}</span>
 						</td>
 						<td>
-							{{ request.created }}
+							{{ formatDate(request.created) }}
 						</td>
 						<td>
-							{{ request.own_signed }}
+							{{ formatDate(request.own_signed) }}
 						</td>
 						<td>
 							<NcAvatar :user="request.user_id"
@@ -115,6 +115,7 @@
 </template>
 
 <script>
+import moment from '@nextcloud/moment'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
@@ -195,6 +196,14 @@ export default {
 			}
 
 			elem.scrollIntoView()
+		},
+
+		formatDate(d) {
+			if (!d) {
+				return d
+			}
+
+			return moment(d).format('LLL')
 		},
 
 		async fetchRequests() {
