@@ -35,6 +35,16 @@
 				@update:checked="debounceUpdateBackgroundVerify">
 				{{ t('esig', 'Verify document signatures in the background.') }}
 			</NcCheckboxRadioSwitch>
+			<div v-if="settings.last_verified">
+				{{ t('esig', 'Last verification: {timestamp}', {
+					timestamp: formatDate(settings.last_verified),
+				}) }}
+			</div>
+			<div v-if="settings.unverified_count !== null">
+				{{ t('esig', 'Number of pending verifications: {count}', {
+					count: settings.unverified_count,
+				}) }}
+			</div>
 		</div>
 	</NcSettingsSection>
 </template>
@@ -45,6 +55,8 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
+
+import { formatDate } from '../../services/formatter.js'
 
 export default {
 	name: 'InstanceSettings',
@@ -104,6 +116,10 @@ export default {
 					self.loading = false
 				},
 			})
+		},
+
+		formatDate(d) {
+			return formatDate(d)
 		},
 	},
 }

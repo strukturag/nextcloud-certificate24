@@ -27,17 +27,24 @@ namespace OCA\Esig;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\File;
+use OCP\Files\IMimeTypeLoader;
 use OCP\IDBConnection;
 use Psr\Log\LoggerInterface;
 
 class Verify {
 	private LoggerInterface $logger;
 	private IDBConnection $db;
+	private IMimeTypeLoader $mimeTypeLoader;
+	private Requests $requests;
 
 	public function __construct(LoggerInterface $logger,
-		IDBConnection $db) {
+		IDBConnection $db,
+		IMimeTypeLoader $mimeTypeLoader,
+		Requests $requests) {
 		$this->logger = $logger;
 		$this->db = $db;
+		$this->mimeTypeLoader = $mimeTypeLoader;
+		$this->requests = $requests;
 	}
 
 	public function storeFileSignatures(File $file, ?array $signatures): void {
@@ -96,5 +103,39 @@ class Verify {
 		$query->delete('esig_file_signatures')
 			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
 		$query->executeStatement();
+	}
+
+	public function getLastVerified(): ?\DateTime {
+		$query = $this->db->getQueryBuilder();
+		$query->selectAlias($query->func()->max('updated'), 'last')
+			->from('esig_file_signatures');
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+		if ($row === false) {
+			return null;
+		}
+
+		return $this->requests->parseDateTime($row['last']);
+	}
+
+	public function getUnverifiedCount(): ?int {
+		$pdfMimeTypeId = $this->mimeTypeLoader->getId('application/pdf');
+
+		$query = $this->db->getQueryBuilder();
+		$query->selectAlias($query->func()->count('*'), 'count')
+			->from('filecache', 'fc')
+			->leftJoin('fc', 'esig_file_signatures', 'fs', $query->expr()->eq('fc.fileid', 'fs.file_id'))
+			->where($query->expr()->isNull('fs.file_id'))
+			->andWhere($query->expr()->eq('mimetype', $query->expr()->literal($pdfMimeTypeId)))
+			->andWhere($query->expr()->like('path', $query->expr()->literal('files/%')));
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+		if ($row === false) {
+			return null;
+		}
+
+		return $row['count'];
 	}
 }

@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace OCA\Esig\Settings\Admin;
 
 use OCA\Esig\Config;
+use OCA\Esig\Verify;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IL10N;
@@ -42,19 +43,22 @@ class AdminSettings implements ISettings {
 	private IL10N $l10n;
 	private IFactory $l10nFactory;
 	private IURLGenerator $urlGenerator;
+	private Verify $verify;
 
 	public function __construct(Config $config,
 		IInitialState $initialState,
 		IUserSession $userSession,
 		IL10N $l10n,
 		IFactory $l10nFactory,
-		IURLGenerator $urlGenerator) {
+		IURLGenerator $urlGenerator,
+		Verify $verify) {
 		$this->config = $config;
 		$this->initialState = $initialState;
 		$this->currentUser = $userSession->getUser();
 		$this->l10n = $l10n;
 		$this->l10nFactory = $l10nFactory;
 		$this->urlGenerator = $urlGenerator;
+		$this->verify = $verify;
 	}
 
 	/**
@@ -68,11 +72,14 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('nextcloud', [
 			'url' => $this->urlGenerator->getAbsoluteURL(''),
 		]);
+		$last = $this->verify->getLastVerified();
 		$this->initialState->provideInitialState('settings', [
 			'signed_save_mode' => $this->config->getSignedSaveMode(),
 			'insecure_skip_verify' => $this->config->insecureSkipVerify(),
 			'background_verify' => $this->config->isBackgroundVerifyEnabled(),
 			'delete_max_age' => $this->config->getDeleteMaxAge(),
+			'last_verified' => $last ? $last->format(\DateTime::ATOM) : null,
+			'unverified_count' => $this->verify->getUnverifiedCount(),
 		]);
 
 		Util::addScript('esig', 'esig-admin-settings');
