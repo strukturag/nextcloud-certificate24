@@ -232,6 +232,8 @@ class RequestsTest extends TestCase {
 		$this->assertEmpty($pending['multi']);
 
 		$signed = new \DateTime();
+		// Make sure the correct timestamp is saved, independent from the timezone.
+		$signed = $signed->setTimezone(new \DateTimeZone('Europe/Berlin'));
 		// Round to seconds, required as some databases don't store with sub-second precision.
 		$signed->setTimestamp($signed->getTimestamp());
 		$isLast = $this->requests->markRequestSignedById($id, $recipients[0]['type'], $recipients[0]['value'], $signed);

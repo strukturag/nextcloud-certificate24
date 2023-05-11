@@ -458,6 +458,9 @@ class Requests {
 	}
 
 	public function markRequestSignedById(string $id, string $type, string $value, \DateTime $now): bool {
+		$now = clone $now;
+		$now->setTimezone(new \DateTimeZone('UTC'));
+
 		$this->db->beginTransaction();
 		try {
 			$query = $this->db->getQueryBuilder();
@@ -755,6 +758,9 @@ class Requests {
 	}
 
 	public function getCompletedRequests(\DateTime $maxDate): array {
+		$maxDate = clone $maxDate;
+		$maxDate->setTimezone(new \DateTimeZone('UTC'));
+
 		// TODO: This should be possible with a single query for both cases
 		// (single and multiple recipients).
 		$query = $this->db->getQueryBuilder();
