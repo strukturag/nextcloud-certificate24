@@ -50,6 +50,11 @@
 				</h3>
 				<div>
 					<div>
+						{{ t('esig', 'Signed by: {signer}', {
+							'signer': getSigner(signature)
+						}) }}
+					</div>
+					<div>
 						{{ t('esig', 'Signed on: {date}', {
 							'date': formatDate(signature.signed)
 						}) }}
@@ -69,6 +74,13 @@
 				<div v-else>
 					{{ t('esig', 'The file was modified since it was signed.') }}
 				</div>
+
+				<template v-if="hasProperties(signature)">
+					<h3>
+						{{ t('esig', 'Signature properties') }}
+					</h3>
+					<SignatureProperties :properties="signature.properties" />
+				</template>
 
 				<template v-if="signature.signed_details">
 					<h3>
@@ -99,6 +111,7 @@
 
 <script>
 import CertificateDetails from '../components/CertificateDetails.vue'
+import SignatureProperties from '../components/SignatureProperties.vue'
 import SignatureStatus from '../components/SignatureStatus.vue'
 import { getFileSignatures } from '../services/filesIntegrationServices.js'
 
@@ -109,6 +122,7 @@ export default {
 
 	components: {
 		CertificateDetails,
+		SignatureProperties,
 		SignatureStatus,
 	},
 
@@ -155,6 +169,19 @@ export default {
 
 		formatDate(d) {
 			return formatDate(d)
+		},
+
+		getSigner(signature) {
+			return signature.properties?.name || t('esig', 'Unknown')
+		},
+
+		hasProperties(signature) {
+			const keys = Object.keys(signature.properties || {})
+			if (!keys || !keys.length) {
+				return false
+			}
+
+			return keys.length > 1 || keys.indexOf('name') === -1
 		},
 	},
 
