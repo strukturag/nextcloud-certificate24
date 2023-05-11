@@ -63,7 +63,7 @@ export default {
 		},
 		nextcloudUrl() {
 			return this.formatLink(this.properties.metadata?.nextcloud || null)
-		}
+		},
 	},
 
 	methods: {
