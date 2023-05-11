@@ -132,6 +132,12 @@ return [
 			'requirements' => $requirements,
 		],
 		[
+			'name' => 'Verify#clearCache',
+			'url' => '/api/{apiVersion}/verify/cache',
+			'verb' => 'DELETE',
+			'requirements' => $requirements,
+		],
+		[
 			'name' => 'Api#notifySigned',
 			'url' => '/api/{apiVersion}/share/{id}/signed/{signature}',
 			'verb' => 'POST',

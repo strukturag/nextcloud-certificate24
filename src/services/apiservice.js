@@ -119,6 +119,10 @@ const getMetadata = async (file_id) => {
 	})
 }
 
+const clearVerificationCache = async () => {
+	return await axios.delete(generateOcsUrl('apps/esig/api/v1/verify/cache'))
+}
+
 export {
 	shareFile,
 	getRequests,
@@ -132,4 +136,5 @@ export {
 	resetSignatureImage,
 	uploadSignatureImage,
 	getMetadata,
+	clearVerificationCache,
 }

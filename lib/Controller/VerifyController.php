@@ -143,4 +143,14 @@ class VerifyController extends OCSController {
 		return new DataResponse($signatures);
 	}
 
+	/**
+	 * @return DataResponse
+	 */
+	public function clearCache(): DataResponse {
+		$this->verify->deleteAllFileSignatures();
+		return new DataResponse([
+			'unverified_count' => $this->verify->getUnverifiedCount(),
+		]);
+	}
+
 }

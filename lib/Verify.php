@@ -105,6 +105,12 @@ class Verify {
 		$query->executeStatement();
 	}
 
+	public function deleteAllFileSignatures(): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete('esig_file_signatures');
+		$query->executeStatement();
+	}
+
 	public function getLastVerified(): ?\DateTime {
 		$query = $this->db->getQueryBuilder();
 		$query->selectAlias($query->func()->max('updated'), 'last')

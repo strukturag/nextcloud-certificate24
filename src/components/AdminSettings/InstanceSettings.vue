@@ -40,16 +40,24 @@
 					timestamp: formatDate(settings.last_verified),
 				}) }}
 			</div>
+			<div v-else>
+				{{ t('esig', 'Last verification: none yet') }}
+			</div>
 			<div v-if="settings.unverified_count !== null">
 				{{ t('esig', 'Number of pending verifications: {count}', {
 					count: settings.unverified_count,
 				}) }}
 			</div>
+			<NcButton :disabled="clearing"
+				@click="clearVerification">
+				{{ t('esig', 'Clear verification cache') }}
+			</NcButton>
 		</div>
 	</NcSettingsSection>
 </template>
 
 <script>
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
@@ -57,11 +65,13 @@ import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
 
 import { formatDate } from '../../services/formatter.js'
+import { clearVerificationCache } from '../../services/apiservice.js'
 
 export default {
 	name: 'InstanceSettings',
 
 	components: {
+		NcButton,
 		NcSettingsSection,
 		NcCheckboxRadioSwitch,
 	},
@@ -69,6 +79,7 @@ export default {
 	data() {
 		return {
 			loading: false,
+			clearing: false,
 			settings: {},
 		}
 	},
@@ -120,6 +131,34 @@ export default {
 
 		formatDate(d) {
 			return formatDate(d)
+		},
+
+		clearVerification() {
+			OC.dialogs.confirm(
+				t('esig', 'Do you really want to delete the verification cache? This will require that all files need to be verified again.'),
+				t('esig', 'Clear verification cache'),
+				async function(decision) {
+					if (!decision) {
+						return
+					}
+
+					this.clearing = true
+					try {
+						const response = await clearVerificationCache()
+						this.settings.last_verified = null
+						const unverifiedCount = response.data.ocs?.data?.unverified_count || null
+						if (unverifiedCount !== null) {
+							this.settings.unverified_count = unverifiedCount
+						}
+						showSuccess(t('esig', 'Verification cache cleared.'))
+					} catch (error) {
+						console.error('Could not clear verification cache', error)
+						showError(t('esig', 'Error while clearing verification cache.'))
+					} finally {
+						this.clearing = false
+					}
+				}.bind(this)
+			)
 		},
 	},
 }
