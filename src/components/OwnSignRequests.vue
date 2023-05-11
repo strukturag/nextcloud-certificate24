@@ -58,10 +58,10 @@
 							{{ request.filename }}
 						</td>
 						<td>
-							{{ formatDate(request.created) }}
+							<FormattedDate :date="request.created" />
 						</td>
 						<td>
-							{{ formatDate(getLastSignature(request)) }}
+							<FormattedDate :date="getLastSignature(request)" />
 						</td>
 						<td>
 							<div v-for="recipient in request.recipients" :key="recipient.type + '-' + recipient.value">
@@ -103,7 +103,6 @@
 </template>
 
 <script>
-import moment from '@nextcloud/moment'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -112,6 +111,7 @@ import Delete from 'vue-material-design-icons/Delete.vue'
 import Download from 'vue-material-design-icons/Download.vue'
 import OpenInNew from 'vue-material-design-icons/OpenInNew.vue'
 
+import FormattedDate from './FormattedDate.vue'
 import Recipient from './Recipient.vue'
 import { getRequests, deleteRequest, getSignedUrl } from '../services/apiservice.js'
 
@@ -124,6 +124,7 @@ export default {
 		Delete,
 		Download,
 		OpenInNew,
+		FormattedDate,
 		Recipient,
 	},
 
@@ -181,14 +182,6 @@ export default {
 			}
 
 			elem.scrollIntoView()
-		},
-
-		formatDate(d) {
-			if (!d) {
-				return d
-			}
-
-			return moment(d).format('LLL')
 		},
 
 		getLastSignature(request) {

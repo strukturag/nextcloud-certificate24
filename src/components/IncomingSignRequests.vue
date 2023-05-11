@@ -59,10 +59,10 @@
 							<span v-if="request.signed">{{ request.filename }}</span>
 						</td>
 						<td>
-							{{ formatDate(request.created) }}
+							<FormattedDate :date="request.created" />
 						</td>
 						<td>
-							{{ formatDate(request.own_signed) }}
+							<FormattedDate :date="request.own_signed" />
 						</td>
 						<td>
 							<NcAvatar :user="request.user_id"
@@ -115,7 +115,6 @@
 </template>
 
 <script>
-import moment from '@nextcloud/moment'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
@@ -124,6 +123,7 @@ import FileSign from 'vue-material-design-icons/FileSign.vue'
 import OpenInNew from 'vue-material-design-icons/OpenInNew.vue'
 import { showError } from '@nextcloud/dialogs'
 
+import FormattedDate from './FormattedDate.vue'
 import SignDialogModal from './SignDialogModal.vue'
 import { getIncomingRequests, getOriginalUrl, getSignedUrl } from '../services/apiservice.js'
 import getVinegarApi from '../services/vinegarapi.js'
@@ -139,6 +139,7 @@ export default {
 		FileSign,
 		OpenInNew,
 		SignDialogModal,
+		FormattedDate,
 	},
 
 	data() {
@@ -196,14 +197,6 @@ export default {
 			}
 
 			elem.scrollIntoView()
-		},
-
-		formatDate(d) {
-			if (!d) {
-				return d
-			}
-
-			return moment(d).format('LLL')
 		},
 
 		async fetchRequests() {

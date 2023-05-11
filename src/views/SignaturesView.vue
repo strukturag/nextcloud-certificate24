@@ -98,11 +98,11 @@
 </template>
 
 <script>
-import moment from '@nextcloud/moment'
-
 import CertificateDetails from '../components/CertificateDetails.vue'
 import SignatureStatus from '../components/SignatureStatus.vue'
 import { getFileSignatures } from '../services/filesIntegrationServices.js'
+
+import { formatDate } from '../services/formatter.js'
 
 export default {
 	name: 'SignaturesView',
@@ -154,7 +154,7 @@ export default {
 		},
 
 		formatDate(d) {
-			return moment(d).format('LLL')
+			return formatDate(d)
 		},
 	},
 
