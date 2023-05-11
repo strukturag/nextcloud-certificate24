@@ -27,7 +27,10 @@
 			:show-user-status-compact="false" />
 	</div>
 	<div v-else-if="recipient.type === 'email'">
-		<a :href="'mailto:' + recipient.value">{{ recipient.value }}</a>
+		<a :href="'mailto:' + recipient.value"
+			:title="recipient.value">
+			{{ recipient.display_name || recipient.value }}
+		</a>
 	</div>
 	<div v-else>
 		Unknown {{ recipient }}

@@ -97,7 +97,7 @@ class Mails {
 		$templateOptions = [
 			'file' => $file,
 			'user' => $user,
-			'recipient' => $recipient['value'],
+			'recipient' => $recipient['display_name'] ? $recipient['display_name'] : $recipient['value'],
 			'request_id' => $id,
 			'url' => $server . 's/' . urlencode($signature_id),
 		];
@@ -109,7 +109,13 @@ class Mails {
 		/** @var Message $message */
 		$message = $this->mailer->createMessage();
 		$message->setFrom([$from => $this->defaults->getName()]);
-		$message->setTo([$recipient['value']]);
+		$to = [];
+		if ($recipient['display_name']) {
+			$to[$recipient['value']] = $recipient['display_name'];
+		} else {
+			$to[] = $recipient['value'];
+		}
+		$message->setTo($to);
 		$message->setSubject($subject);
 		$message->setPlainBody($body);
 		$failed_recipients = $this->mailer->send($message);
@@ -144,7 +150,7 @@ class Mails {
 		$templateOptions = [
 			'file' => $file,
 			'user' => $user,
-			'recipient' => $recipient['value'],
+			'recipient' => $recipient['display_name'] ? $recipient['display_name'] : $recipient['value'],
 			'request_id' => $id,
 			'url' => $server . 'details/' . urlencode($signature_id),
 		];
@@ -155,7 +161,13 @@ class Mails {
 		/** @var Message $message */
 		$message = $this->mailer->createMessage();
 		$message->setFrom([$from => $this->defaults->getName()]);
-		$message->setTo([$recipient['value']]);
+		$to = [];
+		if ($recipient['display_name']) {
+			$to[$recipient['value']] = $recipient['display_name'];
+		} else {
+			$to[] = $recipient['value'];
+		}
+		$message->setTo($to);
 		$message->setSubject($subject);
 		$message->setPlainBody($body);
 		$failed_recipients = $this->mailer->send($message);

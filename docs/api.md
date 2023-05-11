@@ -38,6 +38,7 @@ Each entry in the `recipients` array must contain the following fields:
   |---------------------|---------|------------------------------------------------------------------|
   | `type`              | string  | Type of recipient, can be `user` or `email`.                     |
   | `value`             | string  | Userid (for type `user`) or email address (for type `email`).    |
+  | `display_name`      | string  | Optional display name for type `email`.                          |
 
 
 The following fields are currently defined for the request `options` JSON:

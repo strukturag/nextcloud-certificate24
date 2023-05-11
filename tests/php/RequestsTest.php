@@ -224,6 +224,7 @@ class RequestsTest extends TestCase {
 		$recipients2[0]['esig_signature_id'] = $recipients[0]['public_id'];
 		unset($recipients2[0]['public_id']);
 		$recipients2[0]['signed'] = null;
+		$recipients2[0]['display_name'] = null;
 
 		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
 
@@ -271,6 +272,7 @@ class RequestsTest extends TestCase {
 			[
 				'type' => 'email',
 				'value' => 'user@domain.invalid',
+				'display_name' => 'Email User',
 				'public_id' => 'user-signature-id',
 			],
 		];
@@ -361,6 +363,7 @@ class RequestsTest extends TestCase {
 			[
 				'type' => 'email',
 				'value' => 'user@domain.invalid',
+				'display_name' => 'Email User',
 				'public_id' => 'user-signature-id',
 			],
 		];
@@ -385,6 +388,9 @@ class RequestsTest extends TestCase {
 			$r['esig_signature_id'] = $r['public_id'];
 			unset($r['public_id']);
 			$r['signed'] = null;
+			if (!isset($r['display_name'])) {
+				$r['display_name'] = null;
+			}
 		}
 
 		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
@@ -398,6 +404,7 @@ class RequestsTest extends TestCase {
 			'request_id' => $id,
 			'type' => $recipients[1]['type'],
 			'value' => $recipients[1]['value'],
+			'display_name' => $recipients[1]['display_name'],
 			'signed' => null,
 			'saved' => null,
 			'esig_signature_id' => $recipients[1]['public_id'],
@@ -423,6 +430,7 @@ class RequestsTest extends TestCase {
 			'request_id' => $id,
 			'type' => $recipients[1]['type'],
 			'value' => $recipients[1]['value'],
+			'display_name' => $recipients[1]['display_name'],
 			'signed' => null,
 			'saved' => null,
 			'esig_signature_id' => $recipients[1]['public_id'],
@@ -453,6 +461,7 @@ class RequestsTest extends TestCase {
 			'request_id' => $id,
 			'type' => $recipients[1]['type'],
 			'value' => $recipients[1]['value'],
+			'display_name' => $recipients[1]['display_name'],
 			'signed' => $signed2,
 			'saved' => null,
 			'esig_signature_id' => $recipients[1]['public_id'],
@@ -495,6 +504,7 @@ class RequestsTest extends TestCase {
 			[
 				'type' => 'email',
 				'value' => 'user@domain.invalid',
+				'display_name' => 'Email User',
 				'public_id' => 'user-signature-id',
 			],
 		];
@@ -563,6 +573,7 @@ class RequestsTest extends TestCase {
 			[
 				'type' => 'email',
 				'value' => 'user@domain.invalid',
+				'display_name' => 'Email User',
 				'public_id' => 'user-signature-id',
 			],
 		];
@@ -587,6 +598,9 @@ class RequestsTest extends TestCase {
 			$r['esig_signature_id'] = $r['public_id'];
 			unset($r['public_id']);
 			$r['signed'] = null;
+			if (!isset($r['display_name'])) {
+				$r['display_name'] = null;
+			}
 		}
 
 		$this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
