@@ -248,7 +248,6 @@ be given with the email address of the user that is fetching the information.
 * Content-Type: `multipart/formdata`
 * Form fields:
   - `options`: JSON options for the signature.
-  - `metadata`: JSON metadata to include in the signature (TO BE DEFINED).
   - `<field-id>`: Image to render on the given field.
 * Response:
   - Status code:
