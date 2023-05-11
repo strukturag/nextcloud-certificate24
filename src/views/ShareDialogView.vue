@@ -505,10 +505,14 @@ export default {
 			}
 
 			const recipients = this.recipients.map((elem) => {
-				return {
+				const result = {
 					type: elem.type,
 					value: elem.value,
 				}
+				if (elem.type === 'email' && elem.item.name && elem.item.name !== elem.value) {
+					result.display_name = elem.item.name
+				}
+				return result
 			})
 
 			this.clearError()

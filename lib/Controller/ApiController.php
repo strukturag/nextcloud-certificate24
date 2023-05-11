@@ -166,7 +166,7 @@ class ApiController extends OCSController {
 
 		$users = [];
 		$emails = [];
-		foreach ($recipients as $r) {
+		foreach ($recipients as &$r) {
 			$recipient_type = $r['type'] ?? null;
 			$recipient = $r['value'] ?? null;
 			switch ($recipient_type) {
@@ -179,6 +179,9 @@ class ApiController extends OCSController {
 						return new DataResponse([
 							'error' => 'invalid_email',
 						], Http::STATUS_BAD_REQUEST);
+					}
+					if ($r['display_name'] === $r['value']) {
+						unset($r['display_name']);
 					}
 					$emails[$recipient] = true;
 					break;
@@ -194,6 +197,9 @@ class ApiController extends OCSController {
 						return new DataResponse([
 							'error' => 'unknown_user',
 						], Http::STATUS_NOT_FOUND);
+					}
+					if ($recipientUser->getDisplayName() !== $recipient) {
+						$r['display_name'] = $recipientUser->getDisplayName();
 					}
 					$users[$recipient] = $recipientUser;
 					break;
@@ -337,6 +343,8 @@ class ApiController extends OCSController {
 			}
 			if ($type === 'user') {
 				$entry['display_name'] = $this->userManager->getDisplayName($value);
+			} elseif ($recipient['display_name']) {
+				$entry['display_name'] = $recipient['display_name'];
 			}
 			$result[] = $entry;
 		}
