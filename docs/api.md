@@ -248,7 +248,6 @@ be given with the email address of the user that is fetching the information.
 * Content-Type: `multipart/formdata`
 * Form fields:
   - `options`: JSON options for the signature.
-  - `metadata`: JSON metadata to include in the signature (TO BE DEFINED).
   - `<field-id>`: Image to render on the given field.
 * Response:
   - Status code:
@@ -374,6 +373,7 @@ The entries in `signatures` contain these fields:
   | `whole_file`           | bool    | Does the signature cover the whole file?                         |
   | `signed`               | iso8601 | Timestamp of this signature (if available).                      |
   | `signed_details`       | object  | Details of the signature timestamp (if available).               |
+  | `properties`           | object  | Additional properties of the signature (if available).           |
   | `certificates`         | array   | List of PEM-encoded X.509 certificates for this signature.       |
 
 The following fields are defined for `signed_details` and are available if the
@@ -384,6 +384,50 @@ signature timestamp was signed by a timestamp authority:
   | `validation`           | string  | The validation status of this timestamp signature (see above).   |
   | `qualified`            | bool    | Is the timestamp signature qualified?                            |
   | `certificates`         | array   | List of PEM-encoded X.509 certificates for this timestamp.       |
+
+The following fields are defined for `properties`:
+
+  | field                  | type    | description                                                        |
+  |------------------------|---------|--------------------------------------------------------------------|
+  | `name`                 | string  | The name of the signer (format unspecified, if available).         |
+  | `location`             | string  | Location of the signature (format unspecified, if available).      |
+  | `reason`               | string  | Reason for the signature (format unspecified, if available).       |
+  | `contact`              | string  | Contact details of the signer (format unspecified, if available).  |
+  | `metadata`             | object  | Additional esig metadata stored with the signature (if available). |
+
+The following fields are defined for `metadata`:
+
+  | field                  | type    | description                                                      |
+  |------------------------|---------|------------------------------------------------------------------|
+  | `version`              | string  | Static text `1.0` for the current definition.                    |
+  | `client`               | object  | Metadata added by the Nextcloud app.                             |
+  | `server`               | object  | Metadata added by the esig backend server.                       |
+  | `nextcloud`            | string  | URL of the Nextcloud instance the signature was requested on.    |
+
+If a request was signed through the Nextcloud app, the field `client` will
+contain information on the client communicating with the Nextcloud API. The
+field `server` will be set by the esig backend and contain information on the
+Nextcloud server / app performing the request against the backend server.
+
+If a request was signed by an anonymous user (i.e. directly on the esig backend),
+the field `client` will be empty and the field `server` will contain information
+about the client performing the signature.
+
+
+The metadata in `client` can contain these fields:
+
+  | field                  | type    | description                                                      |
+  |------------------------|---------|------------------------------------------------------------------|
+  | `clientip`             | string  | The IP address of the client performing the request.             |
+  | `useragent`            | string  | The user-agent of the client performing the request.             |
+
+The metadata in `server` can contain these fields:
+
+  | field                  | type    | description                                                      |
+  |------------------------|---------|------------------------------------------------------------------|
+  | `clientip`             | string  | The IP address of the client performing the request.             |
+  | `useragent`            | string  | The user-agent of the client performing the request.             |
+  | `signer`               | object  | The `type` and `value` of the recipient that signed the file.    |
 
 
 # Backend APIs
