@@ -86,25 +86,4 @@ class PageController extends Controller {
 		return $response;
 	}
 
-	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 *
-	 * @return TemplateResponse
-	 * @throws HintException
-	 */
-	public function sign(string $id): Response {
-		$server = $this->config->getServer();
-		if (!empty($server)) {
-			$this->initialState->provideInitialState(
-				'vinegar_server',
-				$server
-			);
-		}
-
-		$response = new TemplateResponse('esig', 'sign', [
-			'app' => Application::APP_ID,
-		], 'blank');
-		return $response;
-	}
 }
