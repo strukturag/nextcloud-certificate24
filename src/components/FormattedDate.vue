@@ -33,12 +33,17 @@ export default {
 	props: {
 		date: {
 			type: String,
-			required: true,
+			required: false,
+			default: '',
 		},
 	},
 
 	computed: {
 		formattedDate() {
+			if (!this.date) {
+				return this.date
+			}
+
 			return formatDate(this.date)
 		},
 	},
