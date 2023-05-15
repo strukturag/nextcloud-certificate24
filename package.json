@@ -22,7 +22,7 @@
 		"@peculiar/x509": "^1.9.3",
 		"debounce": "^1.2.1",
 		"jquery": "3.6.4",
-		"vue": "2.7.10",
+		"vue": "3.3.2",
 		"vue-material-design-icons": "^5.2.0",
 		"vue-observe-visibility": "^1.0.0",
 		"vue-router": "3.6.5"
