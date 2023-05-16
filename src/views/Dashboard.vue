@@ -46,7 +46,7 @@ import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
-import { translate } from '@nextcloud/l10n'
+import { formatDate } from '../services/formatter.js'
 
 const REQUEST_POLLING_INTERVAL = 30
 
@@ -84,9 +84,9 @@ export default {
 
 		getSubText() {
 			return (request) => {
-				return translate('esig', 'Requested by {display_name} on {date}', {
+				return t('esig', 'Requested by {display_name} on {date}', {
 					display_name: request.display_name,
-					date: request.created,
+					date: formatDate(request.created),
 				})
 			}
 		},
