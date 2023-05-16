@@ -73,6 +73,16 @@ translationfiles/%/esig.po: translationfiles/templates/esig.pot
 l10n: translationtool.phar $(PO_FILES)
 	./translationtool.phar convert-po-files
 
+check-translations: l10n
+	@out=$$(git diff l10n); \
+	if [ ! -z "$$out" ]; then \
+		echo; \
+		echo "Found unprocessed translations, need to update folder \"l10n\":"; \
+		echo; \
+		echo "$$out"; \
+		exit 1; \
+	fi
+
 clean:
 	rm -rf js/*
 	rm -rf $(build_dir)
