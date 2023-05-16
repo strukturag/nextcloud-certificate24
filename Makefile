@@ -11,6 +11,10 @@ package_name=$(app_name)
 cert_dir=$(HOME)/.nextcloud/certificates
 version+=master
 
+PO_FILES=$(wildcard translationfiles/*/esig.po)
+SRC_FILES=$(shell find src)
+LIB_FILES=$(shell find lib)
+
 all: dev-setup build-production
 
 dev-setup: clean-dev composer-install-dev npm-init
@@ -50,6 +54,34 @@ npm-init:
 
 npm-update:
 	npm update
+
+translationtool.phar:
+	curl -L -o translationtool.phar https://github.com/nextcloud/docker-ci/raw/master/translations/translationtool/translationtool.phar
+	chmod a+x translationtool.phar
+
+translationfiles/templates/esig.pot: translationtool.phar $(SRC_FILES) $(LIB_FILES)
+	./translationtool.phar create-pot-files
+	sed -i "s|$(CURDIR)/||" $@
+
+po: $(PO_FILES) translationfiles/templates/esig.pot
+
+translationfiles/%/esig.po: translationfiles/templates/esig.pot
+	msgmerge --update $@ $<
+	touch $@
+
+.PHONY: l10n
+l10n: translationtool.phar $(PO_FILES)
+	./translationtool.phar convert-po-files
+
+check-translations: l10n
+	@out=$$(git diff l10n); \
+	if [ ! -z "$$out" ]; then \
+		echo; \
+		echo "Found unprocessed translations, need to update folder \"l10n\":"; \
+		echo; \
+		echo "$$out"; \
+		exit 1; \
+	fi
 
 clean:
 	rm -rf js/*
@@ -107,6 +139,7 @@ appstore:
 	--exclude=.tx \
 	--exclude=tests \
 	--exclude=tsconfig.json \
+	--exclude=translationfiles \
 	--exclude=vendor \
 	--exclude=vendor-bin \
 	--exclude=webpack.js \

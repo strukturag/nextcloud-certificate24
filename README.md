@@ -22,3 +22,11 @@ instance.
 Open the Apps settings of Nextcloud and enable the "eSignatures" app. Then go
 to the "Administration settings", open section "eSignatures" and enter the
 account id and account secret you created on the esig service portal.
+
+
+## Translations
+
+Run `make l10n` to update the translation files. Translations can be changed
+using [poedit](https://poedit.net/) or similar tools in the `translationfiles`
+folder. Make sure to run `make l10n` afterwards to update the files necessary
+for Nextcloud.

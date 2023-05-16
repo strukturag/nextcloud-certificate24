@@ -1,9 +1,14 @@
+*.mo
+*.po~
+
 build
 js
 lib/Vendor
 node_modules
+tests/php/html-coverage
 vendor
 
 .php-cs-fixer.cache
+translationtool.phar
 tests/php/.phpunit.result.cache
 tests/php/clover.xml

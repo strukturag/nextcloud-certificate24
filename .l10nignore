@@ -1,0 +1,6 @@
+build/
+js/
+lib/Vendor/
+tests/
+vendor/
+vendor-bin/
