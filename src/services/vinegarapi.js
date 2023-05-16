@@ -19,6 +19,7 @@
  */
 
 import { loadState } from '@nextcloud/initial-state'
+import { getCanonicalLocale } from '@nextcloud/l10n'
 
 let api
 
@@ -57,6 +58,7 @@ const getVinegarApi = async () => {
 		// eslint-disable-next-line no-undef
 		const maybePromise = VinegarApi.Setup({
 			url: base,
+			locale: getCanonicalLocale(),
 			features,
 			translator,
 		})
