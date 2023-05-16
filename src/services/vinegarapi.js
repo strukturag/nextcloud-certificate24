@@ -23,10 +23,6 @@ import { getCanonicalLocale } from '@nextcloud/l10n'
 
 let api
 
-const translator = (message, params) => {
-	return t('esig', message, params)
-}
-
 const features = [
 	'token-actions',
 ]
@@ -60,7 +56,6 @@ const getVinegarApi = async () => {
 			url: base,
 			locale: getCanonicalLocale(),
 			features,
-			translator,
 		})
 		if (maybePromise) {
 			await maybePromise
