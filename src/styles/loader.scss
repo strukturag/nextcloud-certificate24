@@ -19,17 +19,19 @@
  */
 
 .icon-esig-sign {
-	background-image: url(../../img/app-dark.svg);
-}
-
-[data-themes*=dark] {
-	.icon-esig-sign {
-		background-image: url(../../img/app.svg);
-	}
+	background-image: var(--icon-esig-dark);
 }
 
 @media (prefers-color-scheme: dark) {
-	.icon-esig-sign {
-		background-image: url(../../img/app.svg);
+	:root {
+		--icon-esig-dark: url(../../img/app.svg);
 	}
+}
+
+[data-themes*=dark] {
+	--icon-esig-dark: url(../../img/app.svg);
+}
+
+[data-themes*=light] {
+	--icon-esig-dark: url(../../img/app-dark.svg);
 }
