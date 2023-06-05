@@ -151,7 +151,7 @@ class Listener implements IEventListener {
 					$notification->setApp(Application::APP_ID)
 						->setDateTime($event->getSigned())
 						->setUser($recipient['value'])
-						->setObject('finished_request', $event->getRequestId())
+						->setObject('finished_incoming', $event->getRequestId())
 						->setSubject('last_signature', [
 							'request' => $request,
 							'request_id' => $event->getRequestId(),
@@ -169,7 +169,7 @@ class Listener implements IEventListener {
 					$notification->setApp(Application::APP_ID)
 						->setDateTime($event->getSigned())
 						->setUser($request['user_id'])
-						->setObject('finished_request', $event->getRequestId())
+						->setObject('finished_outgoing', $event->getRequestId())
 						->setSubject('last_signature', [
 							'request' => $request,
 							'request_id' => $event->getRequestId(),

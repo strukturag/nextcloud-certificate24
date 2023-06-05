@@ -216,8 +216,8 @@ class Listener {
 				$activity = $this->activityManager->generateEvent();
 				try {
 					$activity->setApp('esig')
-						->setType('finished_request')
-						->setObject('finished_request', 0, $id)
+						->setType('finished_incoming')
+						->setObject('finished_incoming', 0, $id)
 						->setTimestamp($event->getSigned()->getTimestamp())
 						->setAffectedUser($value)
 						->setSubject('last_signature', [
@@ -241,8 +241,8 @@ class Listener {
 			$activity = $this->activityManager->generateEvent();
 			try {
 				$activity->setApp('esig')
-					->setType('finished_request')
-					->setObject('finished_request', 0, $id)
+					->setType('finished_outgoing')
+					->setObject('finished_outgoing', 0, $id)
 					->setTimestamp($event->getSigned()->getTimestamp())
 					->setAffectedUser($request['user_id'])
 					->setSubject('last_signature', [
