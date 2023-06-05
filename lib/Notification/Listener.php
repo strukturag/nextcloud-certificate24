@@ -140,9 +140,9 @@ class Listener implements IEventListener {
 		}
 
 		if ($event->isLastSignature()) {
-			$notified = [];
 			foreach ($request['recipients'] as $recipient) {
-				if ($recipient['type'] === 'email') {
+				$value = $recipient['value'];
+				if ($recipient['type'] === 'email' || $value === $request['user_id']) {
 					continue;
 				}
 
@@ -150,35 +150,32 @@ class Listener implements IEventListener {
 				try {
 					$notification->setApp(Application::APP_ID)
 						->setDateTime($event->getSigned())
-						->setUser($recipient['value'])
+						->setUser($value)
 						->setObject('finished_incoming', $event->getRequestId())
 						->setSubject('last_signature', [
 							'request' => $request,
 							'request_id' => $event->getRequestId(),
 						]);
 					$this->notificationManager->notify($notification);
-					$notified[$recipient['value']] = true;
 				} catch (\InvalidArgumentException $e) {
 					$this->logger->error($e->getMessage(), ['exception' => $e]);
 				}
 			}
 
-			if (!isset($notified[$request['user_id']])) {
-				$notification = $this->notificationManager->createNotification();
-				try {
-					$notification->setApp(Application::APP_ID)
-						->setDateTime($event->getSigned())
-						->setUser($request['user_id'])
-						->setObject('finished_outgoing', $event->getRequestId())
-						->setSubject('last_signature', [
-							'request' => $request,
-							'request_id' => $event->getRequestId(),
-						]);
-					$this->notificationManager->notify($notification);
-					$notified[$recipient['value']] = true;
-				} catch (\InvalidArgumentException $e) {
-					$this->logger->error($e->getMessage(), ['exception' => $e]);
-				}
+			$notification = $this->notificationManager->createNotification();
+			try {
+				$notification->setApp(Application::APP_ID)
+					->setDateTime($event->getSigned())
+					->setUser($request['user_id'])
+					->setObject('finished_outgoing', $event->getRequestId())
+					->setSubject('last_signature', [
+						'request' => $request,
+						'request_id' => $event->getRequestId(),
+					]);
+				$this->notificationManager->notify($notification);
+				$notified[$recipient['value']] = true;
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 		}
 		if ($shouldFlush) {
