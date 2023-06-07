@@ -180,7 +180,7 @@ class ApiController extends OCSController {
 							'error' => 'invalid_email',
 						], Http::STATUS_BAD_REQUEST);
 					}
-					if ($r['display_name'] === $r['value']) {
+					if (isset($r['display_name']) && $r['display_name'] === $r['value']) {
 						unset($r['display_name']);
 					}
 					$emails[$recipient] = true;
@@ -343,7 +343,7 @@ class ApiController extends OCSController {
 			}
 			if ($type === 'user') {
 				$entry['display_name'] = $this->userManager->getDisplayName($value);
-			} elseif ($recipient['display_name']) {
+			} elseif (isset($recipient['display_name']) && $recipient['display_name']) {
 				$entry['display_name'] = $recipient['display_name'];
 			}
 			$result[] = $entry;

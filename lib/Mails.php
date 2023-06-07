@@ -94,10 +94,11 @@ class Mails {
 		}
 
 		$lang = $this->l10n->getLanguageCode();
+		$dn = $recipient['display_name'] ?? null;
 		$templateOptions = [
 			'file' => $file,
 			'user' => $user,
-			'recipient' => $recipient['display_name'] ? $recipient['display_name'] : $recipient['value'],
+			'recipient' => $dn ? $dn : $recipient['value'],
 			'request_id' => $id,
 			'url' => $server . 's/' . urlencode($signature_id),
 		];
@@ -110,8 +111,8 @@ class Mails {
 		$message = $this->mailer->createMessage();
 		$message->setFrom([$from => $this->defaults->getName()]);
 		$to = [];
-		if ($recipient['display_name']) {
-			$to[$recipient['value']] = $recipient['display_name'];
+		if ($dn) {
+			$to[$recipient['value']] = $dn;
 		} else {
 			$to[] = $recipient['value'];
 		}
@@ -147,10 +148,11 @@ class Mails {
 		}
 
 		$lang = $this->l10n->getLanguageCode();
+		$dn = $recipient['display_name'] ?? null;
 		$templateOptions = [
 			'file' => $file,
 			'user' => $user,
-			'recipient' => $recipient['display_name'] ? $recipient['display_name'] : $recipient['value'],
+			'recipient' => $dn ? $dn : $recipient['value'],
 			'request_id' => $id,
 			'url' => $server . 'details/' . urlencode($signature_id),
 		];
@@ -162,8 +164,8 @@ class Mails {
 		$message = $this->mailer->createMessage();
 		$message->setFrom([$from => $this->defaults->getName()]);
 		$to = [];
-		if ($recipient['display_name']) {
-			$to[$recipient['value']] = $recipient['display_name'];
+		if ($dn) {
+			$to[$recipient['value']] = $dn;
 		} else {
 			$to[] = $recipient['value'];
 		}
