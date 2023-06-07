@@ -69,12 +69,12 @@ class DeleteListener implements IEventListener {
 			$user = $event->getUser();
 			$requests = $this->requests->getOwnRequests($user, true);
 			foreach ($requests as $request) {
-				$this->manager->deleteRequest($account, $request);
+				$this->manager->deleteRequest($request, $account);
 			}
 
 			$requests = $this->requests->getIncomingRequests($user, true);
 			foreach ($requests as $request) {
-				$this->manager->deleteRequest($account, $request);
+				$this->manager->deleteRequest($request, $account);
 			}
 		}
 		if ($event instanceof NodeDeletedEvent || $event instanceof NodeWrittenEvent) {
@@ -83,7 +83,7 @@ class DeleteListener implements IEventListener {
 			$this->verify->deleteFileSignatures($file);
 			$requests = $this->requests->getRequestsForFile($file, true);
 			foreach ($requests as $request) {
-				$this->manager->deleteRequest($account, $request);
+				$this->manager->deleteRequest($request, $account);
 			}
 		}
 	}
