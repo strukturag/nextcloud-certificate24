@@ -28,7 +28,7 @@
 		"vue-router": "3.6.5"
 	},
 	"devDependencies": {
-		"@babel/preset-typescript": "^7.21.5",
+		"@babel/preset-typescript": "^7.22.5",
 		"@nextcloud/babel-config": "^1.0.0",
 		"@nextcloud/browserslist-config": "^2.3.0",
 		"@nextcloud/eslint-config": "^8.2.1",
