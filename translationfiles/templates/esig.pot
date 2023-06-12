@@ -217,7 +217,7 @@ msgstr ""
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:22
 #. TRANSLATORS src/views/SignaturesView.vue:80
 #: specialVueFakeDummyForL10nScript.js:60
-#: specialVueFakeDummyForL10nScript.js:350
+#: specialVueFakeDummyForL10nScript.js:354
 msgid "Signature properties"
 msgstr ""
 
@@ -342,27 +342,27 @@ msgid "Waiting for other signatures."
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:226
-#. TRANSLATORS src/views/ShareDialogView.vue:587
+#. TRANSLATORS src/views/ShareDialogView.vue:604
 #: specialVueFakeDummyForL10nScript.js:110
-#: specialVueFakeDummyForL10nScript.js:322
+#: specialVueFakeDummyForL10nScript.js:326
 msgid ""
 "The server requires a newer version of the app. Please contact your "
 "administrator."
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:229
-#. TRANSLATORS src/views/ShareDialogView.vue:590
+#. TRANSLATORS src/views/ShareDialogView.vue:607
 #: specialVueFakeDummyForL10nScript.js:112
-#: specialVueFakeDummyForL10nScript.js:324
+#: specialVueFakeDummyForL10nScript.js:328
 msgid ""
 "This app requires a newer version of the server. Please contact your "
 "administrator."
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:233
-#. TRANSLATORS src/views/ShareDialogView.vue:594
+#. TRANSLATORS src/views/ShareDialogView.vue:611
 #: specialVueFakeDummyForL10nScript.js:114
-#: specialVueFakeDummyForL10nScript.js:326
+#: specialVueFakeDummyForL10nScript.js:330
 msgid "Error loading serverside API, please try again later."
 msgstr ""
 
@@ -657,8 +657,8 @@ msgstr ""
 #. TRANSLATORS src/views/SignaturesView.vue:29
 #: specialVueFakeDummyForL10nScript.js:254
 #: specialVueFakeDummyForL10nScript.js:262
-#: specialVueFakeDummyForL10nScript.js:330
 #: specialVueFakeDummyForL10nScript.js:334
+#: specialVueFakeDummyForL10nScript.js:338
 #: src/mainFilesSidebarLoader.js:39
 msgid "Signatures"
 msgstr ""
@@ -681,7 +681,7 @@ msgstr ""
 #. TRANSLATORS src/views/FilesSidebarTab.vue:43
 #. TRANSLATORS src/views/SignaturesView.vue:30
 #: specialVueFakeDummyForL10nScript.js:264
-#: specialVueFakeDummyForL10nScript.js:332
+#: specialVueFakeDummyForL10nScript.js:336
 msgid "The file is not signed."
 msgstr ""
 
@@ -756,92 +756,102 @@ msgstr ""
 msgid "Please add at least one recipient first."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:537
+#. TRANSLATORS src/views/ShareDialogView.vue:523
 #: specialVueFakeDummyForL10nScript.js:310
+msgid "Please create signature fields first."
+msgstr ""
+
+#. TRANSLATORS src/views/ShareDialogView.vue:552
+#: specialVueFakeDummyForL10nScript.js:312
 msgid "At least one field has no recipient assigned."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:551
-#: specialVueFakeDummyForL10nScript.js:312
+#. TRANSLATORS src/views/ShareDialogView.vue:555
+#: specialVueFakeDummyForL10nScript.js:314
+msgid "At least one recipient has no field assigned."
+msgstr ""
+
+#. TRANSLATORS src/views/ShareDialogView.vue:568
+#: specialVueFakeDummyForL10nScript.js:316
 msgid "Requested signature."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:560
-#: specialVueFakeDummyForL10nScript.js:314
+#. TRANSLATORS src/views/ShareDialogView.vue:577
+#: specialVueFakeDummyForL10nScript.js:318
 msgid "Unknown user."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:563
-#: specialVueFakeDummyForL10nScript.js:316
+#. TRANSLATORS src/views/ShareDialogView.vue:580
+#: specialVueFakeDummyForL10nScript.js:320
 msgid "Invalid email address."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:566
-#: specialVueFakeDummyForL10nScript.js:318
+#. TRANSLATORS src/views/ShareDialogView.vue:583
+#: specialVueFakeDummyForL10nScript.js:322
 msgid "Error connecting to esig service."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:569
-#: specialVueFakeDummyForL10nScript.js:320
+#. TRANSLATORS src/views/ShareDialogView.vue:586
+#: specialVueFakeDummyForL10nScript.js:324
 msgid "Error while requesting signature."
 msgstr ""
 
 #. TRANSLATORS src/views/ShareDialogView.vue:146
-#: specialVueFakeDummyForL10nScript.js:328
+#: specialVueFakeDummyForL10nScript.js:332
 msgid "%n signature field positioned"
 msgid_plural "%n signature fields positioned"
 msgstr[0] ""
 msgstr[1] ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:36
-#: specialVueFakeDummyForL10nScript.js:336
+#: specialVueFakeDummyForL10nScript.js:340
 msgid "Checked on: {date}"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:47
-#: specialVueFakeDummyForL10nScript.js:338
+#: specialVueFakeDummyForL10nScript.js:342
 msgid "Signature {index}"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:53
-#: specialVueFakeDummyForL10nScript.js:340
+#: specialVueFakeDummyForL10nScript.js:344
 msgid "Signed by: {signer}"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:58
-#: specialVueFakeDummyForL10nScript.js:342
+#: specialVueFakeDummyForL10nScript.js:346
 msgid "Signed on: {date}"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:64
-#: specialVueFakeDummyForL10nScript.js:344
+#: specialVueFakeDummyForL10nScript.js:348
 msgid ""
 "The signature timestamp was generated on the signers machine and is "
 "untrusted."
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:72
-#: specialVueFakeDummyForL10nScript.js:346
+#: specialVueFakeDummyForL10nScript.js:350
 msgid "The file was not modified since it was signed."
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:75
-#: specialVueFakeDummyForL10nScript.js:348
+#: specialVueFakeDummyForL10nScript.js:352
 msgid "The file was modified since it was signed."
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:87
-#: specialVueFakeDummyForL10nScript.js:352
+#: specialVueFakeDummyForL10nScript.js:356
 msgid "Signature timestamp"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:100
-#: specialVueFakeDummyForL10nScript.js:354
+#: specialVueFakeDummyForL10nScript.js:358
 msgid "Certificate chain"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:175
-#: specialVueFakeDummyForL10nScript.js:356
+#: specialVueFakeDummyForL10nScript.js:360
 msgid "Unknown"
 msgstr ""
 
