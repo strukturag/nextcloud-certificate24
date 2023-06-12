@@ -8,13 +8,15 @@
         "signature_fields": {
             "type": "array",
             "uniqueItems": true,
+            "minItems": 1,
             "items": {
                 "$ref": "#/$defs/signature_field"
             }
         }
     },
     "required": [
-        "version"
+        "version",
+        "signature_fields"
     ],
     "$defs": {
         "version": {

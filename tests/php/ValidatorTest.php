@@ -39,13 +39,6 @@ class ValidatorTest extends TestCase {
 			null,
 			[
 				'version' => '1.0',
-			],
-			[
-				'version' => '1.0',
-				'signature_fields' => [],
-			],
-			[
-				'version' => '1.0',
 				'signature_fields' => [
 					[
 						'page' => 1,
@@ -84,6 +77,13 @@ class ValidatorTest extends TestCase {
 				'version' => '0'
 			],
 			[
+				'version' => '1.0',
+			],
+			[
+				'signature_fields' => [],
+			],
+			[
+				'version' => '1.0',
 				'signature_fields' => [],
 			],
 			[
