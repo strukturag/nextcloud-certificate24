@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-05-16 12:43+0200\n"
-"PO-Revision-Date: 2023-05-16 12:55+0200\n"
+"POT-Creation-Date: 2023-06-13 09:50+0200\n"
+"PO-Revision-Date: 2023-06-13 09:50+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -56,15 +56,15 @@ msgstr "Signaturanfragen"
 msgid "More signature requests"
 msgstr "Mehr Signaturanfragen"
 
-#: lib/Manager.php:141
+#: lib/Manager.php:162
 #, php-format
 msgid "%1$s signed by %2$s on %3$s"
-msgstr "%1$s wurde von %2$s auf %3$s signiert"
+msgstr "%1$s signiert von %2$s am %3$s"
 
-#: lib/Manager.php:147
+#: lib/Manager.php:168
 #, php-format
 msgid "%1$s signed on %2$s"
-msgstr "%1$s wurde auf %2$s signiert"
+msgstr "%1$s signiert am %2$s"
 
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:22
 #: specialVueFakeDummyForL10nScript.js:2

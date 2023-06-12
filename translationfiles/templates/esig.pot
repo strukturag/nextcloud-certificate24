@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-05-16 12:56+0200\n"
+"POT-Creation-Date: 2023-06-13 09:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,12 +61,12 @@ msgstr ""
 msgid "More signature requests"
 msgstr ""
 
-#: lib/Manager.php:141
+#: lib/Manager.php:162
 #, php-format
 msgid "%1$s signed by %2$s on %3$s"
 msgstr ""
 
-#: lib/Manager.php:147
+#: lib/Manager.php:168
 #, php-format
 msgid "%1$s signed on %2$s"
 msgstr ""
