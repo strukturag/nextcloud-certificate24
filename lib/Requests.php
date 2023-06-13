@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace OCA\Esig;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Events\ShareEvent;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -86,9 +85,7 @@ class Requests {
 			$dt = \DateTime::createFromFormat(self::ISO8601_EXTENDED, $s);
 		}
 		if (!$dt) {
-			$this->logger->error('Could not convert ' . $s . ' to datetime', [
-				'app' => Application::APP_ID,
-			]);
+			$this->logger->error('Could not convert ' . $s . ' to datetime');
 			$dt = null;
 		}
 		return $dt;
@@ -635,9 +632,7 @@ class Requests {
 			if (!isset($requests[$row['request_id']])) {
 				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
 				if (!$requests[$row['request_id']]) {
-					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending email of ' . $row['type'] . ' ' . $row['value'], [
-						'app' => Application::APP_ID,
-					]);
+					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending email of ' . $row['type'] . ' ' . $row['value']);
 					continue;
 				}
 			}
@@ -747,9 +742,7 @@ class Requests {
 			if (!isset($requests[$row['request_id']])) {
 				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
 				if (!$requests[$row['request_id']]) {
-					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending signature of ' . $row['type'] . ' ' . $row['value'], [
-						'app' => Application::APP_ID,
-					]);
+					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending signature of ' . $row['type'] . ' ' . $row['value']);
 					continue;
 				}
 			}

@@ -23,7 +23,6 @@
 namespace OCA\Esig\Migration;
 
 use Doctrine\DBAL\Types\Types;
-use OCA\Esig\AppInfo\Application;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -82,9 +81,7 @@ class Version1000Date20230131095219 extends SimpleMigrationStep {
 			$dt = \DateTime::createFromFormat(self::ISO8601_EXTENDED, $s);
 		}
 		if (!$dt) {
-			$this->logger->error('Could not convert ' . $s . ' to datetime', [
-				'app' => Application::APP_ID,
-			]);
+			$this->logger->error('Could not convert ' . $s . ' to datetime');
 			$dt = null;
 		}
 		return $dt;

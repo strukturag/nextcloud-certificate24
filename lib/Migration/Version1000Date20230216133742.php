@@ -22,7 +22,6 @@
  */
 namespace OCA\Esig\Migration;
 
-use OCA\Esig\AppInfo\Application;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
@@ -62,9 +61,7 @@ class Version1000Date20230216133742 extends SimpleMigrationStep {
 			$dt = \DateTime::createFromFormat(self::ISO8601_EXTENDED, $s);
 		}
 		if (!$dt) {
-			$this->logger->error('Could not convert ' . $s . ' to datetime', [
-				'app' => Application::APP_ID,
-			]);
+			$this->logger->error('Could not convert ' . $s . ' to datetime');
 			$dt = null;
 		}
 		return $dt;

@@ -24,7 +24,6 @@ declare(strict_types=1);
  */
 namespace OCA\Esig\BackgroundJob;
 
-use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Config;
 use OCA\Esig\Manager;
 use OCA\Esig\Requests;
@@ -72,9 +71,7 @@ class DeleteCompleted extends TimedJob {
 		$completed = $this->requests->getCompletedRequests($maxAge);
 
 		foreach ($completed as $request) {
-			$this->logger->info('Request ' . $request['id'] . ' of user ' . $request['user_id'] . ' is completed for ' . $maxAgeDays . ' days, deleting', [
-				'app' => Application::APP_ID,
-			]);
+			$this->logger->info('Request ' . $request['id'] . ' of user ' . $request['user_id'] . ' is completed for ' . $maxAgeDays . ' days, deleting');
 
 			$this->manager->deleteRequest($request, $account);
 		}

@@ -26,7 +26,6 @@ namespace OCA\Esig\Controller;
 
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
-use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Client;
 use OCA\Esig\Config;
 use OCA\Esig\Verify;
@@ -104,7 +103,6 @@ class VerifyController extends OCSController {
 			} catch (ConnectException $e) {
 				$this->logger->error('Error connecting to ' . $server, [
 					'exception' => $e,
-					'app' => Application::APP_ID,
 				]);
 				return new DataResponse(['error' => 'error_connecting'], Http::STATUS_BAD_GATEWAY);
 			} catch (\Exception $e) {
@@ -122,7 +120,6 @@ class VerifyController extends OCSController {
 
 				$this->logger->error('Error sending request to ' . $server, [
 					'exception' => $e,
-					'app' => Application::APP_ID,
 				]);
 				return new DataResponse(['error' => $e->getCode()], Http::STATUS_BAD_GATEWAY);
 			}

@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace OCA\Esig\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
-use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Client;
 use OCA\Esig\Config;
 use OCA\Esig\Events\SignEvent;
@@ -290,13 +289,11 @@ class ApiController extends OCSController {
 		} catch (ConnectException $e) {
 			$this->logger->error('Error connecting to ' . $server, [
 				'exception' => $e,
-				'app' => Application::APP_ID,
 			]);
 			return new DataResponse(['error' => 'error_connecting'], Http::STATUS_BAD_GATEWAY);
 		} catch (\Exception $e) {
 			$this->logger->error('Error sending request to ' . $server, [
 				'exception' => $e,
-				'app' => Application::APP_ID,
 			]);
 			return new DataResponse(['error' => $e->getCode()], Http::STATUS_BAD_GATEWAY);
 		}

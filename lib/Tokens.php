@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace OCA\Esig;
 
 use DomainException;
-use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Vendor\Firebase\JWT\JWT;
 use OCA\Esig\Vendor\Firebase\JWT\Key;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -76,7 +75,6 @@ class Tokens {
 		} catch (DomainException $e) {
 			$this->logger->error('Could not decode token ' . $token, [
 				'exception' => $e,
-				'app' => Application::APP_ID,
 			]);
 			return false;
 		}

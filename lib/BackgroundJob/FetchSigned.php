@@ -26,7 +26,6 @@ namespace OCA\Esig\BackgroundJob;
 
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
-use OCA\Esig\AppInfo\Application;
 use OCA\Esig\Client;
 use OCA\Esig\Config;
 use OCA\Esig\Manager;
@@ -68,7 +67,6 @@ class FetchSigned extends TimedJob {
 		} catch (ConnectException $e) {
 			$this->logger->error('Error connecting to ' . $server, [
 				'exception' => $e,
-				'app' => Application::APP_ID,
 			]);
 			return null;
 		} catch (RequestException $e) {
@@ -79,9 +77,7 @@ class FetchSigned extends TimedJob {
 				$decoded = json_decode($body, true);
 				if ($decoded) {
 					if ($decoded['code'] === 'not_signed') {
-						$this->logger->info('Request ' . $id . ' has not been signed by ' . $type . ' ' . $value, [
-							'app' => Application::APP_ID,
-						]);
+						$this->logger->info('Request ' . $id . ' has not been signed by ' . $type . ' ' . $value);
 						return null;
 					}
 				}
@@ -89,22 +85,18 @@ class FetchSigned extends TimedJob {
 
 			$this->logger->error('Error sending request to ' . $server . ': ' . print_r($body, true), [
 				'exception' => $e,
-				'app' => Application::APP_ID,
 			]);
 			return null;
 		} catch (\Exception $e) {
 			$this->logger->error('Error sending request to ' . $server, [
 				'exception' => $e,
-				'app' => Application::APP_ID,
 			]);
 			return null;
 		}
 
 		$response = json_decode($details, true);
 		if (!$response) {
-			$this->logger->error('Error decoding response ' . $details . ' from ' . $server, [
-				'app' => Application::APP_ID,
-			]);
+			$this->logger->error('Error decoding response ' . $details . ' from ' . $server);
 			return null;
 		}
 		return $response;
@@ -124,9 +116,7 @@ class FetchSigned extends TimedJob {
 
 			$signature_id = $request['esig_signature_id'] ?? null;
 			if (!$signature_id) {
-				$this->logger->error('No signature id found for request ' . $request['id'] . ' to fetch signature details for ' . $request['recipient_type'] . ' ' . $request['recipient'], [
-					'app' => Application::APP_ID,
-				]);
+				$this->logger->error('No signature id found for request ' . $request['id'] . ' to fetch signature details for ' . $request['recipient_type'] . ' ' . $request['recipient']);
 				continue;
 			}
 
@@ -146,9 +136,7 @@ class FetchSigned extends TimedJob {
 
 			$signature_id = $entry['esig_signature_id'] ?? null;
 			if (!$signature_id) {
-				$this->logger->error('No signature id found for request ' . $request['id'] . ' to fetch signature details for ' . $entry['type'] . ' ' . $entry['value'], [
-					'app' => Application::APP_ID,
-				]);
+				$this->logger->error('No signature id found for request ' . $request['id'] . ' to fetch signature details for ' . $entry['type'] . ' ' . $entry['value']);
 				continue;
 			}
 
