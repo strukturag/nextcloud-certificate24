@@ -30,15 +30,21 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
+use OCP\IConfig;
+use OCP\IDateTimeFormatter;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\L10N\IFactory;
 use Psr\Log\LoggerInterface;
 
 class Manager {
 	private LoggerInterface $logger;
 	private IEventDispatcher $dispatcher;
+	private IConfig $systemConfig;
 	private IL10N $l10n;
+	private IFactory $l10nFactory;
+	private IDateTimeFormatter $formatter;
 	private IUserManager $userManager;
 	private IRootFolder $root;
 	private Client $client;
@@ -48,7 +54,10 @@ class Manager {
 
 	public function __construct(LoggerInterface $logger,
 		IEventDispatcher $dispatcher,
+		IConfig $systemConfig,
 		IL10N $l10n,
+		IFactory $l10nFactory,
+		IDateTimeFormatter $formatter,
 		IUserManager $userManager,
 		IRootFolder $root,
 		Client $client,
@@ -57,7 +66,10 @@ class Manager {
 		Mails $mails) {
 		$this->logger = $logger;
 		$this->dispatcher = $dispatcher;
+		$this->systemConfig = $systemConfig;
 		$this->l10n = $l10n;
+		$this->l10nFactory = $l10nFactory;
+		$this->formatter = $formatter;
 		$this->userManager = $userManager;
 		$this->root = $root;
 		$this->client = $client;
@@ -124,6 +136,22 @@ class Manager {
 			return;
 		}
 
+		$lang = $this->l10nFactory->getUserLanguage($user);
+		$timeZone = $this->systemConfig->getUserValue($owner->getUID(), 'core', 'timezone', null);
+		if ($timeZone) {
+			$timeZone = new \DateTimeZone($timeZone);
+		} else {
+			$timeZone = null;
+		}
+
+		if ($lang) {
+			$l10n = $this->l10nFactory->get(Application::APP_ID, $lang);
+			if (!$l10n) {
+				$l10n = $this->l10n;
+			}
+		} else {
+			$l10n = $this->l10n;
+		}
 		$file = $files[0];
 		$folder = $file->getParent();
 
@@ -138,15 +166,15 @@ class Manager {
 
 		$info = pathinfo($row['filename']);
 		if (count($row['recipients']) === 1) {
-			$filename = $this->l10n->t('%1$s signed by %2$s on %3$s', [
+			$filename = $l10n->t('%1$s signed by %2$s on %3$s', [
 				$info['filename'],
 				$signerName,
-				$signed->format(Requests::ISO8601_EXTENDED),
+				$this->formatter->formatDateTime($signed, 'long', 'medium', $timeZone, $l10n),
 			]) . ($info['extension'] ? ('.' . $info['extension']) : '');
 		} else {
-			$filename = $this->l10n->t('%1$s signed on %2$s', [
+			$filename = $l10n->t('%1$s signed on %2$s', [
 				$info['filename'],
-				$signed->format(Requests::ISO8601_EXTENDED),
+				$this->formatter->formatDateTime($signed, 'long', 'medium', $timeZone, $l10n),
 			]) . ($info['extension'] ? ('.' . $info['extension']) : '');
 		}
 
