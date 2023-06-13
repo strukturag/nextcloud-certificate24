@@ -138,6 +138,8 @@ class BackgroundVerify extends TimedJob {
 				$this->logger->error($e->getMessage(), ['exception' => $e]);
 			}
 		}
+
+		$this->logger->debug('Background verification finished');
 	}
 
 	private function getBatchSize(): int {
