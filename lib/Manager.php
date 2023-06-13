@@ -30,6 +30,7 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
+use OCP\IConfig;
 use OCP\IDateTimeFormatter;
 use OCP\IL10N;
 use OCP\IUser;
@@ -40,6 +41,7 @@ use Psr\Log\LoggerInterface;
 class Manager {
 	private LoggerInterface $logger;
 	private IEventDispatcher $dispatcher;
+	private IConfig $systemConfig;
 	private IL10N $l10n;
 	private IFactory $l10nFactory;
 	private IDateTimeFormatter $formatter;
@@ -52,6 +54,7 @@ class Manager {
 
 	public function __construct(LoggerInterface $logger,
 		IEventDispatcher $dispatcher,
+		IConfig $systemConfig,
 		IL10N $l10n,
 		IFactory $l10nFactory,
 		IDateTimeFormatter $formatter,
@@ -63,6 +66,7 @@ class Manager {
 		Mails $mails) {
 		$this->logger = $logger;
 		$this->dispatcher = $dispatcher;
+		$this->systemConfig = $systemConfig;
 		$this->l10n = $l10n;
 		$this->l10nFactory = $l10nFactory;
 		$this->formatter = $formatter;
@@ -133,6 +137,13 @@ class Manager {
 		}
 
 		$lang = $this->l10nFactory->getUserLanguage($user);
+		$timeZone = $this->systemConfig->getUserValue($owner->getUID(), 'core', 'timezone', null);
+		if ($timeZone) {
+			$timeZone = new \DateTimeZone($timeZone);
+		} else {
+			$timeZone = null;
+		}
+
 		if ($lang) {
 			$l10n = $this->l10nFactory->get(Application::APP_ID, $lang);
 			if (!$l10n) {
@@ -158,12 +169,12 @@ class Manager {
 			$filename = $l10n->t('%1$s signed by %2$s on %3$s', [
 				$info['filename'],
 				$signerName,
-				$this->formatter->formatDateTime($signed, 'long', 'medium', null, $l10n),
+				$this->formatter->formatDateTime($signed, 'long', 'medium', $timeZone, $l10n),
 			]) . ($info['extension'] ? ('.' . $info['extension']) : '');
 		} else {
 			$filename = $l10n->t('%1$s signed on %2$s', [
 				$info['filename'],
-				$this->formatter->formatDateTime($signed, 'long', 'medium', null, $l10n),
+				$this->formatter->formatDateTime($signed, 'long', 'medium', $timeZone, $l10n),
 			]) . ($info['extension'] ? ('.' . $info['extension']) : '');
 		}
 
