@@ -83,9 +83,7 @@ class Mails {
 	public function sendRequestMail(string $id, IUser $user, File $file, array $recipient, string $server) {
 		$signature_id = $recipient['esig_signature_id'] ?? null;
 		if (!$signature_id) {
-			$this->logger->error('No signature id found for request ' . $id . ' to send mail to ' . $recipient['value'], [
-				'app' => Application::APP_ID,
-			]);
+			$this->logger->error('No signature id found for request ' . $id . ' to send mail to ' . $recipient['value']);
 			return;
 		}
 
@@ -121,24 +119,18 @@ class Mails {
 		$message->setPlainBody($body);
 		$failed_recipients = $this->mailer->send($message);
 		if (!empty($failed_recipients)) {
-			$this->logger->error('Could not send email for request ' . $id . ' to ' . $recipient['value'], [
-				'app' => Application::APP_ID,
-			]);
+			$this->logger->error('Could not send email for request ' . $id . ' to ' . $recipient['value']);
 			return;
 		}
 
 		$this->requests->markEmailSent($id, $recipient['value']);
-		$this->logger->info('Sent email for request ' . $id . ' to ' . $recipient['value'], [
-			'app' => Application::APP_ID,
-		]);
+		$this->logger->info('Sent email for request ' . $id . ' to ' . $recipient['value']);
 	}
 
 	public function sendLastSignatureMail(string $id, array $request, IUser $user, File $file, array $recipient) {
 		$signature_id = $request['esig_signature_result_id'] ?? null;
 		if (!$signature_id) {
-			$this->logger->error('No signature result id found for request ' . $id . ' to send mail to ' . $recipient['value'], [
-				'app' => Application::APP_ID,
-			]);
+			$this->logger->error('No signature result id found for request ' . $id . ' to send mail to ' . $recipient['value']);
 			return;
 		}
 
@@ -174,15 +166,11 @@ class Mails {
 		$message->setPlainBody($body);
 		$failed_recipients = $this->mailer->send($message);
 		if (!empty($failed_recipients)) {
-			$this->logger->error('Could not send last signature email for request ' . $id . ' to ' . $recipient['value'], [
-				'app' => Application::APP_ID,
-			]);
+			$this->logger->error('Could not send last signature email for request ' . $id . ' to ' . $recipient['value']);
 			// TODO: Retry sending email.
 			return;
 		}
 
-		$this->logger->info('Sent last signature email for request ' . $id . ' to ' . $recipient['value'], [
-			'app' => Application::APP_ID,
-		]);
+		$this->logger->info('Sent last signature email for request ' . $id . ' to ' . $recipient['value']);
 	}
 }
