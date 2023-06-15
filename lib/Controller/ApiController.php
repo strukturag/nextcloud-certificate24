@@ -165,9 +165,12 @@ class ApiController extends OCSController {
 
 		$users = [];
 		$emails = [];
+		$required = [];
+		$idx = 0;
 		foreach ($recipients as &$r) {
 			$recipient_type = $r['type'] ?? null;
 			$recipient = $r['value'] ?? null;
+			$required[$idx++] = true;
 			switch ($recipient_type) {
 				case 'email':
 					if (isset($emails[$recipient])) {
@@ -209,9 +212,7 @@ class ApiController extends OCSController {
 			}
 		}
 
-		if (empty($metadata)) {
-			$metadata = null;
-		}
+		$metadata = !empty($metadata) ? $metadata : [];
 
 		$error = $this->validator->validateShareMetadata($metadata);
 		if ($error) {
@@ -221,23 +222,37 @@ class ApiController extends OCSController {
 			], Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($metadata && count($recipients) > 1) {
-			$fields = $metadata['signature_fields'] ?? null;
-			if (!empty($fields)) {
-				foreach ($fields as $field) {
-					$idx = $field['recipient_idx'] ?? null;
-					if ($idx === null) {
-						return new DataResponse([
-							'error' => 'invalid_metadata',
-							'details' => ['field has no recipient_idx'],
-						], Http::STATUS_BAD_REQUEST);
-					} elseif ($idx >= count($recipients)) {
-						return new DataResponse([
-							'error' => 'invalid_metadata',
-							'details' => ['recipient_idx is out of bounds'],
-						], Http::STATUS_BAD_REQUEST);
-					}
+		$fields = $metadata['signature_fields'] ?? null;
+		if (empty($fields)) {
+			return new DataResponse([
+				'error' => 'invalid_metadata',
+				'details' => ['no signature fields found'],
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		if (count($recipients) > 1) {
+			foreach ($fields as $field) {
+				$idx = $field['recipient_idx'] ?? null;
+				if ($idx === null) {
+					return new DataResponse([
+						'error' => 'invalid_metadata',
+						'details' => ['field has no recipient_idx'],
+					], Http::STATUS_BAD_REQUEST);
+				} elseif ($idx < 0 || $idx >= count($recipients)) {
+					return new DataResponse([
+						'error' => 'invalid_metadata',
+						'details' => ['recipient_idx is out of bounds'],
+					], Http::STATUS_BAD_REQUEST);
 				}
+
+				unset($required[$idx]);
+			}
+
+			if (!empty($required)) {
+				return new DataResponse([
+					'error' => 'invalid_metadata',
+					'details' => ['recipient has no field assigned'],
+				], Http::STATUS_BAD_REQUEST);
 			}
 		}
 

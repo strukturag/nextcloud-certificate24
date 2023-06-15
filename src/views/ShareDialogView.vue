@@ -518,30 +518,47 @@ export default {
 			this.clearError()
 			this.shareLoading = true
 			try {
-				let metadata
-				if (this.signaturePositions && this.signaturePositions.length) {
-					let signaturePositions = this.signaturePositions
-					if (recipients.length === 1) {
-						signaturePositions = signaturePositions.map((e) => {
-							delete e.recipient_idx
-							return e
-						})
-					} else {
-						let missingIndexes = false
-						signaturePositions.forEach((e) => {
-							if (!Object.prototype.hasOwnProperty.call(e, 'recipient_idx') || e.recipient_idx === -1) {
-								missingIndexes = true
-							}
-						})
-						if (missingIndexes) {
-							this.renderError(t('esig', 'At least one field has no recipient assigned.'))
+				let signaturePositions = this.signaturePositions
+				if (!signaturePositions || !signaturePositions.length) {
+					this.renderError(t('esig', 'Please create signature fields first.'))
+					return
+				}
+
+				if (recipients.length === 1) {
+					signaturePositions = signaturePositions.map((e) => {
+						delete e.recipient_idx
+						return e
+					})
+				} else {
+					let missingIndexes = false
+					const required = []
+					recipients.forEach((e, idx) => {
+						required.push(idx)
+					})
+					signaturePositions.forEach((e) => {
+						if (!Object.prototype.hasOwnProperty.call(e, 'recipient_idx')
+							|| e.recipient_idx < 0
+							|| e.recipient_idx >= recipients.length) {
+							missingIndexes = true
 							return
 						}
+
+						const pos = required.indexOf(e.recipient_idx)
+						if (pos >= 0) {
+							required.splice(pos, 1)
+						}
+					})
+					if (missingIndexes) {
+						this.renderError(t('esig', 'At least one field has no recipient assigned.'))
+						return
+					} else if (required.length) {
+						this.renderError(t('esig', 'At least one recipient has no field assigned.'))
+						return
 					}
-					metadata = {
-						version: '1.0',
-						signature_fields: signaturePositions,
-					}
+				}
+				const metadata = {
+					version: '1.0',
+					signature_fields: signaturePositions,
 				}
 				const options = {
 					signed_save_mode: this.signed_save_mode,

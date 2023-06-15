@@ -23,6 +23,7 @@ Nextcloud instance.
   - Status code:
     + `201 Created`
     + `400 Bad Request` When no / an invalid recipient was specified.
+    + `400 Bad Request` When no / invalid metadata was given.
     + `401 Unauthorized` When the user is not logged in.
     + `403 Forbidden` When the user is not allowed to share files for signing.
     + `404 Not Found` When the file was not found.
