@@ -39,7 +39,6 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Collaboration\Collaborators\ISearch;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\Image;
 use OCP\IRequest;
