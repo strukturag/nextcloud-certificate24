@@ -97,7 +97,7 @@ class VerifyController extends OCSController {
 				], Http::STATUS_PRECONDITION_FAILED);
 			}
 
-			$server = $this->config->getServer();
+			$server = $this->config->getApiServer();
 			try {
 				$signatures = $this->client->verifySignatures($file, $account, $server);
 			} catch (ConnectException $e) {

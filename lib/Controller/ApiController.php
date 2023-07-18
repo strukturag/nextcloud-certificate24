@@ -297,7 +297,7 @@ class ApiController extends OCSController {
 			], Http::STATUS_BAD_REQUEST);
 		}
 
-		$server = $this->config->getServer();
+		$server = $this->config->getApiServer();
 		try {
 			$data = $this->client->shareFile($file, $recipients, $metadata, $account, $server);
 		} catch (ConnectException $e) {

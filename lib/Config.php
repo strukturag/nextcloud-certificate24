@@ -32,7 +32,8 @@ use OCP\IConfig;
 use OCP\IUser;
 
 class Config {
-	public const DEFAULT_SERVER = "https://api.certificate24.com/";
+	public const DEFAULT_API_SERVER = "https://api.certificate24.com/";
+	public const DEFAULT_WEB_SERVER = "https://www.certificate24.com/";
 	public const DEFAULT_SAVE_MODE = 'new';
 
 	private IConfig $config;
@@ -44,10 +45,22 @@ class Config {
 		$this->appData = $appData;
 	}
 
-	public function getServer(): string {
-		$server = $this->config->getAppValue('esig', 'server', self::DEFAULT_SERVER);
+	public function getApiServer(): string {
+		$server = $this->config->getAppValue('esig', 'api_server', self::DEFAULT_API_SERVER);
 		if (empty($server)) {
-			$server = self::DEFAULT_SERVER;
+			$server = self::DEFAULT_API_SERVER;
+		}
+
+		if ($server[strlen($server) - 1] != '/') {
+			$server = $server . '/';
+		}
+		return $server;
+	}
+
+	public function getWebServer(): string {
+		$server = $this->config->getAppValue('esig', 'web_server', self::DEFAULT_WEB_SERVER);
+		if (empty($server)) {
+			$server = self::DEFAULT_WEB_SERVER;
 		}
 
 		if ($server[strlen($server) - 1] != '/') {

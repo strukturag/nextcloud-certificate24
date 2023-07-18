@@ -66,8 +66,10 @@ class AdminSettings implements ISettings {
 	 */
 	public function getForm(): TemplateResponse {
 		$account = $this->config->getAccount();
-		$server = $this->config->getServer();
-		$account['server'] = $server;
+		$apiServer = $this->config->getApiServer();
+		$webServer = $this->config->getWebServer();
+		$account['api_server'] = $apiServer;
+		$account['web_server'] = $webServer;
 		$this->initialState->provideInitialState('account', $account);
 		$this->initialState->provideInitialState('nextcloud', [
 			'url' => $this->urlGenerator->getAbsoluteURL(''),

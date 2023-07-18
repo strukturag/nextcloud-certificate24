@@ -53,7 +53,7 @@ class CSPSetter implements IEventListener {
 			return;
 		}
 
-		$server = $this->config->getServer();
+		$server = $this->config->getApiServer();
 		if (empty($server)) {
 			return;
 		}

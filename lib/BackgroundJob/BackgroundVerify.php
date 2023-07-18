@@ -99,7 +99,7 @@ class BackgroundVerify extends TimedJob {
 		}
 
 		$batchSize = $this->getBatchSize();
-		$server = $this->config->getServer();
+		$server = $this->config->getApiServer();
 		$cnt = 0;
 		while (($row = $result->fetch()) && $cnt < $batchSize) {
 			try {
