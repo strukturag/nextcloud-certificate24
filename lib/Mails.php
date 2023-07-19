@@ -95,7 +95,11 @@ class Mails {
 			$server = $this->config->getWebServer();
 		}
 
-		$lang = $this->l10n->getLanguageCode();
+		// TOOD: We should support per-recipient languages.
+		$lang = $this->l10nFactory->getUserLanguage($user);
+		if (empty($lang)) {
+			$lang = $this->l10n->getLanguageCode();
+		}
 		$dn = $recipient['display_name'] ?? null;
 		$templateOptions = [
 			'file' => $file,
@@ -147,7 +151,11 @@ class Mails {
 			$server = $this->config->getWebServer();
 		}
 
-		$lang = $this->l10n->getLanguageCode();
+		// TOOD: We should support per-recipient languages.
+		$lang = $this->l10nFactory->getUserLanguage($user);
+		if (empty($lang)) {
+			$lang = $this->l10n->getLanguageCode();
+		}
 		$dn = $recipient['display_name'] ?? null;
 		$templateOptions = [
 			'file' => $file,
