@@ -53,24 +53,32 @@ class CSPSetter implements IEventListener {
 			return;
 		}
 
-		$server = $this->config->getApiServer();
-		if (empty($server)) {
-			return;
-		}
-
 		$csp = new ContentSecurityPolicy();
-		$csp->addAllowedChildSrcDomain($server);
 		$csp->addAllowedChildSrcDomain('blob:');
 		$csp->addAllowedChildSrcDomain("'self'");
-		$csp->addAllowedConnectDomain($server);
 		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain("'self'");
-		$csp->addAllowedScriptDomain($server);
 		$csp->addAllowedScriptDomain('blob:');
 		$csp->addAllowedScriptDomain("'self'");
-		$csp->addAllowedWorkerSrcDomain($server);
 		$csp->addAllowedWorkerSrcDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain("'self'");
+
+		$apiServer = $this->config->getApiServer();
+		if (!empty($apiServer)) {
+			$csp->addAllowedChildSrcDomain($apiServer);
+			$csp->addAllowedConnectDomain($apiServer);
+			$csp->addAllowedScriptDomain($apiServer);
+			$csp->addAllowedWorkerSrcDomain($apiServer);
+		}
+
+		$webServer = $this->config->getWebServer();
+		if (!empty($webServer) && $apiServer !== $webServer) {
+			$csp->addAllowedChildSrcDomain($webServer);
+			$csp->addAllowedConnectDomain($webServer);
+			$csp->addAllowedScriptDomain($webServer);
+			$csp->addAllowedWorkerSrcDomain($webServer);
+		}
+
 		$event->addPolicy($csp);
 	}
 }
