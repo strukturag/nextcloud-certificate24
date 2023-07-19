@@ -24,6 +24,7 @@ declare(strict_types=1);
  */
 namespace OCA\Esig;
 
+use OCA\Esig\AppInfo\Application;
 use OCP\App\IAppManager;
 use OCP\Capabilities\IPublicCapability;
 use OCP\IUserSession;
@@ -44,6 +45,7 @@ class Capabilities implements IPublicCapability {
 	public function getCapabilities(): array {
 		$user = $this->userSession->getUser();
 
+		$account = $this->config->getAccount();
 		$capabilities = [
 			'features' => [
 				'multiple-recipients',
@@ -56,7 +58,8 @@ class Capabilities implements IPublicCapability {
 				],
 				'user' => [],
 			],
-			'version' => $this->appManager->getAppVersion('esig'),
+			'version' => $this->appManager->getAppVersion(Application::APP_ID),
+			'has-account' => !empty($account['id']) && !empty($account['secret']),
 		];
 
 		if ($user) {
