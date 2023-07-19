@@ -58,7 +58,7 @@ class PageController extends Controller {
 	 * @throws HintException
 	 */
 	public function index(): Response {
-		$server = $this->config->getServer();
+		$server = $this->config->getApiServer();
 		if (!empty($server)) {
 			$this->initialState->provideInitialState(
 				'vinegar_server',

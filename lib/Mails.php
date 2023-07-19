@@ -90,6 +90,10 @@ class Mails {
 		if ($server && $server[strlen($server) - 1] != '/') {
 			$server = $server . '/';
 		}
+		$apiServer = $this->config->getApiServer();
+		if ($server === $apiServer) {
+			$server = $this->config->getWebServer();
+		}
 
 		$lang = $this->l10n->getLanguageCode();
 		$dn = $recipient['display_name'] ?? null;
@@ -137,6 +141,10 @@ class Mails {
 		$server = $request['esig_server'];
 		if ($server && $server[strlen($server) - 1] != '/') {
 			$server = $server . '/';
+		}
+		$apiServer = $this->config->getApiServer();
+		if ($server === $apiServer) {
+			$server = $this->config->getWebServer();
 		}
 
 		$lang = $this->l10n->getLanguageCode();

@@ -23,7 +23,7 @@
 		:description="t('esig', 'The configured account will be used to request signatures and sign files.')">
 		<div>
 			<h4>{{ t('esig', 'Server') }}</h4>
-			<div><a :href="server" target="_blank">{{ server }}</a></div>
+			<div>{{ api_server }}</div>
 		</div>
 
 		<div>
@@ -50,7 +50,7 @@
 				@input="debounceUpdateAccount">
 		</div>
 
-		<div>{{ t('esig', 'If you don\'t have an account on the esig service yet, please login to {server} and create an account with the following data:', {'server': server}) }}</div>
+		<div>{{ t('esig', 'If you don\'t have an account on the esig service yet, please login to {server} and create an account with the following data:', {'server': web_server}) }}</div>
 		<div>{{ t('esig', 'Name: {theme}', {'theme': theme.name}) }}</div>
 		<div>{{ t('esig', 'Nextcloud Url: {url}', {'url': nextcloud.url}) }}</div>
 	</NcSettingsSection>
@@ -73,7 +73,8 @@ export default {
 		return {
 			account_id: '',
 			account_secret: '',
-			server: '',
+			api_server: '',
+			web_server: '',
 			loading: false,
 			saved: false,
 			nextcloud: {},
@@ -85,7 +86,8 @@ export default {
 		const state = loadState('esig', 'account')
 		this.account_id = state.id
 		this.account_secret = state.secret
-		this.server = state.server
+		this.api_server = state.api_server
+		this.web_server = state.web_server
 		this.nextcloud = loadState('esig', 'nextcloud')
 	},
 
