@@ -22,8 +22,9 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig;
+namespace OCA\Certificate24;
 
+use OCA\Certificate24\AppInfo\Application;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\Event;
@@ -70,8 +71,8 @@ class FilesLoader implements IEventListener {
 			]
 		);
 
-		Util::addScript('esig', 'esig-loader');
-		Util::addScript('esig', 'esig-files-sidebar');
-		Util::addStyle('esig', 'icons');
+		Util::addScript(Application::APP_ID, Application::APP_ID . '-loader');
+		Util::addScript(Application::APP_ID, Application::APP_ID . '-files-sidebar');
+		Util::addStyle(Application::APP_ID, 'icons');
 	}
 }

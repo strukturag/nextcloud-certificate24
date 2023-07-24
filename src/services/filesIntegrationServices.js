@@ -36,7 +36,7 @@ const getFileSignatures = async function({ fileId }, options) {
 		query.push('reverify=true')
 	}
 	query = query.length ? ('?' + query.join('&')) : ''
-	const response = await axios.get(generateOcsUrl('apps/esig/api/v1/verify/{fileId}', { fileId }) + query)
+	const response = await axios.get(generateOcsUrl('apps/certificate24/api/v1/verify/{fileId}', { fileId }) + query)
 	return response
 }
 

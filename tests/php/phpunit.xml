@@ -10,15 +10,16 @@
   <coverage>
 	  <!-- filters for code coverage -->
     <include>
-      <directory suffix=".php">../../../nextcloud-esig/appinfo</directory>
-      <directory suffix=".php">../../../nextcloud-esig/lib</directory>
+      <directory suffix=".php">../../../nextcloud-certificate24/appinfo</directory>
+      <directory suffix=".php">../../../nextcloud-certificate24/lib</directory>
     </include>
     <report>
-	    <!-- and this is where your report will be written -->
+      <!-- and this is where your report will be written -->
       <clover outputFile="./clover.xml"/>
+      <html outputDirectory="html-coverage"/>
     </report>
   </coverage>
-  <testsuite name="Esig App Tests">
+  <testsuite name="Certificate24 App Tests">
     <directory suffix="Test.php">.</directory>
   </testsuite>
   <logging>

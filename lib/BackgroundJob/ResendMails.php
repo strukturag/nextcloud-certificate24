@@ -22,10 +22,10 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\BackgroundJob;
+namespace OCA\Certificate24\BackgroundJob;
 
-use OCA\Esig\Mails;
-use OCA\Esig\Requests;
+use OCA\Certificate24\Mails;
+use OCA\Certificate24\Requests;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -75,7 +75,7 @@ class ResendMails extends TimedJob {
 				'type' => $entry['recipient_type'],
 				'value' => $entry['recipient'],
 			];
-			$this->mails->sendRequestMail($entry['id'], $user, $file, $recipient, $entry['esig_server']);
+			$this->mails->sendRequestMail($entry['id'], $user, $file, $recipient, $entry['c24_server']);
 		}
 
 		foreach ($pending['multi'] as $entry) {
@@ -97,7 +97,7 @@ class ResendMails extends TimedJob {
 				'type' => $entry['type'],
 				'value' => $entry['value'],
 			];
-			$this->mails->sendRequestMail($entry['request_id'], $user, $file, $recipient, $request['esig_server']);
+			$this->mails->sendRequestMail($entry['request_id'], $user, $file, $recipient, $request['c24_server']);
 		}
 	}
 }

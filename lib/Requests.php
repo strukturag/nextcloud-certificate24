@@ -22,10 +22,10 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig;
+namespace OCA\Certificate24;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use OCA\Esig\Events\ShareEvent;
+use OCA\Certificate24\Events\ShareEvent;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
@@ -96,7 +96,7 @@ class Requests {
 		return $this->secureRandom->generate($length, $chars);
 	}
 
-	public function storeRequest(File $file, IUser $user, array $recipients, ?array $options, ?array $metadata, array $account, string $server, string $esig_file_id, ?string $esig_signature_result_id): string {
+	public function storeRequest(File $file, IUser $user, array $recipients, ?array $options, ?array $metadata, array $account, string $server, string $response_file_id, ?string $response_signature_result_id): string {
 		$mime = $file->getMimeType();
 		if ($mime) {
 			$mime = strtolower($mime);
@@ -118,18 +118,18 @@ class Requests {
 			'user_id' => $query->createNamedParameter($user->getUID()),
 			'signed_save_mode' => $query->createNamedParameter($signed_save_mode),
 			'metadata' => $query->createNamedParameter(!empty($metadata) ? json_encode($metadata) : null),
-			'esig_account_id' => $query->createNamedParameter($account['id']),
-			'esig_server' => $query->createNamedParameter($server),
-			'esig_file_id' => $query->createNamedParameter($esig_file_id),
-			'esig_signature_result_id' => $query->createNamedParameter($esig_signature_result_id),
+			'c24_account_id' => $query->createNamedParameter($account['id']),
+			'c24_server' => $query->createNamedParameter($server),
+			'c24_file_id' => $query->createNamedParameter($response_file_id),
+			'c24_signature_result_id' => $query->createNamedParameter($response_signature_result_id),
 		];
 		if (count($recipients) === 1) {
 			$values['recipient'] = $query->createNamedParameter($recipients[0]['value']);
 			$values['recipient_type'] = $query->createNamedParameter($recipients[0]['type']);
 			$values['recipient_display_name'] = $query->createNamedParameter($recipients[0]['display_name'] ?? null);
-			$values['esig_signature_id'] = $query->createNamedParameter($recipients[0]['public_id'] ?? null);
+			$values['c24_signature_id'] = $query->createNamedParameter($recipients[0]['public_id'] ?? null);
 		}
-		$query->insert('esig_requests')
+		$query->insert('c24_requests')
 			->values($values);
 
 		$id = $this->newRandomId(16);
@@ -148,7 +148,7 @@ class Requests {
 
 		if (count($recipients) > 1) {
 			$insert = $this->db->getQueryBuilder();
-			$insert->insert('esig_recipients')
+			$insert->insert('c24_recipients')
 				->values(
 					[
 						'request_id' => $insert->createNamedParameter($id),
@@ -156,14 +156,14 @@ class Requests {
 						'type' => $insert->createParameter('type'),
 						'value' => $insert->createParameter('value'),
 						'display_name' => $insert->createParameter('display_name'),
-						'esig_signature_id' => $insert->createParameter('esig_signature_id'),
+						'c24_signature_id' => $insert->createParameter('c24_signature_id'),
 					]
 				);
 			foreach ($recipients as $recipient) {
 				$insert->setParameter('type', $recipient['type']);
 				$insert->setParameter('value', $recipient['value']);
 				$insert->setParameter('display_name', $recipient['display_name'] ?? null);
-				$insert->setParameter('esig_signature_id', $recipient['public_id'] ?? null);
+				$insert->setParameter('c24_signature_id', $recipient['public_id'] ?? null);
 				$insert->executeStatement();
 			}
 		}
@@ -184,15 +184,15 @@ class Requests {
 					'type' => $row['recipient_type'],
 					'value' => $row['recipient'],
 					'display_name' => $row['recipient_display_name'],
-					'esig_signature_id' => $row['esig_signature_id'],
+					'c24_signature_id' => $row['c24_signature_id'],
 					'signed' => $signed,
 				],
 			];
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('type', 'value', 'display_name', 'esig_signature_id', 'signed')
-			->from('esig_recipients')
+		$query->select('type', 'value', 'display_name', 'c24_signature_id', 'signed')
+			->from('c24_recipients')
 			->where($query->expr()->eq('request_id', $query->createNamedParameter($row['id'])))
 			->orderBy('id');
 		$result = $query->executeQuery();
@@ -213,7 +213,7 @@ class Requests {
 	public function getRequestById(string $id): ?array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests')
+			->from('c24_requests')
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
 		$result = $query->executeQuery();
@@ -230,11 +230,11 @@ class Requests {
 		return $row;
 	}
 
-	public function getRequestByEsigFileId(string $fileId): ?array {
+	public function getRequestByCertificate24FileId(string $fileId): ?array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests')
-			->where($query->expr()->eq('esig_file_id', $query->createNamedParameter($fileId)))
+			->from('c24_requests')
+			->where($query->expr()->eq('c24_file_id', $query->createNamedParameter($fileId)))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
 		$result = $query->executeQuery();
 		$row = $result->fetch();
@@ -250,11 +250,11 @@ class Requests {
 		return $row;
 	}
 
-	public function getRequestByEsigSignatureId(string $signatureId): ?array {
+	public function getRequestByCertificate24SignatureId(string $signatureId): ?array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests')
-			->where($query->expr()->eq('esig_signature_id', $query->createNamedParameter($signatureId)))
+			->from('c24_requests')
+			->where($query->expr()->eq('c24_signature_id', $query->createNamedParameter($signatureId)))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
 		$result = $query->executeQuery();
 		$row = $result->fetch();
@@ -270,8 +270,8 @@ class Requests {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('request_id')
-			->from('esig_recipients')
-			->where($query->expr()->eq('esig_signature_id', $query->createNamedParameter($signatureId)));
+			->from('c24_recipients')
+			->where($query->expr()->eq('c24_signature_id', $query->createNamedParameter($signatureId)));
 		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
@@ -285,7 +285,7 @@ class Requests {
 	public function getOwnRequests(IUser $user, bool $include_signed): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests')
+			->from('c24_requests')
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($user->getUID())))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->orderBy('created');
@@ -322,7 +322,7 @@ class Requests {
 	public function getOwnRequestById(IUser $user, string $id): ?array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests')
+			->from('c24_requests')
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
 			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($user->getUID())))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
@@ -345,7 +345,7 @@ class Requests {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests')
+			->from('c24_requests')
 			->where($query->expr()->eq('recipient', $query->createNamedParameter($user->getUID())))
 			->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter('user')))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
@@ -375,8 +375,8 @@ class Requests {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
-			->from('esig_requests', 'r')
-			->join('r', 'esig_recipients', 'p', 'r.id = p.request_id')
+			->from('c24_requests', 'r')
+			->join('r', 'c24_recipients', 'p', 'r.id = p.request_id')
 			->where($query->expr()->eq('p.value', $query->createNamedParameter($user->getUID())))
 			->andWhere($query->expr()->eq('p.type', $query->createNamedParameter('user')))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
@@ -421,7 +421,7 @@ class Requests {
 	public function getRequestsForFile(File $file, bool $include_signed): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests')
+			->from('c24_requests')
 			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->orderBy('created');
@@ -465,7 +465,7 @@ class Requests {
 		$this->db->beginTransaction();
 		try {
 			$query = $this->db->getQueryBuilder();
-			$query->update('esig_requests')
+			$query->update('c24_requests')
 				->set('signed', $query->createNamedParameter($now, 'datetimetz'))
 				->where($query->expr()->eq('id', $query->createNamedParameter($id)))
 				->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter($type)))
@@ -477,7 +477,7 @@ class Requests {
 			}
 
 			$query = $this->db->getQueryBuilder();
-			$query->update('esig_recipients')
+			$query->update('c24_recipients')
 				->set('signed', $query->createNamedParameter($now, 'datetimetz'))
 				->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
 				->andWhere($query->expr()->eq('type', $query->createNamedParameter($type)))
@@ -486,7 +486,7 @@ class Requests {
 
 			$query = $this->db->getQueryBuilder();
 			$query->select($query->func()->count('*', 'count'))
-				->from('esig_recipients')
+				->from('c24_recipients')
 				->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
 				->andWhere($query->expr()->isNull('signed'));
 			$result = $query->executeQuery();
@@ -503,7 +503,7 @@ class Requests {
 
 	public function markRequestSavedById(string $id) {
 		$query = $this->db->getQueryBuilder();
-		$query->update('esig_requests')
+		$query->update('c24_requests')
 			->set('saved', $query->createFunction('now()'))
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
 			->andWhere($query->expr()->isNull('saved'));
@@ -512,7 +512,7 @@ class Requests {
 
 	public function markRequestDeletedById(string $id) {
 		$query = $this->db->getQueryBuilder();
-		$query->update('esig_requests')
+		$query->update('c24_requests')
 			->set('deleted', $query->createNamedParameter(true))
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
 		$query->executeStatement();
@@ -520,7 +520,7 @@ class Requests {
 
 	public function deleteRequestById(string $id) {
 		$query = $this->db->getQueryBuilder();
-		$query->delete('esig_requests')
+		$query->delete('c24_requests')
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
 		if (!$query->executeStatement()) {
 			return;
@@ -528,7 +528,7 @@ class Requests {
 
 		// Explicitly delete recipients for databases without foreign keys.
 		$query = $this->db->getQueryBuilder();
-		$query->delete('esig_recipients')
+		$query->delete('c24_recipients')
 			->where($query->expr()->eq('request_id', $query->createNamedParameter($id)));
 		$query->executeStatement();
 	}
@@ -547,7 +547,7 @@ class Requests {
 
 			$query = $this->db->getQueryBuilder();
 			$query->select('id')
-				->from('esig_recipients')
+				->from('c24_recipients')
 				->where($query->expr()->eq('request_id', $query->createNamedParameter($request['id'])))
 				->andWhere($query->expr()->eq('type', $query->createNamedParameter('user')))
 				->andWhere($query->expr()->eq('value', $query->createNamedParameter($user->getUID())));
@@ -566,7 +566,7 @@ class Requests {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->select('esig_recipients')
+		$query->select('c24_recipients')
 			->where($query->expr()->eq('request_id', $query->createNamedParameter($request['id'])))
 			->andWhere($query->expr()->eq('type', $query->createNamedParameter('email')));
 		$result = $query->executeQuery();
@@ -581,7 +581,7 @@ class Requests {
 
 	public function markEmailSent(string $id, string $email) {
 		$query = $this->db->getQueryBuilder();
-		$query->update('esig_requests')
+		$query->update('c24_requests')
 			->set('email_sent', $query->createFunction('now()'))
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)))
 			->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter('email')))
@@ -591,7 +591,7 @@ class Requests {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->update('esig_recipients')
+		$query->update('c24_recipients')
 			->set('email_sent', $query->createFunction('now()'))
 			->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
 			->andWhere($query->expr()->eq('type', $query->createNamedParameter('email')))
@@ -602,7 +602,7 @@ class Requests {
 	public function getPendingEmails() {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests')
+			->from('c24_requests')
 			->where($query->expr()->eq('recipient_type', $query->createNamedParameter('email')))
 			->andWhere($query->expr()->isNull('email_sent'));
 		$result = $query->executeQuery();
@@ -622,7 +622,7 @@ class Requests {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_recipients')
+			->from('c24_recipients')
 			->where($query->expr()->eq('type', $query->createNamedParameter('email')))
 			->andWhere($query->expr()->isNull('email_sent'));
 		$result = $query->executeQuery();
@@ -651,7 +651,7 @@ class Requests {
 	public function getPendingDownloads() {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests')
+			->from('c24_requests')
 			->where($query->expr()->isNotNull('signed'))
 			->andWhere($query->expr()->isNull('saved'));
 		$result = $query->executeQuery();
@@ -674,10 +674,10 @@ class Requests {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
-			->from('esig_requests', 'r')
+			->from('c24_requests', 'r')
 			->where($query->expr()->isNull('r.recipient'))
 			->andWhere($query->expr()->isNull('r.saved'))
-			->andWhere('not exists (select * from oc_esig_recipients p where r.id = p.request_id and p.signed is null)');
+			->andWhere('not exists (select * from oc_c24_recipients p where r.id = p.request_id and p.signed is null)');
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			if ($row['metadata']) {
@@ -712,7 +712,7 @@ class Requests {
 	public function getPendingSignatures() {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests')
+			->from('c24_requests')
 			->where($query->expr()->isNull('signed'))
 			->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter('email')));
 		$result = $query->executeQuery();
@@ -732,7 +732,7 @@ class Requests {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_recipients')
+			->from('c24_recipients')
 			->where($query->expr()->isNull('signed'))
 			->andWhere($query->expr()->eq('type', $query->createNamedParameter('email')));
 		$result = $query->executeQuery();
@@ -762,7 +762,7 @@ class Requests {
 		// (single and multiple recipients).
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests')
+			->from('c24_requests')
 			->where($query->expr()->lt('signed', $query->createNamedParameter($maxDate, 'datetimetz')))
 			->andWhere($query->expr()->eq('deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->andWhere($query->expr()->isNotNull('recipient'))
@@ -782,11 +782,11 @@ class Requests {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_requests', 'r')
+			->from('c24_requests', 'r')
 			->where($query->expr()->isNull('r.recipient'))
 			->andWhere($query->expr()->eq('r.deleted', $query->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 			->andWhere($query->expr()->isNull('r.recipient_type'))
-			->andWhere('exists (select * from oc_esig_recipients p where r.id = p.request_id and p.signed is not null)');
+			->andWhere('exists (select * from oc_c24_recipients p where r.id = p.request_id and p.signed is not null)');
 		$result = $query->executeQuery();
 
 		while ($row = $result->fetch()) {

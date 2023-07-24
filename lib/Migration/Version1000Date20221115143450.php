@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
@@ -37,7 +37,7 @@ class Version1000Date20221115143450 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
 		$schema = $schemaClosure();
 
-		$table = $schema->getTable('esig_requests');
+		$table = $schema->getTable('c24_requests');
 		if (!$table->hasColumn('saved')) {
 			$table->addColumn('saved', Types::DATETIMETZ_MUTABLE, [
 				'notnull' => false,

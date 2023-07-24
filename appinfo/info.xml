@@ -1,16 +1,28 @@
 <?xml version="1.0"?>
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
 		xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
-	<id>esig</id>
-	<name>eSignatures</name>
-	<summary><![CDATA[eSignatures]]></summary>
-	<description><![CDATA[eSignatures]]></description>
+	<id>certificate24</id>
+	<name>Certificate24</name>
+	<summary><![CDATA[Certificate24 - Digital Document Signature]]></summary>
+	<description><![CDATA[Certificate24 - Digital Document Signature]]></description>
 
 	<version>0.0.29</version>
 	<license>agpl</license>
 
+	<author>struktur AG</author>
 	<author>Joachim Bauch</author>
-	<namespace>Esig</namespace>
+
+	<namespace>Certificate24</namespace>
+
+	<website>https://www.certificate24.com</website>
+	<bugs>https://github.com/astrairidium/nextcloud-certificate24/issues</bugs>
+	<repository>https://github.com/astrairidium/nextcloud-certificate24.git</repository>
+
+	<category>files</category>
+	<category>office</category>
+	<category>organization</category>
+	<category>social</category>
+	<category>tools</category>
 
 	<dependencies>
 		<nextcloud min-version="24" max-version="26" />
@@ -21,28 +33,28 @@
 	</types>
 
 	<background-jobs>
-		<job>OCA\Esig\BackgroundJob\BackgroundVerify</job>
-		<job>OCA\Esig\BackgroundJob\DeleteCompleted</job>
-		<job>OCA\Esig\BackgroundJob\FetchSigned</job>
-		<job>OCA\Esig\BackgroundJob\ResendMails</job>
-		<job>OCA\Esig\BackgroundJob\RetryDownloads</job>
+		<job>OCA\Certificate24\BackgroundJob\BackgroundVerify</job>
+		<job>OCA\Certificate24\BackgroundJob\DeleteCompleted</job>
+		<job>OCA\Certificate24\BackgroundJob\FetchSigned</job>
+		<job>OCA\Certificate24\BackgroundJob\ResendMails</job>
+		<job>OCA\Certificate24\BackgroundJob\RetryDownloads</job>
 	</background-jobs>
 
 	<settings>
-		<admin>OCA\Esig\Settings\Admin\AdminSettings</admin>
-		<admin-section>OCA\Esig\Settings\Admin\Section</admin-section>
-		<personal>OCA\Esig\Settings\PersonalSettings</personal>
-		<personal-section>OCA\Esig\Settings\Section</personal-section>
+		<admin>OCA\Certificate24\Settings\Admin\AdminSettings</admin>
+		<admin-section>OCA\Certificate24\Settings\Admin\Section</admin-section>
+		<personal>OCA\Certificate24\Settings\PersonalSettings</personal>
+		<personal-section>OCA\Certificate24\Settings\Section</personal-section>
 	</settings>
 
 	<activity>
 		<settings>
-			<setting>OCA\Esig\Activity\Setting</setting>
+			<setting>OCA\Certificate24\Activity\Setting</setting>
 		</settings>
 
 		<providers>
-			<provider>OCA\Esig\Activity\Provider\Share</provider>
-			<provider>OCA\Esig\Activity\Provider\Sign</provider>
+			<provider>OCA\Certificate24\Activity\Provider\Share</provider>
+			<provider>OCA\Certificate24\Activity\Provider\Sign</provider>
 		</providers>
 	</activity>
 </info>

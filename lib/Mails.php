@@ -22,10 +22,10 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig;
+namespace OCA\Certificate24;
 
 use OC\Mail\Message;
-use OCA\Esig\AppInfo\Application;
+use OCA\Certificate24\AppInfo\Application;
 use OCP\Defaults;
 use OCP\Files\File;
 use OCP\IL10N;
@@ -81,7 +81,7 @@ class Mails {
 	}
 
 	public function sendRequestMail(string $id, IUser $user, File $file, array $recipient, string $server) {
-		$signature_id = $recipient['esig_signature_id'] ?? null;
+		$signature_id = $recipient['c24_signature_id'] ?? null;
 		if (!$signature_id) {
 			$this->logger->error('No signature id found for request ' . $id . ' to send mail to ' . $recipient['value']);
 			return;
@@ -136,13 +136,13 @@ class Mails {
 	}
 
 	public function sendLastSignatureMail(string $id, array $request, IUser $user, File $file, array $recipient) {
-		$signature_id = $request['esig_signature_result_id'] ?? null;
+		$signature_id = $request['c24_signature_result_id'] ?? null;
 		if (!$signature_id) {
 			$this->logger->error('No signature result id found for request ' . $id . ' to send mail to ' . $recipient['value']);
 			return;
 		}
 
-		$server = $request['esig_server'];
+		$server = $request['c24_server'];
 		if ($server && $server[strlen($server) - 1] != '/') {
 			$server = $server . '/';
 		}

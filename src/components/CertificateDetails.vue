@@ -26,7 +26,7 @@
 		<a :href="downloadUrl"
 			:download="filename"
 			target="_blank">
-			{{ t('esig', 'Download certificate') }}
+			{{ t('certificate24', 'Download certificate') }}
 		</a>
 	</div>
 </template>

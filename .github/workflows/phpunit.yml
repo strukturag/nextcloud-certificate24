@@ -27,7 +27,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  APP_NAME: esig
+  APP_NAME: certificate24
 
 jobs:
   php:

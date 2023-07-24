@@ -1,7 +1,13 @@
-This repository contains the Nextcloud app for the esig service.
+# nextcloud-certificate24
 
-Checkout the repository as `esig` to the `apps` folder of your Nextcloud
-instance.
+This repository contains the Nextcloud app for Certificate24.
+
+With Certificate24 you can request digital signatures of documents stored in
+your Nextcloud from other users in Nextcloud or from external users (by email).
+
+
+Checkout the repository as `certificate24` to the `apps` folder of your
+Nextcloud instance.
 
 ## Prerequisites
 
@@ -19,9 +25,10 @@ instance.
 
 ## Installation
 
-Open the Apps settings of Nextcloud and enable the "eSignatures" app. Then go
-to the "Administration settings", open section "eSignatures" and enter the
-account id and account secret you created on the esig service portal.
+Open the Apps settings of Nextcloud and enable the "Certificate24" app. Then go
+to the "Administration settings", open section "Certificate24" and enter the
+account id and account secret you created on the Certificate24 portal at
+https://www.certificate24.com.
 
 
 ## Translations

@@ -20,10 +20,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Tests\php;
+namespace OCA\Certificate24\Tests\php;
 
-use OCA\Esig\Config;
-use OCA\Esig\Tokens;
+use OCA\Certificate24\Config;
+use OCA\Certificate24\Tokens;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\MockObject\MockObject;

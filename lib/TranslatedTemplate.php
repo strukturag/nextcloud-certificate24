@@ -22,7 +22,7 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig;
+namespace OCA\Certificate24;
 
 use OC\Template\Base as TemplateBase;
 use OC\Template\TemplateFileLocator;

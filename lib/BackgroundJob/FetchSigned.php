@@ -22,14 +22,14 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\BackgroundJob;
+namespace OCA\Certificate24\BackgroundJob;
 
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
-use OCA\Esig\Client;
-use OCA\Esig\Config;
-use OCA\Esig\Manager;
-use OCA\Esig\Requests;
+use OCA\Certificate24\Client;
+use OCA\Certificate24\Config;
+use OCA\Certificate24\Manager;
+use OCA\Certificate24\Requests;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -110,17 +110,17 @@ class FetchSigned extends TimedJob {
 
 		$pending = $this->requests->getPendingSignatures();
 		foreach ($pending['single'] as $request) {
-			if ($account['id'] !== $request['esig_account_id']) {
+			if ($account['id'] !== $request['c24_account_id']) {
 				continue;
 			}
 
-			$signature_id = $request['esig_signature_id'] ?? null;
+			$signature_id = $request['c24_signature_id'] ?? null;
 			if (!$signature_id) {
 				$this->logger->error('No signature id found for request ' . $request['id'] . ' to fetch signature details for ' . $request['recipient_type'] . ' ' . $request['recipient']);
 				continue;
 			}
 
-			$details = $this->getSignatureDetails($request['id'], $request['esig_file_id'], $account, $request['esig_server'], $signature_id, $request['recipient_type'], $request['recipient']);
+			$details = $this->getSignatureDetails($request['id'], $request['c24_file_id'], $account, $request['c24_server'], $signature_id, $request['recipient_type'], $request['recipient']);
 			if (!$details) {
 				continue;
 			}
@@ -130,17 +130,17 @@ class FetchSigned extends TimedJob {
 
 		foreach ($pending['multi'] as $entry) {
 			$request = $entry['request'];
-			if ($account['id'] !== $request['esig_account_id']) {
+			if ($account['id'] !== $request['c24_account_id']) {
 				continue;
 			}
 
-			$signature_id = $entry['esig_signature_id'] ?? null;
+			$signature_id = $entry['c24_signature_id'] ?? null;
 			if (!$signature_id) {
 				$this->logger->error('No signature id found for request ' . $request['id'] . ' to fetch signature details for ' . $entry['type'] . ' ' . $entry['value']);
 				continue;
 			}
 
-			$details = $this->getSignatureDetails($request['id'], $request['esig_file_id'], $account, $request['esig_server'], $signature_id, $entry['type'], $entry['value']);
+			$details = $this->getSignatureDetails($request['id'], $request['c24_file_id'], $account, $request['c24_server'], $signature_id, $entry['type'], $entry['value']);
 			if (!$details) {
 				continue;
 			}

@@ -8,8 +8,8 @@ if [ -z "$TAG" ]; then
 fi
 
 docker tag \
-	nextcloud-esig:$TAG \
-	registry.cluster.caprino.struktur.de/nextcloud-esig:$TAG
+	nextcloud-certificate24:$TAG \
+	registry.cluster.caprino.struktur.de/nextcloud-certificate24:$TAG
 
 docker push \
-	registry.cluster.caprino.struktur.de/nextcloud-esig:$TAG
+	registry.cluster.caprino.struktur.de/nextcloud-certificate24:$TAG

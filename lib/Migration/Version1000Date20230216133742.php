@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
@@ -75,7 +75,7 @@ class Version1000Date20230216133742 extends SimpleMigrationStep {
 		try {
 			$query = $this->db->getQueryBuilder();
 			$query->select('request_id', 'signed')
-				->from('esig_recipients')
+				->from('c24_recipients')
 				->orderBy('request_id')
 				->addOrderBy('signed');
 			$result = $query->executeQuery();
@@ -114,7 +114,7 @@ class Version1000Date20230216133742 extends SimpleMigrationStep {
 			$result->closeCursor();
 
 			$update = $this->db->getQueryBuilder();
-			$update->update('esig_requests')
+			$update->update('c24_requests')
 				->set('signed', $update->createParameter('signed'))
 				->where($update->expr()->eq('id', $update->createParameter('id')))
 				->andWhere($update->expr()->isNull('signed'));

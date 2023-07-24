@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -41,7 +41,7 @@ class Version1000Date20230213115732 extends SimpleMigrationStep {
 		try {
 			$query = $this->db->getQueryBuilder();
 			$query->select('id')
-				->from('esig_requests');
+				->from('c24_requests');
 			$result = $query->executeQuery();
 			$ids = [];
 			while ($row = $result->fetch()) {
@@ -50,7 +50,7 @@ class Version1000Date20230213115732 extends SimpleMigrationStep {
 			$result->closeCursor();
 
 			$query = $this->db->getQueryBuilder();
-			$query->delete('esig_recipients')
+			$query->delete('c24_recipients')
 				->where($query->expr()->notIn('request_id', $query->createNamedParameter($ids, IQueryBuilder::PARAM_STR_ARRAY)));
 			$query->executeStatement();
 			$this->db->commit();

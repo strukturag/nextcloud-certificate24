@@ -22,13 +22,13 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\BackgroundJob;
+namespace OCA\Certificate24\BackgroundJob;
 
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
-use OCA\Esig\Client;
-use OCA\Esig\Config;
-use OCA\Esig\Verify;
+use OCA\Certificate24\Client;
+use OCA\Certificate24\Config;
+use OCA\Certificate24\Verify;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
@@ -165,7 +165,7 @@ class BackgroundVerify extends TimedJob {
 		$query = $this->db->getQueryBuilder();
 		$query->select('fc.fileid', 'storage')
 			->from('filecache', 'fc')
-			->leftJoin('fc', 'esig_file_signatures', 'fs', $query->expr()->eq('fc.fileid', 'fs.file_id'))
+			->leftJoin('fc', 'c24_file_signatures', 'fs', $query->expr()->eq('fc.fileid', 'fs.file_id'))
 			->where($query->expr()->isNull('fs.file_id'))
 			->andWhere($query->expr()->eq('mimetype', $query->expr()->literal($pdfMimeTypeId)))
 			->andWhere($query->expr()->like('path', $query->expr()->literal('files/%')))

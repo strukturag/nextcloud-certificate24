@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
@@ -42,14 +42,14 @@ class Version1000Date20230130153618 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		$table = $schema->getTable('esig_requests');
+		$table = $schema->getTable('c24_requests');
 		if (!$table->hasColumn('email_sent')) {
 			$table->addColumn('email_sent', Types::DATETIMETZ_MUTABLE, [
 				'notnull' => false,
 			]);
 		}
 
-		$table = $schema->getTable('esig_recipients');
+		$table = $schema->getTable('c24_recipients');
 		if (!$table->hasColumn('email_sent')) {
 			$table->addColumn('email_sent', Types::DATETIMETZ_MUTABLE, [
 				'notnull' => false,
@@ -62,13 +62,13 @@ class Version1000Date20230130153618 extends SimpleMigrationStep {
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 		// Assume we could send out emails in the past.
 		$update = $this->db->getQueryBuilder();
-		$update->update('esig_requests')
+		$update->update('c24_requests')
 			->set('email_sent', 'created')
 			->where($update->expr()->eq('recipient_type', $update->createNamedParameter('email')));
 		$update->executeStatement();
 
 		$update = $this->db->getQueryBuilder();
-		$update->update('esig_recipients')
+		$update->update('c24_recipients')
 			->set('email_sent', 'created')
 			->where($update->expr()->eq('type', $update->createNamedParameter('email')));
 		$update->executeStatement();

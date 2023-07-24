@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
@@ -42,8 +42,8 @@ class Version1000Date20221121132914 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('esig_recipients')) {
-			$table = $schema->createTable('esig_recipients');
+		if (!$schema->hasTable('c24_recipients')) {
+			$table = $schema->createTable('c24_recipients');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -69,15 +69,15 @@ class Version1000Date20221121132914 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 			$table->addUniqueConstraint(['request_id', 'type', 'value'], 'recipients_unique_recipient');
 
-			$requestsTable = $schema->getTable('esig_requests');
+			$requestsTable = $schema->getTable('c24_requests');
 			$table->addForeignKeyConstraint($requestsTable, ['request_id'], ['id'], [
 				'onDelete' => 'cascade',
 				'onUpdate' => 'cascade',
 			], 'fk_request_id');
 		}
 
-		$this->ensureColumnIsNullable($schema, 'esig_requests', 'recipient_type');
-		$this->ensureColumnIsNullable($schema, 'esig_requests', 'recipient');
+		$this->ensureColumnIsNullable($schema, 'c24_requests', 'recipient_type');
+		$this->ensureColumnIsNullable($schema, 'c24_requests', 'recipient');
 
 		return $schema;
 	}

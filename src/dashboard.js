@@ -34,7 +34,7 @@ __webpack_nonce__ = btoa(getRequestToken())
 // OC.generateUrl ensure the index.php (or not)
 // We do not want the index.php since we're loading files
 // eslint-disable-next-line
-__webpack_public_path__ = generateFilePath('esig', '', 'js/')
+__webpack_public_path__ = generateFilePath('certificate24', '', 'js/')
 
 Vue.prototype.t = translate
 Vue.prototype.n = translatePlural
@@ -43,7 +43,7 @@ Vue.prototype.OCA = OCA
 
 document.addEventListener('DOMContentLoaded', function() {
 
-	OCA.Dashboard.register('esig', (el) => {
+	OCA.Dashboard.register('certificate24', (el) => {
 		const View = Vue.extend(Dashboard)
 		new View({
 			propsData: {},

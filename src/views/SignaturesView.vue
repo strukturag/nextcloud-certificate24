@@ -25,15 +25,15 @@
 		</div>
 
 		<div v-else-if="signatures.status === 'not_signed'" class="emptycontent">
-			<div class="icon icon-esig" />
-			<h2>{{ t('esig', 'Signatures') }}</h2>
-			<p>{{ t('esig', 'The file is not signed.') }}</p>
+			<div class="icon icon-certificate24" />
+			<h2>{{ t('certificate24', 'Signatures') }}</h2>
+			<p>{{ t('certificate24', 'The file is not signed.') }}</p>
 		</div>
 
 		<template v-else>
-			<h2>{{ t('esig', 'Signatures') }}</h2>
+			<h2>{{ t('certificate24', 'Signatures') }}</h2>
 			<p>
-				{{ t('esig', 'Checked on: {date}', {
+				{{ t('certificate24', 'Checked on: {date}', {
 					'date': formatDate(signatures.verified)
 				}) }}
 			</p>
@@ -44,24 +44,24 @@
 				:key="'sig-'+index"
 				class="signature">
 				<h3>
-					{{ t('esig', 'Signature {index}', {
+					{{ t('certificate24', 'Signature {index}', {
 						index: index+1,
 					}) }}
 				</h3>
 				<div>
 					<div>
-						{{ t('esig', 'Signed by: {signer}', {
+						{{ t('certificate24', 'Signed by: {signer}', {
 							'signer': getSigner(signature)
 						}) }}
 					</div>
 					<div>
-						{{ t('esig', 'Signed on: {date}', {
+						{{ t('certificate24', 'Signed on: {date}', {
 							'date': formatDate(signature.signed)
 						}) }}
 					</div>
 					<div v-if="!signature.signed_details">
 						<em>
-							{{ t('esig', 'The signature timestamp was generated on the signers machine and is untrusted.') }}
+							{{ t('certificate24', 'The signature timestamp was generated on the signers machine and is untrusted.') }}
 						</em>
 					</div>
 				</div>
@@ -69,22 +69,22 @@
 					<SignatureStatus :status="signature.validation" />
 				</div>
 				<div v-if="signature.whole_file">
-					{{ t('esig', 'The file was not modified since it was signed.') }}
+					{{ t('certificate24', 'The file was not modified since it was signed.') }}
 				</div>
 				<div v-else>
-					{{ t('esig', 'The file was modified since it was signed.') }}
+					{{ t('certificate24', 'The file was modified since it was signed.') }}
 				</div>
 
 				<template v-if="hasProperties(signature)">
 					<h3>
-						{{ t('esig', 'Signature properties') }}
+						{{ t('certificate24', 'Signature properties') }}
 					</h3>
 					<SignatureProperties :properties="signature.properties" />
 				</template>
 
 				<template v-if="signature.signed_details">
 					<h3>
-						{{ t('esig', 'Signature timestamp') }}
+						{{ t('certificate24', 'Signature timestamp') }}
 					</h3>
 					<div>
 						<SignatureStatus :status="signature.signed_details.validation" />
@@ -97,7 +97,7 @@
 				</template>
 
 				<h3>
-					{{ t('esig', 'Certificate chain') }}
+					{{ t('certificate24', 'Certificate chain') }}
 				</h3>
 				<div v-for="(cert, cindex) of signature.certificates"
 					:key="'cert-'+cindex"
@@ -172,7 +172,7 @@ export default {
 		},
 
 		getSigner(signature) {
-			return signature.properties?.name || t('esig', 'Unknown')
+			return signature.properties?.name || t('certificate24', 'Unknown')
 		},
 
 		hasProperties(signature) {

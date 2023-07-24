@@ -19,40 +19,40 @@
 -->
 
 <template>
-	<NcSettingsSection :title="t('esig', 'Account settings')"
-		:description="t('esig', 'The configured account will be used to request signatures and sign files.')">
+	<NcSettingsSection :title="t('certificate24', 'Account settings')"
+		:description="t('certificate24', 'The configured account will be used to request signatures and sign files.')">
 		<div>
-			<h4>{{ t('esig', 'Server') }}</h4>
+			<h4>{{ t('certificate24', 'Server') }}</h4>
 			<div>{{ api_server }}</div>
 		</div>
 
 		<div>
-			<h4>{{ t('esig', 'Account Id') }}</h4>
+			<h4>{{ t('certificate24', 'Account Id') }}</h4>
 			<input ref="account_id"
 				v-model="account_id"
 				type="text"
 				name="account_id"
 				placeholder="1234-abcd-5678-efgh"
 				:disabled="loading"
-				:aria-label="t('esig', 'Account Id')"
+				:aria-label="t('certificate24', 'Account Id')"
 				@input="debounceUpdateAccount">
 		</div>
 
 		<div>
-			<h4>{{ t('esig', 'Account Secret') }}</h4>
+			<h4>{{ t('certificate24', 'Account Secret') }}</h4>
 			<input ref="account_secret"
 				v-model="account_secret"
 				type="text"
 				name="account_secret"
 				placeholder="the-secret-value"
 				:disabled="loading"
-				:aria-label="t('esig', 'Account Secret')"
+				:aria-label="t('certificate24', 'Account Secret')"
 				@input="debounceUpdateAccount">
 		</div>
 
-		<div>{{ t('esig', 'If you don\'t have an account on the esig service yet, please login to {server} and create an account with the following data:', {'server': web_server}) }}</div>
-		<div>{{ t('esig', 'Name: {theme}', {'theme': theme.name}) }}</div>
-		<div>{{ t('esig', 'Nextcloud Url: {url}', {'url': nextcloud.url}) }}</div>
+		<div>{{ t('certificate24', 'If you don\'t have an account at Certificate24 yet, please login to {server} and create an account with the following data:', {'server': web_server}) }}</div>
+		<div>{{ t('certificate24', 'Name: {theme}', {'theme': theme.name}) }}</div>
+		<div>{{ t('certificate24', 'Nextcloud Url: {url}', {'url': nextcloud.url}) }}</div>
 	</NcSettingsSection>
 </template>
 
@@ -83,12 +83,12 @@ export default {
 	},
 
 	beforeMount() {
-		const state = loadState('esig', 'account')
+		const state = loadState('certificate24', 'account')
 		this.account_id = state.id
 		this.account_secret = state.secret
 		this.api_server = state.api_server
 		this.web_server = state.web_server
-		this.nextcloud = loadState('esig', 'nextcloud')
+		this.nextcloud = loadState('certificate24', 'nextcloud')
 	},
 
 	methods: {
@@ -100,17 +100,17 @@ export default {
 			this.loading = true
 
 			const self = this
-			OCP.AppConfig.setValue('esig', 'account', JSON.stringify({
+			OCP.AppConfig.setValue('certificate24', 'account', JSON.stringify({
 				id: this.account_id,
 				secret: this.account_secret,
 			}), {
 				success() {
-					showSuccess(t('esig', 'Account settings saved'))
+					showSuccess(t('certificate24', 'Account settings saved'))
 					self.loading = false
 					self.toggleSave()
 				},
 				error() {
-					showError(t('esig', 'Could not save account settings'))
+					showError(t('certificate24', 'Could not save account settings'))
 					self.loading = false
 					self.toggleSave()
 				},

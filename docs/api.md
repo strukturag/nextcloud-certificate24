@@ -1,6 +1,6 @@
 # Nextcloud app API
 
-This document describes the API of the esig Nextcloud app.
+This document describes the API of the Certificate24 Nextcloud app.
 
 Unless otherwise noted, each request must be authenticated with a user of the
 Nextcloud instance.
@@ -395,7 +395,7 @@ The following fields are defined for `properties`:
   | `location`             | string  | Location of the signature (format unspecified, if available).      |
   | `reason`               | string  | Reason for the signature (format unspecified, if available).       |
   | `contact`              | string  | Contact details of the signer (format unspecified, if available).  |
-  | `metadata`             | object  | Additional esig metadata stored with the signature (if available). |
+  | `metadata`             | object  | Additional metadata stored with the signature (if available). |
 
 The following fields are defined for `metadata`:
 
@@ -403,17 +403,17 @@ The following fields are defined for `metadata`:
   |------------------------|---------|------------------------------------------------------------------|
   | `version`              | string  | Static text `1.0` for the current definition.                    |
   | `client`               | object  | Metadata added by the Nextcloud app.                             |
-  | `server`               | object  | Metadata added by the esig backend server.                       |
+  | `server`               | object  | Metadata added by the Certificate24 backend server.                       |
   | `nextcloud`            | string  | URL of the Nextcloud instance the signature was requested on.    |
 
 If a request was signed through the Nextcloud app, the field `client` will
 contain information on the client communicating with the Nextcloud API. The
-field `server` will be set by the esig backend and contain information on the
-Nextcloud server / app performing the request against the backend server.
+field `server` will be set by the Certificate24 backend and contain information
+on the Nextcloud server / app performing the request against the backend server.
 
-If a request was signed by an anonymous user (i.e. directly on the esig backend),
-the field `client` will be empty and the field `server` will contain information
-about the client performing the signature.
+If a request was signed by an anonymous user (i.e. directly on the Certificate24
+backend), the field `client` will be empty and the field `server` will contain
+information about the client performing the signature.
 
 
 The metadata in `client` can contain these fields:

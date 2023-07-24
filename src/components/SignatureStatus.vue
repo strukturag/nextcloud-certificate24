@@ -21,7 +21,7 @@
 <template>
 	<span>
 		{{
-			t('esig', 'Signature status: {status}', {
+			t('certificate24', 'Signature status: {status}', {
 				'status': signatureStatus
 			})
 		}}
@@ -43,23 +43,23 @@ export default {
 		signatureStatus() {
 			switch (this.status) {
 			case 'valid':
-				return t('esig', 'Valid')
+				return t('certificate24', 'Valid')
 			case 'format_error':
-				return t('esig', 'The format is not valid')
+				return t('certificate24', 'The format is not valid')
 			case 'error_validating':
-				return t('esig', 'Error while validating')
+				return t('certificate24', 'Error while validating')
 			case 'certificate_not_valid':
-				return t('esig', 'The certificate is not valid yet')
+				return t('certificate24', 'The certificate is not valid yet')
 			case 'certificate_expired':
-				return t('esig', 'The certificate is expired')
+				return t('certificate24', 'The certificate is expired')
 			case 'no_signature_date':
-				return t('esig', 'No signature date found')
+				return t('certificate24', 'No signature date found')
 			case 'signature_date_invalid':
-				return t('esig', 'The signature date is invalid')
+				return t('certificate24', 'The signature date is invalid')
 			case 'unknown_ca':
-				return t('esig', 'Signed by unknown CA')
+				return t('certificate24', 'Signed by unknown CA')
 			case 'invalid_signature':
-				return t('esig', 'The signature is invalid')
+				return t('certificate24', 'The signature is invalid')
 			default:
 				return this.status
 			}

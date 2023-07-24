@@ -22,10 +22,10 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig;
+namespace OCA\Certificate24;
 
-use OCA\Esig\AppInfo\Application;
-use OCA\Esig\Events\SignEvent;
+use OCA\Certificate24\AppInfo\Application;
+use OCA\Certificate24\Events\SignEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
@@ -178,7 +178,7 @@ class Manager {
 			]) . ($info['extension'] ? ('.' . $info['extension']) : '');
 		}
 
-		$data = $this->client->downloadSignedFile($row['esig_file_id'], $account, $row['esig_server']);
+		$data = $this->client->downloadSignedFile($row['c24_file_id'], $account, $row['c24_server']);
 		$created = $folder->newFile($filename, $data);
 		return $created;
 	}
@@ -199,7 +199,7 @@ class Manager {
 		/** @var File $file */
 		$file = $files[0];
 
-		$data = $this->client->downloadSignedFile($row['esig_file_id'], $account, $row['esig_server']);
+		$data = $this->client->downloadSignedFile($row['c24_file_id'], $account, $row['c24_server']);
 		$file->putContent($data);
 		return $file;
 	}
@@ -249,7 +249,7 @@ class Manager {
 	}
 
 	public function deleteRequest(array $request, array $account) {
-		if ($account['id'] !== $request['esig_account_id']) {
+		if ($account['id'] !== $request['c24_account_id']) {
 			$this->logger->error('Request ' . $request['id'] . ' of user ' . $request['user_id'] . ' is from a different account, got ' . $account['id']);
 			// TODO: Add cronjob to delete in the background.
 			$this->requests->markRequestDeletedById($request['id']);
@@ -257,7 +257,7 @@ class Manager {
 		}
 
 		try {
-			$data = $this->client->deleteFile($request['esig_file_id'], $account, $request['esig_server']);
+			$data = $this->client->deleteFile($request['c24_file_id'], $account, $request['c24_server']);
 		} catch (\Exception $e) {
 			$this->logger->error('Error deleting request ' . $request['id'] . ' of user ' . $request['user_id'], [
 				'exception' => $e,

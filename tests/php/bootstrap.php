@@ -24,7 +24,7 @@ if (!defined('PHPUNIT_RUN')) {
 }
 require_once __DIR__.'/../../../../lib/base.php';
 \OC::$loader->addValidRoot(\OC::$SERVERROOT . '/tests');
-\OC_App::loadApp('esig');
+\OC_App::loadApp('certificate24');
 if (!class_exists('\PHPUnit\Framework\TestCase')) {
 	require_once('PHPUnit/Autoload.php');
 }

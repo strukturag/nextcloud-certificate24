@@ -22,7 +22,7 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Events;
+namespace OCA\Certificate24\Events;
 
 use OCP\EventDispatcher\Event;
 use OCP\IUser;

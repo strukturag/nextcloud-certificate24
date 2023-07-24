@@ -22,13 +22,13 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Controller;
+namespace OCA\Certificate24\Controller;
 
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
-use OCA\Esig\Client;
-use OCA\Esig\Config;
-use OCA\Esig\Verify;
+use OCA\Certificate24\Client;
+use OCA\Certificate24\Config;
+use OCA\Certificate24\Verify;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;

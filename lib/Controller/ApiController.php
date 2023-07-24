@@ -22,18 +22,18 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Controller;
+namespace OCA\Certificate24\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
-use OCA\Esig\Client;
-use OCA\Esig\Config;
-use OCA\Esig\Events\SignEvent;
-use OCA\Esig\Mails;
-use OCA\Esig\Manager;
-use OCA\Esig\Metadata;
-use OCA\Esig\Requests;
-use OCA\Esig\Tokens;
-use OCA\Esig\Validator;
+use OCA\Certificate24\Client;
+use OCA\Certificate24\Config;
+use OCA\Certificate24\Events\SignEvent;
+use OCA\Certificate24\Mails;
+use OCA\Certificate24\Manager;
+use OCA\Certificate24\Metadata;
+use OCA\Certificate24\Requests;
+use OCA\Certificate24\Tokens;
+use OCA\Certificate24\Validator;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -312,14 +312,14 @@ class ApiController extends OCSController {
 			return new DataResponse(['error' => $e->getCode()], Http::STATUS_BAD_GATEWAY);
 		}
 
-		$esig_file_id = $data['file_id'] ?? '';
-		if (empty($esig_file_id)) {
+		$response_file_id = $data['file_id'] ?? '';
+		if (empty($response_file_id)) {
 			return new DataResponse(['error' => 'invalid_response'], Http::STATUS_BAD_GATEWAY);
 		}
 
 		$recipients = $data['recipients'] ?? $recipients;
-		$esig_signature_result_id = $data['signature_id'] ?? null;
-		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id, $esig_signature_result_id);
+		$response_signature_result_id = $data['signature_id'] ?? null;
+		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
 
 		$this->metadata->storeMetadata($user, $file, $metadata);
 
@@ -329,8 +329,8 @@ class ApiController extends OCSController {
 				continue;
 			}
 
-			if (!isset($recipient['esig_signature_id'])) {
-				$recipient['esig_signature_id'] = $recipient['public_id'];
+			if (!isset($recipient['c24_signature_id'])) {
+				$recipient['c24_signature_id'] = $recipient['public_id'];
 			}
 
 			$this->mails->sendRequestMail($id, $user, $file, $recipient, $server);
@@ -400,7 +400,7 @@ class ApiController extends OCSController {
 				'file_id' => $request['file_id'],
 				'filename' => $file->getName(),
 				'mimetype' => $mime,
-				'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
+				'download_url' => $this->client->getOriginalUrl($request['c24_file_id'], $account, $request['c24_server']),
 				'recipients' => $this->formatRecipients($request['recipients']),
 				'metadata' => $request['metadata'],
 			];
@@ -417,14 +417,14 @@ class ApiController extends OCSController {
 						$r['signed'] = $signed;
 					}
 					if (!isset($r['signed_url'])) {
-						$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
+						$r['signed_url'] = $this->client->getSignedUrl($request['c24_file_id'], $account, $request['c24_server']);
 					}
 				}
 				if (!$allSigned) {
 					unset($r['signed']);
 					unset($r['signed_url']);
-				} elseif ($request['esig_signature_result_id']) {
-					$r['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
+				} elseif ($request['c24_signature_result_id']) {
+					$r['details_url'] = $this->client->getDetailsUrl($request['c24_signature_result_id'], $request['c24_server']);
 				}
 			}
 			$response[] = $r;
@@ -518,7 +518,7 @@ class ApiController extends OCSController {
 				'display_name' => $owner ? $owner->getDisplayName() : null,
 				'filename' => $file->getName(),
 				'mimetype' => $mime,
-				'download_url' => $this->client->getSourceUrl($request['esig_file_id'], $account, $request['esig_server']),
+				'download_url' => $this->client->getSourceUrl($request['c24_file_id'], $account, $request['c24_server']),
 				'metadata' => $metadata,
 			];
 			if ($include_signed) {
@@ -534,7 +534,7 @@ class ApiController extends OCSController {
 						$r['signed'] = $signed;
 					}
 					if (!isset($r['signed_url'])) {
-						$r['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
+						$r['signed_url'] = $this->client->getSignedUrl($request['c24_file_id'], $account, $request['c24_server']);
 					}
 
 					if ($recipient['type'] === 'user' && $recipient['value'] === $user->getUID()) {
@@ -544,8 +544,8 @@ class ApiController extends OCSController {
 				if (!$allSigned) {
 					unset($r['signed']);
 					unset($r['signed_url']);
-				} elseif ($request['esig_signature_result_id']) {
-					$r['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
+				} elseif ($request['c24_signature_result_id']) {
+					$r['details_url'] = $this->client->getDetailsUrl($request['c24_signature_result_id'], $request['c24_server']);
 				}
 			}
 			$response[] = $r;
@@ -592,7 +592,7 @@ class ApiController extends OCSController {
 			'file_id' => $request['file_id'],
 			'filename' => $file->getName(),
 			'mimetype' => $mime,
-			'download_url' => $this->client->getOriginalUrl($request['esig_file_id'], $account, $request['esig_server']),
+			'download_url' => $this->client->getOriginalUrl($request['c24_file_id'], $account, $request['c24_server']),
 			'recipients' => $this->formatRecipients($request['recipients']),
 			'metadata' => $request['metadata'],
 		];
@@ -608,21 +608,21 @@ class ApiController extends OCSController {
 				$response['signed'] = $signed;
 			}
 			if (!isset($response['signed_url'])) {
-				$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
+				$response['signed_url'] = $this->client->getSignedUrl($request['c24_file_id'], $account, $request['c24_server']);
 			}
 		}
 		if (!$allSigned) {
 			unset($response['signed']);
 			unset($response['signed_url']);
-		} elseif ($request['esig_signature_result_id']) {
-			$response['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
+		} elseif ($request['c24_signature_result_id']) {
+			$response['details_url'] = $this->client->getDetailsUrl($request['c24_signature_result_id'], $request['c24_server']);
 		}
 		return new DataResponse($response);
 	}
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=esig_request)
+	 * @BruteForceProtection(action=certificate24_request)
 	 *
 	 * @param string $id
 	 * @return DataResponse
@@ -676,7 +676,7 @@ class ApiController extends OCSController {
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=esig_signature)
+	 * @BruteForceProtection(action=certificate24_signature)
 	 *
 	 * @param string $id
 	 * @return DataResponse
@@ -689,7 +689,7 @@ class ApiController extends OCSController {
 			], Http::STATUS_PRECONDITION_FAILED);
 		}
 
-		$request = $this->requests->getRequestByEsigSignatureId($id);
+		$request = $this->requests->getRequestByCertificate24SignatureId($id);
 		if (!$request) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
 			$response->throttle();
@@ -698,7 +698,7 @@ class ApiController extends OCSController {
 
 		$r = null;
 		foreach ($request['recipients'] as $recipient) {
-			if ($recipient['esig_signature_id'] === $id) {
+			if ($recipient['c24_signature_id'] === $id) {
 				$r = $recipient;
 				break;
 			}
@@ -738,7 +738,7 @@ class ApiController extends OCSController {
 			'display_name' => $owner ? $owner->getDisplayName() : null,
 			'filename' => $file->getName(),
 			'mimetype' => $mime,
-			'download_url' => $this->client->getSourceUrl($request['esig_file_id'], $account, $request['esig_server']),
+			'download_url' => $this->client->getSourceUrl($request['c24_file_id'], $account, $request['c24_server']),
 			'metadata' => $metadata,
 		];
 		$allSigned = true;
@@ -753,7 +753,7 @@ class ApiController extends OCSController {
 				$response['signed'] = $signed;
 			}
 			if (!isset($response['signed_url'])) {
-				$response['signed_url'] = $this->client->getSignedUrl($request['esig_file_id'], $account, $request['esig_server']);
+				$response['signed_url'] = $this->client->getSignedUrl($request['c24_file_id'], $account, $request['c24_server']);
 			}
 
 			if ($recipient['type'] === $type && $recipient['value'] === $value) {
@@ -763,8 +763,8 @@ class ApiController extends OCSController {
 		if (!$allSigned) {
 			unset($response['signed']);
 			unset($response['signed_url']);
-		} elseif ($request['esig_signature_result_id']) {
-			$response['details_url'] = $this->client->getDetailsUrl($request['esig_signature_result_id'], $request['esig_server']);
+		} elseif ($request['c24_signature_result_id']) {
+			$response['details_url'] = $this->client->getDetailsUrl($request['c24_signature_result_id'], $request['c24_server']);
 		}
 		return new DataResponse($response);
 	}
@@ -787,14 +787,14 @@ class ApiController extends OCSController {
 			return new DataResponse([
 				'error' => 'unconfigured',
 			], Http::STATUS_PRECONDITION_FAILED);
-		} elseif ($account['id'] !== $row['esig_account_id']) {
+		} elseif ($account['id'] !== $row['c24_account_id']) {
 			return new DataResponse([
 				'error' => 'invalid_account',
 			], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		try {
-			$data = $this->client->deleteFile($row['esig_file_id'], $account, $row['esig_server']);
+			$data = $this->client->deleteFile($row['c24_file_id'], $account, $row['c24_server']);
 		} catch (ConnectException $e) {
 			return new DataResponse([
 				'error' => 'error_connecting'
@@ -814,7 +814,7 @@ class ApiController extends OCSController {
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=esig_request)
+	 * @BruteForceProtection(action=certificate24_request)
 	 *
 	 * @param string $id
 	 * @return DataResponse
@@ -881,7 +881,7 @@ class ApiController extends OCSController {
 			return new DataResponse([
 				'error' => 'unconfigured',
 			], Http::STATUS_PRECONDITION_FAILED);
-		} elseif ($account['id'] !== $row['esig_account_id']) {
+		} elseif ($account['id'] !== $row['c24_account_id']) {
 			return new DataResponse([
 				'error' => 'invalid_account',
 			], Http::STATUS_PRECONDITION_FAILED);
@@ -1027,7 +1027,7 @@ class ApiController extends OCSController {
 		];
 
 		try {
-			$data = $this->client->signFile($row['esig_file_id'], $multipart, $account, $row['esig_server']);
+			$data = $this->client->signFile($row['c24_file_id'], $multipart, $account, $row['c24_server']);
 		} catch (ConnectException $e) {
 			return new DataResponse([
 				'error' => 'error_connecting'
@@ -1070,8 +1070,8 @@ class ApiController extends OCSController {
 			'request_id' => $id,
 			'signed' => $this->formatDateTime($signed),
 		];
-		if ($isLast && $row['esig_signature_result_id']) {
-			$response['details_url'] = $this->client->getDetailsUrl($row['esig_signature_result_id'], $row['esig_server']);
+		if ($isLast && $row['c24_signature_result_id']) {
+			$response['details_url'] = $this->client->getDetailsUrl($row['c24_signature_result_id'], $row['c24_server']);
 		}
 		return new DataResponse($response);
 	}
@@ -1141,7 +1141,7 @@ class ApiController extends OCSController {
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=esig_file)
+	 * @BruteForceProtection(action=certificate24_file)
 	 *
 	 * @param string $id
 	 * @param string $signature
@@ -1156,7 +1156,7 @@ class ApiController extends OCSController {
 			return $response;
 		}
 
-		$request = $this->requests->getRequestByEsigFileId($id);
+		$request = $this->requests->getRequestByCertificate24FileId($id);
 		if (!$request) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
 			$response->throttle();
@@ -1165,7 +1165,7 @@ class ApiController extends OCSController {
 
 		$found = null;
 		foreach ($request['recipients'] as $recipient) {
-			if ($recipient['esig_signature_id'] === $signature) {
+			if ($recipient['c24_signature_id'] === $signature) {
 				if ($recipient['signed']) {
 					// Already flagged as "signed" while processing the request.
 					return new DataResponse([], Http::STATUS_OK);

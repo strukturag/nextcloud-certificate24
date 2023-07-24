@@ -1,6 +1,6 @@
 # Makefile for building the project
 
-app_name=esig
+app_name=certificate24
 
 project_dir=$(CURDIR)
 build_dir=$(CURDIR)/build/artifacts
@@ -11,7 +11,7 @@ package_name=$(app_name)
 cert_dir=$(HOME)/.nextcloud/certificates
 version+=master
 
-PO_FILES=$(wildcard translationfiles/*/esig.po)
+PO_FILES=$(wildcard translationfiles/*/certificate24.po)
 SRC_FILES=$(shell find src)
 LIB_FILES=$(shell find lib)
 
@@ -59,13 +59,13 @@ translationtool.phar:
 	curl -L -o translationtool.phar https://github.com/nextcloud/docker-ci/raw/master/translations/translationtool/translationtool.phar
 	chmod a+x translationtool.phar
 
-translationfiles/templates/esig.pot: translationtool.phar $(SRC_FILES) $(LIB_FILES)
+translationfiles/templates/certificate24.pot: translationtool.phar $(SRC_FILES) $(LIB_FILES)
 	./translationtool.phar create-pot-files
 	sed -i "s|$(CURDIR)/||" $@
 
-po: $(PO_FILES) translationfiles/templates/esig.pot
+po: $(PO_FILES) translationfiles/templates/certificate24.pot
 
-translationfiles/%/esig.po: translationfiles/templates/esig.pot
+translationfiles/%/certificate24.po: translationfiles/templates/certificate24.pot
 	msgmerge --update $@ $<
 	touch $@
 

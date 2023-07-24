@@ -22,7 +22,7 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Activity;
+namespace OCA\Certificate24\Activity;
 
 use OCP\Activity\ActivitySettings;
 use OCP\IL10N;
@@ -39,7 +39,7 @@ class Setting extends ActivitySettings {
 	 * @since 11.0.0
 	 */
 	public function getIdentifier(): string {
-		return 'esig';
+		return 'certificate_twentyfour';
 	}
 
 	/**

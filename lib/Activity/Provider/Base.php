@@ -22,8 +22,9 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Activity\Provider;
+namespace OCA\Certificate24\Activity\Provider;
 
+use OCA\Certificate24\AppInfo\Application;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\Activity\IProvider;
@@ -54,7 +55,7 @@ abstract class Base implements IProvider {
 	 * @throws \InvalidArgumentException
 	 */
 	public function preParse(IEvent $event): IEvent {
-		if ($event->getApp() !== 'esig') {
+		if ($event->getApp() !== Application::APP_ID) {
 			throw new \InvalidArgumentException('Wrong app');
 		}
 
@@ -64,9 +65,9 @@ abstract class Base implements IProvider {
 		}
 
 		if ($this->activityManager->getRequirePNG()) {
-			$event->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('esig', 'app-dark.png')));
+			$event->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.png')));
 		} else {
-			$event->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('esig', 'app-dark.svg')));
+			$event->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg')));
 		}
 
 		return $event;

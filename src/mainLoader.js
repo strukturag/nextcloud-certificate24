@@ -56,12 +56,12 @@ app.$on('dialog:closed', () => {
 	app.$data.fileModel = null
 })
 
-OCA.Esig = OCA.Esig || {}
+OCA.Certificate24 = OCA.Certificate24 || {}
 
 /**
- * @namespace OCA.Esig.SignPlugin
+ * @namespace OCA.Certificate24.SignPlugin
  */
-OCA.Esig.SignPlugin = {
+OCA.Certificate24.SignPlugin = {
 
 	attach(fileList) {
 		if (fileList.$el && fileList.$el.attr('id') === 'app-content-trashbin') {
@@ -70,8 +70,8 @@ OCA.Esig.SignPlugin = {
 		}
 
 		fileList.fileActions.registerAction({
-			displayName: t('esig', 'Request signature'),
-			iconClass: 'icon-esig-sign',
+			displayName: t('certificate24', 'Request signature'),
+			iconClass: 'icon-certificate24-sign',
 			name: 'Sign',
 			mime: 'application/pdf',
 			permissions: OC.PERMISSION_READ | OC.PERMISSION_WRITE,
@@ -88,5 +88,5 @@ OCA.Esig.SignPlugin = {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-	OC.Plugins.register('OCA.Files.FileList', OCA.Esig.SignPlugin)
+	OC.Plugins.register('OCA.Files.FileList', OCA.Certificate24.SignPlugin)
 })

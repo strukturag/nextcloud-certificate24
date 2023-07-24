@@ -20,10 +20,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use Doctrine\DBAL\Types\Types;
-use OCA\Esig\Requests;
+use OCA\Certificate24\Requests;
 use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
 use OCP\Migration\IOutput;
@@ -45,7 +45,7 @@ class Version1000Date20221115160418 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
 		$schema = $schemaClosure();
 
-		$table = $schema->getTable('esig_requests');
+		$table = $schema->getTable('c24_requests');
 		if (!$table->hasColumn('signed_save_mode')) {
 			$table->addColumn('signed_save_mode', Types::STRING, [
 				'notnull' => false,
@@ -58,7 +58,7 @@ class Version1000Date20221115160418 extends SimpleMigrationStep {
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 		// Don't process signed results of existing requests.
 		$update = $this->db->getQueryBuilder();
-		$update->update('esig_requests')
+		$update->update('c24_requests')
 			->set('signed_save_mode', $update->createNamedParameter(Requests::MODE_SIGNED_NONE))
 			->where($update->expr()->isNull('signed_save_mode'));
 		$update->executeStatement();

@@ -21,22 +21,22 @@
 <template>
 	<div>
 		<div v-if="properties.reason" class="row">
-			{{ t('esig', 'Reason: {reason}', {
+			{{ t('certificate24', 'Reason: {reason}', {
 				'reason': properties.reason
 			}) }}
 		</div>
 		<div v-if="properties.location" class="row">
-			{{ t('esig', 'Location:') }}
+			{{ t('certificate24', 'Location:') }}
 			<!-- eslint-disable-next-line vue/no-v-html -->
 			<span v-html="location" />
 		</div>
 		<div v-if="properties.contact" class="row">
-			{{ t('esig', 'Contact:') }}
+			{{ t('certificate24', 'Contact:') }}
 			<!-- eslint-disable-next-line vue/no-v-html -->
 			<span v-html="contact" />
 		</div>
 		<div v-if="nextcloudUrl" class="row">
-			{{ t('esig', 'Nextcloud URL:') }}
+			{{ t('certificate24', 'Nextcloud URL:') }}
 			<!-- eslint-disable-next-line vue/no-v-html -->
 			<span v-html="nextcloudUrl" />
 		</div>

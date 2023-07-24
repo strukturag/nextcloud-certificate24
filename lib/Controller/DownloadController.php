@@ -22,11 +22,12 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Controller;
+namespace OCA\Certificate24\Controller;
 
-use OCA\Esig\Client;
-use OCA\Esig\Config;
-use OCA\Esig\Requests;
+use OCA\Certificate24\AppInfo\Application;
+use OCA\Certificate24\Client;
+use OCA\Certificate24\Config;
+use OCA\Certificate24\Requests;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataDisplayResponse;
@@ -72,7 +73,7 @@ class DownloadController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @BruteForceProtection(action=esig_request)
+	 * @BruteForceProtection(action=certificate24_request)
 	 */
 	public function downloadOriginal(string $id): Response {
 		$req = $this->requests->getRequestById($id);
@@ -85,13 +86,13 @@ class DownloadController extends Controller {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
-		} elseif ($account['id'] !== $req['esig_account_id']) {
+		} elseif ($account['id'] !== $req['c24_account_id']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		$user = $this->userSession->getUser();
 		if (!$this->requests->mayAccess($user, $req)) {
-			$redirectUrl = $this->urlGenerator->linkToRoute('esig.Download.downloadOriginal', ['id' => $id]);
+			$redirectUrl = $this->urlGenerator->linkToRoute(Application::APP_ID . '.Download.downloadOriginal', ['id' => $id]);
 			$response = new RedirectResponse($this->urlGenerator->linkToRoute('core.login.showLoginForm', [
 				'redirect_url' => $redirectUrl,
 			]));
@@ -99,7 +100,7 @@ class DownloadController extends Controller {
 			return $response;
 		}
 
-		$url = $this->client->getOriginalUrl($req['esig_file_id'], $account, $req['esig_server']);
+		$url = $this->client->getOriginalUrl($req['c24_file_id'], $account, $req['c24_server']);
 		$url .= (strpos($url, '?') === false) ? '?' : '&';
 		$url .= 'download=1';
 		return new RedirectResponse($url);
@@ -108,7 +109,7 @@ class DownloadController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @BruteForceProtection(action=esig_request)
+	 * @BruteForceProtection(action=certificate24_request)
 	 */
 	public function downloadSource(string $id): Response {
 		$req = $this->requests->getRequestById($id);
@@ -121,13 +122,13 @@ class DownloadController extends Controller {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
-		} elseif ($account['id'] !== $req['esig_account_id']) {
+		} elseif ($account['id'] !== $req['c24_account_id']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		$user = $this->userSession->getUser();
 		if (!$this->requests->mayAccess($user, $req)) {
-			$redirectUrl = $this->urlGenerator->linkToRoute('esig.Download.downloadSource', ['id' => $id]);
+			$redirectUrl = $this->urlGenerator->linkToRoute(Application::APP_ID . '.Download.downloadSource', ['id' => $id]);
 			$response = new RedirectResponse($this->urlGenerator->linkToRoute('core.login.showLoginForm', [
 				'redirect_url' => $redirectUrl,
 			]));
@@ -135,7 +136,7 @@ class DownloadController extends Controller {
 			return $response;
 		}
 
-		$url = $this->client->getSourceUrl($req['esig_file_id'], $account, $req['esig_server']);
+		$url = $this->client->getSourceUrl($req['c24_file_id'], $account, $req['c24_server']);
 		$url .= (strpos($url, '?') === false) ? '?' : '&';
 		$url .= 'download=1';
 		return new RedirectResponse($url);
@@ -144,7 +145,7 @@ class DownloadController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @BruteForceProtection(action=esig_request)
+	 * @BruteForceProtection(action=certificate24_request)
 	 */
 	public function downloadSigned(string $id): Response {
 		$req = $this->requests->getRequestById($id);
@@ -157,13 +158,13 @@ class DownloadController extends Controller {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
-		} elseif ($account['id'] !== $req['esig_account_id']) {
+		} elseif ($account['id'] !== $req['c24_account_id']) {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		$user = $this->userSession->getUser();
 		if (!$this->requests->mayAccess($user, $req)) {
-			$redirectUrl = $this->urlGenerator->linkToRoute('esig.Download.downloadSigned', ['id' => $id]);
+			$redirectUrl = $this->urlGenerator->linkToRoute(Application::APP_ID . '.Download.downloadSigned', ['id' => $id]);
 			$response = new RedirectResponse($this->urlGenerator->linkToRoute('core.login.showLoginForm', [
 				'redirect_url' => $redirectUrl,
 			]));
@@ -184,7 +185,7 @@ class DownloadController extends Controller {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
-		$url = $this->client->getSignedUrl($req['esig_file_id'], $account, $req['esig_server']);
+		$url = $this->client->getSignedUrl($req['c24_file_id'], $account, $req['c24_server']);
 		$url .= (strpos($url, '?') === false) ? '?' : '&';
 		$url .= 'download=1';
 		return new RedirectResponse($url);

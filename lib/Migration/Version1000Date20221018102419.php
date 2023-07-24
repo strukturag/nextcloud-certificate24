@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use Doctrine\DBAL\Types\Types;
 use OC\User\NoUserException;
@@ -49,7 +49,7 @@ class Version1000Date20221018102419 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
 		$schema = $schemaClosure();
 
-		$table = $schema->getTable('esig_requests');
+		$table = $schema->getTable('c24_requests');
 		if (!$table->hasColumn('filename')) {
 			$table->addColumn('filename', Types::STRING, [
 				'notnull' => false,
@@ -72,7 +72,7 @@ class Version1000Date20221018102419 extends SimpleMigrationStep {
 
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 		$update = $this->db->getQueryBuilder();
-		$update->update('esig_requests')
+		$update->update('c24_requests')
 			->set('filename', $update->createParameter('filename'))
 			->set('mimetype', $update->createParameter('mimetype'))
 			->set('size', $update->createParameter('size'))
@@ -80,7 +80,7 @@ class Version1000Date20221018102419 extends SimpleMigrationStep {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('id', 'file_id', 'user_id')
-			->from('esig_requests');
+			->from('c24_requests');
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
 			$update->setParameter('id', $row['id']);

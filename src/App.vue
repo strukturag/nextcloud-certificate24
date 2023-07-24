@@ -20,7 +20,7 @@
 
 <template>
 	<NcContent :class="{ 'icon-loading': loading }"
-		app-name="esig">
+		app-name="certificate24">
 		<NcAppContent>
 			<OwnSignRequests />
 			<IncomingSignRequests />

@@ -19,33 +19,33 @@
 -->
 
 <template>
-	<div id="incoming_requests" class="esig section">
+	<div id="incoming_requests" class="certificate24 section">
 		<h2>
-			{{ t('esig', 'Incoming signing requests') }}
+			{{ t('certificate24', 'Incoming signing requests') }}
 			<NcLoadingIcon v-if="loading" />
 		</h2>
 
 		<div v-if="!requests.length">
-			{{ t('esig', 'No requests created yet') }}
+			{{ t('certificate24', 'No requests created yet') }}
 		</div>
 		<div v-else>
 			<table>
 				<thead>
 					<tr>
 						<th>
-							{{ t('esig', 'File') }}
+							{{ t('certificate24', 'File') }}
 						</th>
 						<th>
-							{{ t('esig', 'Created') }}
+							{{ t('certificate24', 'Created') }}
 						</th>
 						<th>
-							{{ t('esig', 'Signed') }}
+							{{ t('certificate24', 'Signed') }}
 						</th>
 						<th>
-							{{ t('esig', 'Creator') }}
+							{{ t('certificate24', 'Creator') }}
 						</th>
 						<th>
-							{{ t('esig', 'Actions') }}
+							{{ t('certificate24', 'Actions') }}
 						</th>
 					</tr>
 				</thead>
@@ -77,7 +77,7 @@
 									:disabled="request.loading"
 									type="primary"
 									@click="signRequest(request)">
-									{{ t('esig', 'Sign') }}
+									{{ t('certificate24', 'Sign') }}
 									<template #icon>
 										<NcLoadingIcon v-show="request.loading" :size="20" />
 										<FileSign v-show="!request.loading" :size="20" />
@@ -86,7 +86,7 @@
 								<NcButton v-show="request.signed"
 									type="primary"
 									:href="downloadSignedUrl(request)">
-									{{ t('esig', 'Download signed') }}
+									{{ t('certificate24', 'Download signed') }}
 									<template #icon>
 										<Download :size="20" />
 									</template>
@@ -94,13 +94,13 @@
 								<NcButton v-show="request.details_url"
 									type="primary"
 									@click="openWindow(request.details_url)">
-									{{ t('esig', 'Show details') }}
+									{{ t('certificate24', 'Show details') }}
 									<template #icon>
 										<OpenInNew :size="20" />
 									</template>
 								</NcButton>
 								<div v-show="request.own_signed && !request.signed">
-									{{ t('esig', 'Waiting for other signatures.') }}
+									{{ t('certificate24', 'Waiting for other signatures.') }}
 								</div>
 								<SignDialogModal v-if="signDialog === request"
 									:request="request"
@@ -223,14 +223,14 @@ export default {
 					const msg = error.message || error
 					switch (msg) {
 					case 'client_unsupported':
-						showError(t('esig', 'The server requires a newer version of the app. Please contact your administrator.'))
+						showError(t('certificate24', 'The server requires a newer version of the app. Please contact your administrator.'))
 						break
 					case 'server_unsupported':
-						showError(t('esig', 'This app requires a newer version of the server. Please contact your administrator.'))
+						showError(t('certificate24', 'This app requires a newer version of the server. Please contact your administrator.'))
 						break
 					default:
-						console.error('Error loading esig API', error)
-						showError(t('esig', 'Error loading serverside API, please try again later.'))
+						console.error('Error loading Certificate24 API', error)
+						showError(t('certificate24', 'Error loading serverside API, please try again later.'))
 					}
 				})
 				.finally(() => {

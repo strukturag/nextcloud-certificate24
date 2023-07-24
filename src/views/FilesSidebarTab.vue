@@ -19,36 +19,36 @@
 -->
 
 <template>
-	<div class="esigSignaturesTab">
+	<div class="certificate24SignaturesTab">
 		<div v-if="isSidebarSupportedForFile === undefined" class="emptycontent">
 			<div class="icon icon-loading" />
 		</div>
 		<div v-else-if="!isSidebarSupportedForFile" class="emptycontent">
-			<div class="icon icon-esig" />
-			<h2>{{ t('esig', 'Signatures') }}</h2>
+			<div class="icon icon-certificate24" />
+			<h2>{{ t('certificate24', 'Signatures') }}</h2>
 			<p v-if="!signaturesPending">
-				{{ t('esig', 'Signatures are not supported for this file.') }}
+				{{ t('certificate24', 'Signatures are not supported for this file.') }}
 			</p>
 			<p v-if="signaturesPending">
-				{{ t('esig', 'Signature status is pending for this file.') }}
+				{{ t('certificate24', 'Signature status is pending for this file.') }}
 			</p>
 			<NcButton v-if="signaturesPending"
 				@click="forceCheck">
-				{{ t('esig', 'Check manually') }}
+				{{ t('certificate24', 'Check manually') }}
 			</NcButton>
 		</div>
 		<div v-else-if="isSidebarSupportedForFile && notSigned" class="emptycontent">
-			<div class="icon icon-esig" />
-			<h2>{{ t('esig', 'Signatures') }}</h2>
-			<p>{{ t('esig', 'The file is not signed.') }}</p>
+			<div class="icon icon-certificate24" />
+			<h2>{{ t('certificate24', 'Signatures') }}</h2>
+			<p>{{ t('certificate24', 'The file is not signed.') }}</p>
 			<NcButton @click="forceCheck">
-				{{ t('esig', 'Force recheck') }}
+				{{ t('certificate24', 'Force recheck') }}
 			</NcButton>
 		</div>
 		<template v-else>
 			<SignaturesView :file-id="fileId" />
 			<NcButton @click="forceCheck">
-				{{ t('esig', 'Force recheck') }}
+				{{ t('certificate24', 'Force recheck') }}
 			</NcButton>
 		</template>
 	</div>
@@ -72,7 +72,7 @@ export default {
 	data() {
 		return {
 			// needed for reactivity
-			Esig: OCA.Esig,
+			Certificate24: OCA.Certificate24,
 			sidebarState: OCA.Files.Sidebar.state,
 			signaturesPending: false,
 			notSigned: false,
@@ -85,7 +85,7 @@ export default {
 
 	computed: {
 		fileInfo() {
-			return this.Esig.fileInfo || {}
+			return this.Certificate24.fileInfo || {}
 		},
 		fileId() {
 			return this.fileInfo.id
@@ -217,7 +217,7 @@ export default {
 				this.isSidebarSupportedForFile = this.prevIsSidebarSupportedForFile
 				this.signaturesPending = this.prevSignaturesPending
 				this.notSigned = this.prevNotSigned
-				showError(t('esig', 'Error fetching signature details.'))
+				showError(t('certificate24', 'Error fetching signature details.'))
 				break
 			}
 		},
@@ -230,7 +230,7 @@ export default {
 </script>
 
 <style scoped>
-.esigSignaturesTab {
+.certificate24SignaturesTab {
 	height: 100%;
 
 	display: flex;

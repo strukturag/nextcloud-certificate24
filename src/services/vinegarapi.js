@@ -37,7 +37,7 @@ function checkServerFeatures(features) {
 const getVinegarApi = async () => {
 	if (!api) {
 		const ts = (new Date()).getTime()
-		let base = loadState('esig', 'vinegar_server')
+		let base = loadState('certificate24', 'vinegar_server')
 		if (!base) {
 			throw new Error('No server configured')
 		}

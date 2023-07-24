@@ -22,9 +22,9 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig;
+namespace OCA\Certificate24;
 
-use OCA\Esig\AppInfo\Application;
+use OCA\Certificate24\AppInfo\Application;
 use OCP\App\IAppManager;
 use OCP\Capabilities\IPublicCapability;
 use OCP\IUserSession;
@@ -69,7 +69,7 @@ class Capabilities implements IPublicCapability {
 		}
 
 		return [
-			'esig' => $capabilities,
+			'certificate24' => $capabilities,
 		];
 	}
 }
