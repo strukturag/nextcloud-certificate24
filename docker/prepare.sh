@@ -46,6 +46,12 @@ fi
 if [ -n "$CERTIFICATE24_ACCOUNT_ID" ] && [ -n "$CERTIFICATE24_ACCOUNT_SECRET" ]; then
     run_as 'php /var/www/html/occ config:app:set certificate24 account --value "{\"id\": \"${CERTIFICATE24_ACCOUNT_ID}\",\"secret\": \"${CERTIFICATE24_ACCOUNT_SECRET}\"}"'
 fi
+if [ -n "$CERTIFICATE24_API_SERVER" ]; then
+    run_as 'php /var/www/html/occ config:app:set certificate24 api_server --value "$CERTIFICATE24_API_SERVER"'
+fi
+if [ -n "$CERTIFICATE24_WEB_SERVER" ]; then
+    run_as 'php /var/www/html/occ config:app:set certificate24 web_server --value "$CERTIFICATE24_WEB_SERVER"'
+fi
 
 UPDATE_THEME=
 run_as 'php /var/www/html/occ config:app:set theming enabled --value yes'
