@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
@@ -50,7 +50,7 @@ class Version1000Date20230131095219 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
 		$schema = $schemaClosure();
 
-		$table = $schema->getTable('esig_recipients');
+		$table = $schema->getTable('c24_recipients');
 		if (!$table->hasColumn('saved')) {
 			$table->addColumn('saved', Types::DATETIMETZ_MUTABLE, [
 				'notnull' => false,
@@ -93,7 +93,7 @@ class Version1000Date20230131095219 extends SimpleMigrationStep {
 		// While this is technically not correct, it will prevent the signed files
 		// from being re-downloaded again.
 		$query = $this->db->getQueryBuilder();
-		$query->update('esig_requests')
+		$query->update('c24_requests')
 			->set('saved', $query->createFunction('now()'))
 			->where($query->expr()->isNotNull('signed'))
 			->andWhere($query->expr()->isNull('saved'));
@@ -101,12 +101,12 @@ class Version1000Date20230131095219 extends SimpleMigrationStep {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('id', 'saved')
-			->from('esig_requests')
+			->from('c24_requests')
 			->where($query->expr()->isNotNull('saved'));
 		$result = $query->executeQuery();
 
 		$update = $this->db->getQueryBuilder();
-		$update->update('esig_recipients')
+		$update->update('c24_recipients')
 			->set('saved', $update->createParameter('saved'))
 			->where($update->expr()->isNotNull('signed'))
 			->andWhere($update->expr()->eq('request_id', $update->createParameter('request_id')));

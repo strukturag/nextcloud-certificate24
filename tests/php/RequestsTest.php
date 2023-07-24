@@ -20,10 +20,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Tests\php;
+namespace OCA\Certificate24\Tests\php;
 
-use OCA\Esig\Config;
-use OCA\Esig\Requests;
+use OCA\Certificate24\Config;
+use OCA\Certificate24\Requests;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\IUser;
@@ -59,7 +59,7 @@ class RequestsTest extends TestCase {
 		parent::tearDown();
 	}
 
-	private function checkRequest(string $id, array $recipients, array $metadata, string $esig_file_id, File $file, IUser $user, bool $saved = false): array {
+	private function checkRequest(string $id, array $recipients, array $metadata, string $response_file_id, File $file, IUser $user, bool $saved = false): array {
 		$request1 = $this->requests->getRequestById($id);
 		$this->assertNotNull($request1);
 		$this->assertEquals($recipients, $request1['recipients']);
@@ -71,11 +71,11 @@ class RequestsTest extends TestCase {
 		$request2 = $this->requests->getOwnRequestById($user, $id);
 		$this->assertEquals($request1, $request2);
 
-		$request2 = $this->requests->getRequestByEsigFileId($esig_file_id);
+		$request2 = $this->requests->getRequestByCertificate24FileId($response_file_id);
 		$this->assertEquals($request1, $request2);
 
 		foreach ($recipients as $r) {
-			$request2 = $this->requests->getRequestByEsigSignatureId($r['esig_signature_id']);
+			$request2 = $this->requests->getRequestByCertificate24SignatureId($r['c24_signature_id']);
 			$this->assertEquals($request1, $request2);
 		}
 
@@ -140,18 +140,18 @@ class RequestsTest extends TestCase {
 		return $request1;
 	}
 
-	private function checkDeletedRequest(string $id, array $recipients, string $esig_file_id, File $file, IUser $user) {
+	private function checkDeletedRequest(string $id, array $recipients, string $response_file_id, File $file, IUser $user) {
 		$request = $this->requests->getRequestById($id);
 		$this->assertNull($request);
 
 		$request = $this->requests->getOwnRequestById($user, $id);
 		$this->assertNull($request);
 
-		$request = $this->requests->getRequestByEsigFileId($esig_file_id);
+		$request = $this->requests->getRequestByCertificate24FileId($response_file_id);
 		$this->assertNull($request);
 
 		foreach ($recipients as $r) {
-			$request = $this->requests->getRequestByEsigSignatureId($r['esig_signature_id']);
+			$request = $this->requests->getRequestByCertificate24SignatureId($r['c24_signature_id']);
 			$this->assertNull($request);
 		}
 
@@ -213,20 +213,20 @@ class RequestsTest extends TestCase {
 			'id' => 'the-account',
 		];
 		$server = 'https://domain.invalid';
-		$esig_file_id = 'the-file';
-		$esig_signature_result_id = 'the-signature-result';
+		$response_file_id = 'the-file';
+		$response_signature_result_id = 'the-signature-result';
 
-		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id, $esig_signature_result_id);
+		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
 		$this->assertNotNull($id);
 		$this->requestIds[] = $id;
 
 		$recipients2 = $recipients;
-		$recipients2[0]['esig_signature_id'] = $recipients[0]['public_id'];
+		$recipients2[0]['c24_signature_id'] = $recipients[0]['public_id'];
 		unset($recipients2[0]['public_id']);
 		$recipients2[0]['signed'] = null;
 		$recipients2[0]['display_name'] = null;
 
-		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$pending = $this->requests->getPendingSignatures();
 		$this->assertEmpty($pending['single']);
@@ -241,7 +241,7 @@ class RequestsTest extends TestCase {
 		$this->assertTrue($isLast);
 
 		$recipients2[0]['signed'] = $signed;
-		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 		$request['last_signed'] = $signed;
 
 		$pending = $this->requests->getPendingDownloads();
@@ -251,10 +251,10 @@ class RequestsTest extends TestCase {
 		$this->requests->markRequestSavedById($id);
 		$pending = $this->requests->getPendingDownloads();
 		$this->assertEquals(0, count($pending));
-		$this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user, true);
+		$this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user, true);
 
 		$this->requests->markRequestDeletedById($id);
-		$this->checkDeletedRequest($id, $recipients2, $esig_file_id, $file, $user);
+		$this->checkDeletedRequest($id, $recipients2, $response_file_id, $file, $user);
 	}
 
 	public function testStoreRequestSingleMail() {
@@ -285,19 +285,19 @@ class RequestsTest extends TestCase {
 			'id' => 'the-account',
 		];
 		$server = 'https://domain.invalid';
-		$esig_file_id = 'the-file';
-		$esig_signature_result_id = 'the-signature-result';
+		$response_file_id = 'the-file';
+		$response_signature_result_id = 'the-signature-result';
 
-		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id, $esig_signature_result_id);
+		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
 		$this->assertNotNull($id);
 		$this->requestIds[] = $id;
 
 		$recipients2 = $recipients;
-		$recipients2[0]['esig_signature_id'] = $recipients[0]['public_id'];
+		$recipients2[0]['c24_signature_id'] = $recipients[0]['public_id'];
 		unset($recipients2[0]['public_id']);
 		$recipients2[0]['signed'] = null;
 
-		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$pending = $this->requests->getPendingSignatures();
 		$this->assertEquals(1, count($pending['single']));
@@ -311,7 +311,7 @@ class RequestsTest extends TestCase {
 		$this->assertTrue($isLast);
 
 		$recipients2[0]['signed'] = $signed;
-		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$pending = $this->requests->getPendingSignatures();
 		$this->assertEmpty($pending['single']);
@@ -337,10 +337,10 @@ class RequestsTest extends TestCase {
 		$this->requests->markRequestSavedById($id);
 		$pending = $this->requests->getPendingDownloads();
 		$this->assertEquals(0, count($pending));
-		$this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user, true);
+		$this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user, true);
 
 		$this->requests->markRequestDeletedById($id);
-		$this->checkDeletedRequest($id, $recipients2, $esig_file_id, $file, $user);
+		$this->checkDeletedRequest($id, $recipients2, $response_file_id, $file, $user);
 	}
 
 	public function testStoreRequestMultiple() {
@@ -376,16 +376,16 @@ class RequestsTest extends TestCase {
 			'id' => 'the-account',
 		];
 		$server = 'https://domain.invalid';
-		$esig_file_id = 'the-file';
-		$esig_signature_result_id = 'the-signature-result';
+		$response_file_id = 'the-file';
+		$response_signature_result_id = 'the-signature-result';
 
-		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id, $esig_signature_result_id);
+		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
 		$this->assertNotNull($id);
 		$this->requestIds[] = $id;
 
 		$recipients2 = $recipients;
 		foreach ($recipients2 as &$r) {
-			$r['esig_signature_id'] = $r['public_id'];
+			$r['c24_signature_id'] = $r['public_id'];
 			unset($r['public_id']);
 			$r['signed'] = null;
 			if (!isset($r['display_name'])) {
@@ -393,7 +393,7 @@ class RequestsTest extends TestCase {
 			}
 		}
 
-		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$pending = $this->requests->getPendingSignatures();
 		$this->assertEmpty($pending['single']);
@@ -407,7 +407,7 @@ class RequestsTest extends TestCase {
 			'display_name' => $recipients[1]['display_name'],
 			'signed' => null,
 			'saved' => null,
-			'esig_signature_id' => $recipients[1]['public_id'],
+			'c24_signature_id' => $recipients[1]['public_id'],
 			'email_sent' => null,
 			'request' => $request,
 		], $pending['multi'][0]);
@@ -419,7 +419,7 @@ class RequestsTest extends TestCase {
 		$this->assertFalse($isLast);
 
 		$recipients2[0]['signed'] = $signed1;
-		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$pending = $this->requests->getPendingSignatures();
 		$this->assertEmpty($pending['single']);
@@ -433,7 +433,7 @@ class RequestsTest extends TestCase {
 			'display_name' => $recipients[1]['display_name'],
 			'signed' => null,
 			'saved' => null,
-			'esig_signature_id' => $recipients[1]['public_id'],
+			'c24_signature_id' => $recipients[1]['public_id'],
 			'email_sent' => null,
 			'request' => $request,
 		], $pending['multi'][0]);
@@ -446,7 +446,7 @@ class RequestsTest extends TestCase {
 		$this->assertTrue($isLast);
 
 		$recipients2[1]['signed'] = $signed2;
-		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$pending = $this->requests->getPendingSignatures();
 		$this->assertEmpty($pending['single']);
@@ -464,7 +464,7 @@ class RequestsTest extends TestCase {
 			'display_name' => $recipients[1]['display_name'],
 			'signed' => $signed2,
 			'saved' => null,
-			'esig_signature_id' => $recipients[1]['public_id'],
+			'c24_signature_id' => $recipients[1]['public_id'],
 			'email_sent' => null,
 			'request' => $request,
 		], $pending['multi'][0]);
@@ -483,10 +483,10 @@ class RequestsTest extends TestCase {
 		$this->requests->markRequestSavedById($id);
 		$pending = $this->requests->getPendingDownloads();
 		$this->assertEquals(0, count($pending));
-		$this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user, true);
+		$this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user, true);
 
 		$this->requests->markRequestDeletedById($id);
-		$this->checkDeletedRequest($id, $recipients2, $esig_file_id, $file, $user);
+		$this->checkDeletedRequest($id, $recipients2, $response_file_id, $file, $user);
 	}
 
 	public function testCompletedSingle() {
@@ -517,19 +517,19 @@ class RequestsTest extends TestCase {
 			'id' => 'the-account',
 		];
 		$server = 'https://domain.invalid';
-		$esig_file_id = 'the-file';
-		$esig_signature_result_id = 'the-signature-result';
+		$response_file_id = 'the-file';
+		$response_signature_result_id = 'the-signature-result';
 
-		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id, $esig_signature_result_id);
+		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
 		$this->assertNotNull($id);
 		$this->requestIds[] = $id;
 
 		$recipients2 = $recipients;
-		$recipients2[0]['esig_signature_id'] = $recipients[0]['public_id'];
+		$recipients2[0]['c24_signature_id'] = $recipients[0]['public_id'];
 		unset($recipients2[0]['public_id']);
 		$recipients2[0]['signed'] = null;
 
-		$this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$completed = $this->requests->getCompletedRequests(new \DateTime());
 		$this->assertEmpty($completed);
@@ -542,7 +542,7 @@ class RequestsTest extends TestCase {
 		$this->assertTrue($isLast);
 
 		$recipients2[0]['signed'] = $signed;
-		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$completed = $this->requests->getCompletedRequests(new \DateTime());
 		$this->assertEquals(1, count($completed));
@@ -586,16 +586,16 @@ class RequestsTest extends TestCase {
 			'id' => 'the-account',
 		];
 		$server = 'https://domain.invalid';
-		$esig_file_id = 'the-file';
-		$esig_signature_result_id = 'the-signature-result';
+		$response_file_id = 'the-file';
+		$response_signature_result_id = 'the-signature-result';
 
-		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $esig_file_id, $esig_signature_result_id);
+		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
 		$this->assertNotNull($id);
 		$this->requestIds[] = $id;
 
 		$recipients2 = $recipients;
 		foreach ($recipients2 as &$r) {
-			$r['esig_signature_id'] = $r['public_id'];
+			$r['c24_signature_id'] = $r['public_id'];
 			unset($r['public_id']);
 			$r['signed'] = null;
 			if (!isset($r['display_name'])) {
@@ -603,7 +603,7 @@ class RequestsTest extends TestCase {
 			}
 		}
 
-		$this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$completed = $this->requests->getCompletedRequests(new \DateTime());
 		$this->assertEmpty($completed);
@@ -616,7 +616,7 @@ class RequestsTest extends TestCase {
 		$this->assertFalse($isLast);
 
 		$recipients2[0]['signed'] = $signed;
-		$this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$completed = $this->requests->getCompletedRequests(new \DateTime());
 		$this->assertEmpty($completed);
@@ -629,7 +629,7 @@ class RequestsTest extends TestCase {
 		$this->assertTrue($isLast);
 
 		$recipients2[1]['signed'] = $signed2;
-		$request = $this->checkRequest($id, $recipients2, $metadata, $esig_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$completed = $this->requests->getCompletedRequests(new \DateTime());
 		$this->assertEquals(1, count($completed));

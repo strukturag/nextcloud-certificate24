@@ -11,6 +11,6 @@ docker build \
 	--rm \
 	--pull \
 	--progress plain \
-	--tag nextcloud-esig:$TAG \
+	--tag nextcloud-certificate24:$TAG \
 	-f docker/Dockerfile \
 	.

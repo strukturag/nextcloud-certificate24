@@ -29,7 +29,7 @@ const isEmpty = (obj) => {
 }
 
 const shareFile = async (file_id, recipients, options, metadata) => {
-	return axios.post(generateOcsUrl('apps/esig/api/v1/share'), {
+	return axios.post(generateOcsUrl('apps/certificate24/api/v1/share'), {
 		file_id,
 		recipients,
 		options: !isEmpty(options) ? options : null,
@@ -44,7 +44,7 @@ const shareFile = async (file_id, recipients, options, metadata) => {
 }
 
 const getRequests = async (include_signed) => {
-	return await axios.get(generateOcsUrl('apps/esig/api/v1/share'), {
+	return await axios.get(generateOcsUrl('apps/certificate24/api/v1/share'), {
 		params: {
 			include_signed,
 		},
@@ -52,11 +52,11 @@ const getRequests = async (include_signed) => {
 }
 
 const deleteRequest = async (id) => {
-	return await axios.delete(generateOcsUrl('apps/esig/api/v1/share/' + id))
+	return await axios.delete(generateOcsUrl('apps/certificate24/api/v1/share/' + id))
 }
 
 const getIncomingRequests = async (include_signed) => {
-	return await axios.get(generateOcsUrl('apps/esig/api/v1/share/incoming'), {
+	return await axios.get(generateOcsUrl('apps/certificate24/api/v1/share/incoming'), {
 		params: {
 			include_signed,
 		},
@@ -68,37 +68,37 @@ const signRequest = async (id, options) => {
 	if (options) {
 		form.append('options', JSON.stringify(options))
 	}
-	return await axios.postForm(generateOcsUrl('apps/esig/api/v1/share/' + id + '/sign'), form)
+	return await axios.postForm(generateOcsUrl('apps/certificate24/api/v1/share/' + id + '/sign'), form)
 }
 
 const getOriginalUrl = (id) => {
-	return generateUrl('apps/esig/download/' + id)
+	return generateUrl('apps/certificate24/download/' + id)
 }
 
 const getSourceUrl = (id) => {
-	return generateUrl('apps/esig/download/source/' + id)
+	return generateUrl('apps/certificate24/download/source/' + id)
 }
 
 const getSignedUrl = (id) => {
-	return generateUrl('apps/esig/download/signed/' + id)
+	return generateUrl('apps/certificate24/download/signed/' + id)
 }
 
 const search = async (search, type) => {
-	return await axios.post(generateOcsUrl('apps/esig/api/v1/search'), {
+	return await axios.post(generateOcsUrl('apps/certificate24/api/v1/search'), {
 		search,
 		type,
 	})
 }
 
 const resetSignatureImage = async () => {
-	return await axios.delete(generateUrl('apps/esig/settings/signature'))
+	return await axios.delete(generateUrl('apps/certificate24/settings/signature'))
 }
 
 const uploadSignatureImage = async (image) => {
 	const form = new FormData()
 	form.append('image', image)
 
-	return await axios.postForm(generateUrl('apps/esig/settings/signature'), form)
+	return await axios.postForm(generateUrl('apps/certificate24/settings/signature'), form)
 }
 
 const getMetadata = async (file_id) => {
@@ -108,7 +108,7 @@ const getMetadata = async (file_id) => {
 			return
 		}
 
-		axios.get(generateOcsUrl('apps/esig/api/v1/metadata/' + file_id))
+		axios.get(generateOcsUrl('apps/certificate24/api/v1/metadata/' + file_id))
 			.then((response) => {
 				const metadata = response.data?.ocs?.data || {}
 				metadataCache[file_id] = metadata
@@ -120,7 +120,7 @@ const getMetadata = async (file_id) => {
 }
 
 const clearVerificationCache = async () => {
-	return await axios.delete(generateOcsUrl('apps/esig/api/v1/verify/cache'))
+	return await axios.delete(generateOcsUrl('apps/certificate24/api/v1/verify/cache'))
 }
 
 export {

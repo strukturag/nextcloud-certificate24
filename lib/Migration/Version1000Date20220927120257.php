@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
@@ -37,8 +37,8 @@ class Version1000Date20220927120257 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('esig_requests')) {
-			$table = $schema->createTable('esig_requests');
+		if (!$schema->hasTable('c24_requests')) {
+			$table = $schema->createTable('c24_requests');
 			$table->addColumn('id', Types::STRING, [
 				'notnull' => true,
 				'length' => 64,
@@ -65,15 +65,15 @@ class Version1000Date20220927120257 extends SimpleMigrationStep {
 				'notnull' => false,
 				'length' => 255,
 			]);
-			$table->addColumn('esig_account_id', Types::STRING, [
+			$table->addColumn('c24_account_id', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 			]);
-			$table->addColumn('esig_server', Types::STRING, [
+			$table->addColumn('c24_server', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 			]);
-			$table->addColumn('esig_file_id', Types::STRING, [
+			$table->addColumn('c24_file_id', Types::STRING, [
 				'notnull' => true,
 				'length' => 255,
 			]);

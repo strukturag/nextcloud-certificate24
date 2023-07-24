@@ -22,11 +22,12 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Activity;
+namespace OCA\Certificate24\Activity;
 
-use OCA\Esig\Events\ShareEvent;
-use OCA\Esig\Events\SignEvent;
-use OCA\Esig\Requests;
+use OCA\Certificate24\AppInfo\Application;
+use OCA\Certificate24\Events\ShareEvent;
+use OCA\Certificate24\Events\SignEvent;
+use OCA\Certificate24\Requests;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -84,7 +85,7 @@ class Listener {
 		$file = $event->getFile();
 		$activity = $this->activityManager->generateEvent();
 		try {
-			$activity->setApp('esig')
+			$activity->setApp(Application::APP_ID)
 				->setType('incoming_request')
 				->setAuthor($sender->getUID())
 				->setObject('incoming_request', 0, $event->getRequestId())
@@ -133,7 +134,7 @@ class Listener {
 			// Add activity for sender that the recipient has signed (only if not requested from themselves).
 			$activity = $this->activityManager->generateEvent();
 			try {
-				$activity->setApp('esig')
+				$activity->setApp(Application::APP_ID)
 					->setType('recipient_signed')
 					->setObject('outgoing_request', 0, $id)
 					->setTimestamp($event->getSigned()->getTimestamp())
@@ -171,7 +172,7 @@ class Listener {
 			// Add activity for recipient that they have signed.
 			$activity = $this->activityManager->generateEvent();
 			try {
-				$activity->setApp('esig')
+				$activity->setApp(Application::APP_ID)
 					->setType('own_signed')
 					->setObject('incoming_request', 0, $id)
 					->setTimestamp($event->getSigned()->getTimestamp())
@@ -215,7 +216,7 @@ class Listener {
 
 				$activity = $this->activityManager->generateEvent();
 				try {
-					$activity->setApp('esig')
+					$activity->setApp(Application::APP_ID)
 						->setType('finished_incoming')
 						->setObject('finished_incoming', 0, $id)
 						->setTimestamp($event->getSigned()->getTimestamp())
@@ -240,7 +241,7 @@ class Listener {
 
 			$activity = $this->activityManager->generateEvent();
 			try {
-				$activity->setApp('esig')
+				$activity->setApp(Application::APP_ID)
 					->setType('finished_outgoing')
 					->setObject('finished_outgoing', 0, $id)
 					->setTimestamp($event->getSigned()->getTimestamp())

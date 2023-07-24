@@ -1,5 +1,5 @@
 {
-	"name": "esig",
+	"name": "certificate24",
 	"version": "1.0.0",
 	"scripts": {
 		"build": "NODE_ENV=production webpack --progress --config webpack.js",

@@ -22,13 +22,15 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\ESig\Settings\Admin;
+namespace OCA\Certificate24\Settings\Admin;
 
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
 
 class Section implements IIconSection {
+	public const APP_ID = 'certificate24';
+
 	private IL10N $l;
 
 	private IURLGenerator $url;
@@ -46,7 +48,7 @@ class Section implements IIconSection {
 	 * @since 12
 	 */
 	public function getIcon(): string {
-		return $this->url->imagePath('esig', 'app-dark.svg');
+		return $this->url->imagePath(self::APP_ID, 'app-dark.svg');
 	}
 
 	/**
@@ -57,7 +59,7 @@ class Section implements IIconSection {
 	 * @since 9.1
 	 */
 	public function getID(): string {
-		return 'esig';
+		return self::APP_ID;
 	}
 
 	/**
@@ -68,7 +70,7 @@ class Section implements IIconSection {
 	 * @since 9.1
 	 */
 	public function getName(): string {
-		return $this->l->t('eSignatures');
+		return $this->l->t('Certificate24');
 	}
 
 	/**

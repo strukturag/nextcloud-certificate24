@@ -22,7 +22,7 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig;
+namespace OCA\Certificate24;
 
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
@@ -32,6 +32,8 @@ use OCP\IConfig;
 use OCP\IUser;
 
 class Config {
+	public const APP_ID = 'certificate24';
+
 	public const DEFAULT_API_SERVER = "https://api.certificate24.com/";
 	public const DEFAULT_WEB_SERVER = "https://www.certificate24.com/";
 	public const DEFAULT_SAVE_MODE = 'new';
@@ -46,7 +48,7 @@ class Config {
 	}
 
 	public function getApiServer(): string {
-		$server = $this->config->getAppValue('esig', 'api_server', self::DEFAULT_API_SERVER);
+		$server = $this->config->getAppValue(self::APP_ID, 'api_server', self::DEFAULT_API_SERVER);
 		if (empty($server)) {
 			$server = self::DEFAULT_API_SERVER;
 		}
@@ -58,7 +60,7 @@ class Config {
 	}
 
 	public function getWebServer(): string {
-		$server = $this->config->getAppValue('esig', 'web_server', self::DEFAULT_WEB_SERVER);
+		$server = $this->config->getAppValue(self::APP_ID, 'web_server', self::DEFAULT_WEB_SERVER);
 		if (empty($server)) {
 			$server = self::DEFAULT_WEB_SERVER;
 		}
@@ -70,7 +72,7 @@ class Config {
 	}
 
 	public function getAccount(): array {
-		$account = $this->config->getAppValue('esig', 'account', '');
+		$account = $this->config->getAppValue(self::APP_ID, 'account', '');
 		if (!$account) {
 			$account = [
 				'id' => '',
@@ -83,15 +85,15 @@ class Config {
 	}
 
 	public function getSignedSaveMode(): string {
-		return $this->config->getAppValue('esig', 'signed_save_mode', self::DEFAULT_SAVE_MODE);
+		return $this->config->getAppValue(self::APP_ID, 'signed_save_mode', self::DEFAULT_SAVE_MODE);
 	}
 
 	public function insecureSkipVerify(): bool {
-		return $this->config->getAppValue('esig', 'insecure_skip_verify', 'false') === 'true';
+		return $this->config->getAppValue(self::APP_ID, 'insecure_skip_verify', 'false') === 'true';
 	}
 
 	public function isBackgroundVerifyEnabled(): bool {
-		return $this->config->getAppValue('esig', 'background_verify', 'true') === 'true';
+		return $this->config->getAppValue(self::APP_ID, 'background_verify', 'true') === 'true';
 	}
 
 	public function getSignatureImage(IUser $user): ?ISimpleFile {
@@ -143,7 +145,7 @@ class Config {
 	}
 
 	public function getDeleteMaxAge(): int {
-		$value = $this->config->getAppValue('esig', 'delete_max_age', '30');
+		$value = $this->config->getAppValue(self::APP_ID, 'delete_max_age', '30');
 		if ($value === null || $value === '') {
 			$value = '30';
 		}

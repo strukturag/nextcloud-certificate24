@@ -22,7 +22,7 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig;
+namespace OCA\Certificate24;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -52,7 +52,7 @@ class Metadata {
 		}
 
 		$update = $this->db->getQueryBuilder();
-		$update->update('esig_file_metadata')
+		$update->update('c24_file_metadata')
 			->set('updated', $update->createFunction('now()'))
 			->set('user_id', $update->createNamedParameter($user->getUID()))
 			->set('metadata', $update->createNamedParameter(!empty($metadata) ? json_encode($metadata) : null))
@@ -63,7 +63,7 @@ class Metadata {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->insert('esig_file_metadata')
+		$query->insert('c24_file_metadata')
 			->values(
 				[
 					'file_id' => $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT),
@@ -85,7 +85,7 @@ class Metadata {
 	public function getMetadata(IUser $user, File $file): ?array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_file_metadata')
+			->from('c24_file_metadata')
 			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
 		$result = $query->executeQuery();
 		$row = $result->fetch();
@@ -102,7 +102,7 @@ class Metadata {
 
 	public function deleteMetadata(File $file): void {
 		$query = $this->db->getQueryBuilder();
-		$query->delete('esig_file_metadata')
+		$query->delete('c24_file_metadata')
 			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
 		$query->executeStatement();
 	}

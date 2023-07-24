@@ -16,14 +16,14 @@ run_as() {
     fi
 }
 
-rsync -rlDog --delete --chown www-data:www-data /usr/src/nextcloud/custom_apps/esig/ /var/www/html/custom_apps/esig/
+rsync -rlDog --delete --chown www-data:www-data /usr/src/nextcloud/custom_apps/certificate24/ /var/www/html/custom_apps/certificate24/
 
 run_as 'php /var/www/html/occ config:system:set appstoreenabled --type boolean --value false'
 run_as 'php /var/www/html/occ config:system:set integrity.check.disabled --type boolean --value true'
 
 run_as 'php /var/www/html/occ upgrade'
-run_as 'php /var/www/html/occ app:enable esig'
-run_as 'php /var/www/html/occ app:update esig'
+run_as 'php /var/www/html/occ app:enable certificate24'
+run_as 'php /var/www/html/occ app:update certificate24'
 
 if [ -n "$NEXTCLOUD_ADMIN_DISPLAY_NAME" ]; then
     run_as 'php /var/www/html/occ user:setting --update-only "${NEXTCLOUD_ADMIN_USER}" settings display_name "${NEXTCLOUD_ADMIN_DISPLAY_NAME}"' || true
@@ -38,8 +38,8 @@ if [ -n "$OVERWRITECLIURL" ]; then
     run_as 'php /var/www/html/occ config:system:set overwrite.cli.url --value "${OVERWRITECLIURL}"'
 fi
 
-if [ -n "$ESIG_ACCOUNT_ID" ] && [ -n "$ESIG_ACCOUNT_SECRET" ]; then
-    run_as 'php /var/www/html/occ config:app:set esig account --value "{\"id\": \"${ESIG_ACCOUNT_ID}\",\"secret\": \"${ESIG_ACCOUNT_SECRET}\"}"'
+if [ -n "$CERTIFICATE24_ACCOUNT_ID" ] && [ -n "$CERTIFICATE24_ACCOUNT_SECRET" ]; then
+    run_as 'php /var/www/html/occ config:app:set certificate24 account --value "{\"id\": \"${CERTIFICATE24_ACCOUNT_ID}\",\"secret\": \"${CERTIFICATE24_ACCOUNT_SECRET}\"}"'
 fi
 
 UPDATE_THEME=

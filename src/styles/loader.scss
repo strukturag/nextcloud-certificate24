@@ -18,20 +18,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
 
-.icon-esig-sign {
-	background-image: var(--icon-esig-dark);
+.icon-certificate24-sign {
+	background-image: var(--icon-certificate24-dark);
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--icon-esig-dark: url(../../img/app.svg);
+		--icon-certificate24-dark: url(../../img/app.svg);
 	}
 }
 
 [data-themes*=dark] {
-	--icon-esig-dark: url(../../img/app.svg);
+	--icon-certificate24-dark: url(../../img/app.svg);
 }
 
 [data-themes*=light] {
-	--icon-esig-dark: url(../../img/app-dark.svg);
+	--icon-certificate24-dark: url(../../img/app-dark.svg);
 }

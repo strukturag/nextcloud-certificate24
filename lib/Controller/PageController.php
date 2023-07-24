@@ -22,10 +22,10 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Controller;
+namespace OCA\Certificate24\Controller;
 
-use OCA\Esig\AppInfo\Application;
-use OCA\Esig\Config;
+use OCA\Certificate24\AppInfo\Application;
+use OCA\Certificate24\Config;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -78,7 +78,7 @@ class PageController extends Controller {
 			$userSettings
 		);
 
-		$response = new TemplateResponse('esig', 'index', [
+		$response = new TemplateResponse(Application::APP_ID, 'index', [
 			'app' => Application::APP_ID,
 			'id-app-content' => '#app-content-vue',
 			'id-app-navigation' => '#app-navigation-vue',

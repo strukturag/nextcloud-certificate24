@@ -22,9 +22,9 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Settings;
+namespace OCA\Certificate24\Settings;
 
-use OCA\Esig\Config;
+use OCA\Certificate24\Config;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IURLGenerator;
@@ -54,7 +54,7 @@ class PersonalSettings implements ISettings {
 	 */
 	public function getForm(): TemplateResponse {
 		$settings = [
-			'signature-image-url' => $this->urlGenerator->linkToRouteAbsolute('esig.Download.downloadSignatureImage'),
+			'signature-image-url' => $this->urlGenerator->linkToRouteAbsolute(Config::APP_ID . '.Download.downloadSignatureImage'),
 		];
 		if ($this->config->getSignatureImage($this->currentUser)) {
 			$settings['has-signature-image'] = true;
@@ -69,16 +69,16 @@ class PersonalSettings implements ISettings {
 			);
 		}
 
-		Util::addScript('esig', 'esig-personal-settings');
+		Util::addScript(Config::APP_ID, Config::APP_ID . '-personal-settings');
 
-		return new TemplateResponse('esig', 'settings/personal-settings', [], '');
+		return new TemplateResponse(Config::APP_ID, 'settings/personal-settings', [], '');
 	}
 
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
 	public function getSection(): string {
-		return 'esig';
+		return Config::APP_ID;
 	}
 
 	/**

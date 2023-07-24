@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-06-13 09:50+0200\n"
-"PO-Revision-Date: 2023-06-13 09:50+0200\n"
+"POT-Creation-Date: 2023-07-24 14:23+0200\n"
+"PO-Revision-Date: 2023-07-24 14:19+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -18,19 +18,19 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.3\n"
 
-#: lib/Activity/Provider/Share.php:60 lib/Notification/Notifier.php:131
+#: lib/Activity/Provider/Share.php:61 lib/Notification/Notifier.php:131
 msgid "{user} requested your signature of \"{filename}\""
 msgstr "{user} hat Ihre Signatur von \"{filename}\" angefordert"
 
-#: lib/Activity/Provider/Sign.php:67
+#: lib/Activity/Provider/Sign.php:68
 msgid "You signed the file \"{filename}\""
 msgstr "Sie haben die Datei \"{filename}\" signiert"
 
-#: lib/Activity/Provider/Sign.php:69 lib/Notification/Notifier.php:171
+#: lib/Activity/Provider/Sign.php:70 lib/Notification/Notifier.php:171
 msgid "The file \"{filename}\" was signed by {user}"
 msgstr "Die Datei \"{filename}\" wurde von {user} signiert"
 
-#: lib/Activity/Provider/Sign.php:90 lib/Notification/Notifier.php:229
+#: lib/Activity/Provider/Sign.php:91 lib/Notification/Notifier.php:229
 msgid "The file \"{filename}\" was signed by all recipients"
 msgstr "Die Datei \"{filename}\" wurde von allen Empfängern signiert"
 
@@ -43,28 +43,32 @@ msgid "Other activities"
 msgstr "Andere Aktivitäten"
 
 #: lib/AppInfo/Application.php:67 lib/Notification/Notifier.php:80
-#: lib/Settings/Admin/Section.php:71 lib/Settings/Section.php:71
+#: lib/Settings/Admin/Section.php:72 lib/Settings/Section.php:72
 #: specialAppInfoFakeDummyForL10nScript.php:2
-msgid "eSignatures"
+msgid "Certificate24"
 msgstr ""
 
-#: lib/Dashboard/EsigWidget.php:61
+#: lib/Dashboard/Certificate24Widget.php:62
 msgid "Signature requests"
 msgstr "Signaturanfragen"
 
-#: lib/Dashboard/EsigWidget.php:90
+#: lib/Dashboard/Certificate24Widget.php:91
 msgid "More signature requests"
 msgstr "Mehr Signaturanfragen"
 
-#: lib/Manager.php:162
+#: lib/Manager.php:169
 #, php-format
 msgid "%1$s signed by %2$s on %3$s"
 msgstr "%1$s signiert von %2$s am %3$s"
 
-#: lib/Manager.php:168
+#: lib/Manager.php:175
 #, php-format
 msgid "%1$s signed on %2$s"
 msgstr "%1$s signiert am %2$s"
+
+#: specialAppInfoFakeDummyForL10nScript.php:3
+msgid "Certificate24 - Digital Document Signature"
+msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:22
 #: specialVueFakeDummyForL10nScript.js:2
@@ -100,11 +104,11 @@ msgstr "Account-Schlüssel"
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:53
 #: specialVueFakeDummyForL10nScript.js:16
 msgid ""
-"If you don't have an account on the esig service yet, please login to "
-"{server} and create an account with the following data:"
+"If you don't have an account at Certificate24 yet, please login to {server} "
+"and create an account with the following data:"
 msgstr ""
-"Wenn Sie noch keinen Account auf dem esig Server haben, loggen Sie sich "
-"bitte auf {server} ein und legen einen Account mit den folgenden Daten an:"
+"Wenn Sie noch keinen Account bei Certificate24 haben, loggen Sie sich bitte "
+"auf {server} ein und legen einen Account mit den folgenden Daten an:"
 
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:54
 #: specialVueFakeDummyForL10nScript.js:18
@@ -116,12 +120,12 @@ msgstr "Name: {theme}"
 msgid "Nextcloud Url: {url}"
 msgstr "Nextcloud-Url: {url}"
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:106
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:108
 #: specialVueFakeDummyForL10nScript.js:22
 msgid "Account settings saved"
 msgstr "Account-Einstellungen gespeichert"
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:111
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:113
 #: specialVueFakeDummyForL10nScript.js:24
 msgid "Could not save account settings"
 msgstr "Die Account-Einstellungen konnten nicht gespeichert werden"
@@ -806,8 +810,8 @@ msgstr "Ungültige E-Mail Adresse."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:583
 #: specialVueFakeDummyForL10nScript.js:322
-msgid "Error connecting to esig service."
-msgstr "Fehler beim Verbinden mit dem esig Service."
+msgid "Error connecting to Certificate24 service."
+msgstr "Fehler beim Verbinden mit Certificate24."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:586
 #: specialVueFakeDummyForL10nScript.js:324

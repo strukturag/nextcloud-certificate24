@@ -22,8 +22,9 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Activity\Provider;
+namespace OCA\Certificate24\Activity\Provider;
 
+use OCA\Certificate24\AppInfo\Application;
 use OCP\Activity\IEvent;
 use OCP\IL10N;
 
@@ -40,10 +41,10 @@ class Share extends Base {
 		$event = $this->preParse($event);
 
 		if ($event->getSubject() === 'share') {
-			$l = $this->languageFactory->get('esig', $language);
+			$l = $this->languageFactory->get(Application::APP_ID, $language);
 			$parameters = $event->getSubjectParameters();
 
-			$url = $this->urlGenerator->linkToRouteAbsolute('esig.Page.index') . '#incoming-' . $parameters['request_id'];
+			$url = $this->urlGenerator->linkToRouteAbsolute(Application::APP_ID . '.Page.index') . '#incoming-' . $parameters['request_id'];
 			$event->setLink($url);
 
 			$result = $this->parseShare($event, $l);

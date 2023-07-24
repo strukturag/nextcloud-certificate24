@@ -20,12 +20,12 @@
 -->
 
 <template>
-	<NcModal :aria-label="t('esig', 'Sign {filename}', {filename: request.filename})"
+	<NcModal :aria-label="t('certificate24', 'Sign {filename}', {filename: request.filename})"
 		size="large"
-		:title="t('esig', 'Sign {filename}', {filename: request.filename})"
+		:title="t('certificate24', 'Sign {filename}', {filename: request.filename})"
 		@close="$emit('close', arguments)">
 		<div class="modal__content">
-			<h1>{{ t('esig', 'Sign {filename}', {filename: request.filename}) }}</h1>
+			<h1>{{ t('certificate24', 'Sign {filename}', {filename: request.filename}) }}</h1>
 			<div class="document">
 				<PdfSigner :url="downloadSourceUrl(request)"
 					:download-url="downloadSourceUrl(request)"
@@ -41,14 +41,14 @@
 			<NcCheckboxRadioSwitch v-if="canEmbedImages"
 				:disabled="loading > 0"
 				:checked.sync="embedSignature">
-				{{ t('esig', 'Embed personal signature in fields') }}
+				{{ t('certificate24', 'Embed personal signature in fields') }}
 			</NcCheckboxRadioSwitch>
 			<div v-if="signature_fields && !canEmbedImages"
 				v-html="uploadMessage" />
 			<NcButton type="primary"
 				:disabled="submitDisabled"
 				@click="sign(request)">
-				{{ t('esig', 'Sign') }}
+				{{ t('certificate24', 'Sign') }}
 				<template #icon>
 					<NcLoadingIcon v-show="signLoading" :size="20" />
 					<FileSign v-show="!signLoading" :size="20" />
@@ -123,14 +123,14 @@ export default {
 				)
 		},
 		uploadMessage() {
-			return t('esig', 'Please upload a signature image in the <a href="{link}">personal settings</a> to sign this file.', {
-				link: generateUrl('/settings/user/esig'),
+			return t('certificate24', 'Please upload a signature image in the <a href="{link}">personal settings</a> to sign this file.', {
+				link: generateUrl('/settings/user/certificate24'),
 			})
 		},
 	},
 
 	beforeMount() {
-		this.settings = loadState('esig', 'user-settings')
+		this.settings = loadState('certificate24', 'user-settings')
 	},
 
 	mounted() {
@@ -145,18 +145,18 @@ export default {
 
 		pdfFailed(error) {
 			console.error('Could not load document', error)
-			showError(t('esig', 'Could not load document, please download and review manually.'))
+			showError(t('certificate24', 'Could not load document, please download and review manually.'))
 		},
 
 		renderError(idx, error) {
 			console.error('Could not render page', idx, error)
-			showError(t('esig', 'Could not render page {page}.', { page: idx }))
+			showError(t('certificate24', 'Could not render page {page}.', { page: idx }))
 		},
 
 		sign(request) {
 			OC.dialogs.confirm(
-				t('esig', 'Do you really want to sign this request?'),
-				t('esig', 'Sign request'),
+				t('certificate24', 'Do you really want to sign this request?'),
+				t('certificate24', 'Sign request'),
 				async function(decision) {
 					if (!decision) {
 						return
@@ -174,11 +174,11 @@ export default {
 							request.signed = data.signed
 							request.details_url = data.details_url
 						}
-						showSuccess(t('esig', 'Request signed.'))
+						showSuccess(t('certificate24', 'Request signed.'))
 						this.$emit('close', arguments)
 					} catch (error) {
 						console.error('Could not sign request', request, error)
-						showError(t('esig', 'Error while signing request.'))
+						showError(t('certificate24', 'Error while signing request.'))
 					} finally {
 						this.loading--
 						this.signLoading = false

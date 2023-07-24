@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
@@ -36,7 +36,7 @@ class Version1000Date20221115160640 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
 		$schema = $schemaClosure();
 
-		$this->ensureColumnIsNullable($schema, 'esig_requests', 'signed_save_mode');
+		$this->ensureColumnIsNullable($schema, 'c24_requests', 'signed_save_mode');
 		return $schema;
 	}
 

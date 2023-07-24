@@ -6,14 +6,14 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"OCA\\Esig\\": "lib/"
+			"OCA\\Certificate24\\": "lib/"
 		}
 	},
 	"config": {
 		"allow-plugins": {
 			"bamarni/composer-bin-plugin": true
 		},
-		"autoloader-suffix": "Esig",
+		"autoloader-suffix": "Certificate24",
 		"classmap-authoritative": true,
 		"optimize-autoloader": true,
 		"platform": {
@@ -52,10 +52,10 @@
 	},
 	"extra": {
 		"mozart": {
-			"dep_namespace": "OCA\\Esig\\Vendor\\",
+			"dep_namespace": "OCA\\Certificate24\\Vendor\\",
 			"dep_directory": "/lib/Vendor/",
 			"classmap_directory": "/lib/autoload/",
-			"classmap_prefix": "ESIG_",
+			"classmap_prefix": "CERTIFICATE24_",
 			"packages": [
 				"firebase/php-jwt",
 				"opis/json-schema"

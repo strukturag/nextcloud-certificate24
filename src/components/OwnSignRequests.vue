@@ -19,33 +19,33 @@
 -->
 
 <template>
-	<div id="signing_requests" class="esig section">
+	<div id="signing_requests" class="certificate24 section">
 		<h2>
-			{{ t('esig', 'Signing requests') }}
+			{{ t('certificate24', 'Signing requests') }}
 			<NcLoadingIcon v-if="loading" />
 		</h2>
 
 		<div v-if="!requests.length">
-			{{ t('esig', 'No requests created yet') }}
+			{{ t('certificate24', 'No requests created yet') }}
 		</div>
 		<div v-else>
 			<table>
 				<thead>
 					<tr>
 						<th>
-							{{ t('esig', 'File') }}
+							{{ t('certificate24', 'File') }}
 						</th>
 						<th>
-							{{ t('esig', 'Created') }}
+							{{ t('certificate24', 'Created') }}
 						</th>
 						<th>
-							{{ t('esig', 'Last signed') }}
+							{{ t('certificate24', 'Last signed') }}
 						</th>
 						<th>
-							{{ t('esig', 'Recipients') }}
+							{{ t('certificate24', 'Recipients') }}
 						</th>
 						<th>
-							{{ t('esig', 'Actions') }}
+							{{ t('certificate24', 'Actions') }}
 						</th>
 					</tr>
 				</thead>
@@ -72,7 +72,7 @@
 							<div class="grid">
 								<NcButton type="primary"
 									@click="deleteRequest(request)">
-									{{ t('esig', 'Delete') }}
+									{{ t('certificate24', 'Delete') }}
 									<template #icon>
 										<Delete :size="20" />
 									</template>
@@ -80,7 +80,7 @@
 								<NcButton v-if="request.signed"
 									type="primary"
 									:href="downloadSignedUrl(request)">
-									{{ t('esig', 'Download signed') }}
+									{{ t('certificate24', 'Download signed') }}
 									<template #icon>
 										<Download :size="20" />
 									</template>
@@ -88,7 +88,7 @@
 								<NcButton v-if="request.details_url"
 									type="primary"
 									@click="openWindow(request.details_url)">
-									{{ t('esig', 'Show details') }}
+									{{ t('certificate24', 'Show details') }}
 									<template #icon>
 										<OpenInNew :size="20" />
 									</template>
@@ -217,8 +217,8 @@ export default {
 
 		async deleteRequest(request) {
 			OC.dialogs.confirm(
-				t('esig', 'Do you really want to delete this signing request?'),
-				t('esig', 'Delete request'),
+				t('certificate24', 'Do you really want to delete this signing request?'),
+				t('certificate24', 'Delete request'),
 				async function(decision) {
 					if (!decision) {
 						return
@@ -230,10 +230,10 @@ export default {
 						this.requests = this.requests.filter((r) => {
 							return r.request_id !== request.request_id
 						})
-						showSuccess(t('esig', 'Request deleted.'))
+						showSuccess(t('certificate24', 'Request deleted.'))
 					} catch (error) {
 						console.error('Could not delete request', request, error)
-						showError(t('esig', 'Error while deleting request.'))
+						showError(t('certificate24', 'Error while deleting request.'))
 					} finally {
 						this.loading = false
 					}

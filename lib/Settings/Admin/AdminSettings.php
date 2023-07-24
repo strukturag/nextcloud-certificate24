@@ -22,10 +22,10 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Settings\Admin;
+namespace OCA\Certificate24\Settings\Admin;
 
-use OCA\Esig\Config;
-use OCA\Esig\Verify;
+use OCA\Certificate24\Config;
+use OCA\Certificate24\Verify;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IL10N;
@@ -84,16 +84,16 @@ class AdminSettings implements ISettings {
 			'unverified_count' => $this->verify->getUnverifiedCount(),
 		]);
 
-		Util::addScript('esig', 'esig-admin-settings');
+		Util::addScript(Config::APP_ID, Config::APP_ID . '-admin-settings');
 
-		return new TemplateResponse('esig', 'settings/admin-settings', [], '');
+		return new TemplateResponse(Config::APP_ID, 'settings/admin-settings', [], '');
 	}
 
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
 	public function getSection(): string {
-		return 'esig';
+		return 'certificate24';
 	}
 
 	/**

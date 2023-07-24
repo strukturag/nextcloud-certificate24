@@ -22,8 +22,9 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Dashboard;
+namespace OCA\Certificate24\Dashboard;
 
+use OCA\Certificate24\AppInfo\Application;
 use OCP\Dashboard\IAPIWidget;
 use OCP\Dashboard\IButtonWidget;
 use OCP\Dashboard\IIconWidget;
@@ -34,7 +35,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Util;
 
-class EsigWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget {
+class Certificate24Widget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget {
 
 	private IURLGenerator $url;
 	private IL10N $l10n;
@@ -51,7 +52,7 @@ class EsigWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	 * @inheritDoc
 	 */
 	public function getId(): string {
-		return 'esig';
+		return Application::APP_ID;
 	}
 
 	/**
@@ -72,7 +73,7 @@ class EsigWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	 * @inheritDoc
 	 */
 	public function getIconClass(): string {
-		return 'dashboard-esig-icon';
+		return 'dashboard-' . Application::APP_ID . '-icon';
 	}
 
 	public function getWidgetOptions(): WidgetOptions {
@@ -86,7 +87,7 @@ class EsigWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		$buttons = [];
 		$buttons[] = new WidgetButton(
 			WidgetButton::TYPE_MORE,
-			$this->url->linkToRouteAbsolute('esig.Page.index'),
+			$this->url->linkToRouteAbsolute(Application::APP_ID . '.Page.index'),
 			$this->l10n->t('More signature requests')
 		);
 		return $buttons;
@@ -96,22 +97,22 @@ class EsigWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	 * @inheritDoc
 	 */
 	public function getIconUrl(): string {
-		return $this->url->getAbsoluteURL($this->url->imagePath('esig', 'app-dark.svg'));
+		return $this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg'));
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getUrl(): ?string {
-		return $this->url->linkToRouteAbsolute('esig.Page.index');
+		return $this->url->linkToRouteAbsolute(Application::APP_ID . '.Page.index');
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function load(): void {
-		Util::addStyle('esig', 'icons');
-		Util::addScript('esig', 'esig-dashboard');
+		Util::addStyle(Application::APP_ID, 'icons');
+		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboard');
 	}
 
 	public function getItems(string $userId, ?string $since = null, int $limit = 7): array {

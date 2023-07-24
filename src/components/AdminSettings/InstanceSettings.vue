@@ -19,38 +19,38 @@
 -->
 
 <template>
-	<NcSettingsSection :title="t('esig', 'Instance settings')"
-		:description="t('esig', 'Settings of the Nextcloud instance can be configured here.')">
+	<NcSettingsSection :title="t('certificate24', 'Instance settings')"
+		:description="t('certificate24', 'Settings of the Nextcloud instance can be configured here.')">
 		<div>
 			<NcCheckboxRadioSwitch :checked.sync="settings.insecure_skip_verify"
 				type="switch"
 				@update:checked="debounceUpdateInsecureVerify">
-				{{ t('esig', 'Skip verification of certificates when communicating with the backend service.') }}
-				{{ t('esig', 'This is potentially insecure and should only be enabled during development (if necessary).') }}
+				{{ t('certificate24', 'Skip verification of certificates when communicating with the backend service.') }}
+				{{ t('certificate24', 'This is potentially insecure and should only be enabled during development (if necessary).') }}
 			</NcCheckboxRadioSwitch>
 		</div>
 		<div>
 			<NcCheckboxRadioSwitch :checked.sync="settings.background_verify"
 				type="switch"
 				@update:checked="debounceUpdateBackgroundVerify">
-				{{ t('esig', 'Verify document signatures in the background.') }}
+				{{ t('certificate24', 'Verify document signatures in the background.') }}
 			</NcCheckboxRadioSwitch>
 			<div v-if="settings.last_verified">
-				{{ t('esig', 'Last verification: {timestamp}', {
+				{{ t('certificate24', 'Last verification: {timestamp}', {
 					timestamp: formatDate(settings.last_verified),
 				}) }}
 			</div>
 			<div v-else>
-				{{ t('esig', 'Last verification: none yet') }}
+				{{ t('certificate24', 'Last verification: none yet') }}
 			</div>
 			<div v-if="settings.unverified_count !== null">
-				{{ t('esig', 'Number of pending verifications: {count}', {
+				{{ t('certificate24', 'Number of pending verifications: {count}', {
 					count: settings.unverified_count,
 				}) }}
 			</div>
 			<NcButton :disabled="clearing"
 				@click="clearVerification">
-				{{ t('esig', 'Clear verification cache') }}
+				{{ t('certificate24', 'Clear verification cache') }}
 			</NcButton>
 		</div>
 	</NcSettingsSection>
@@ -85,7 +85,7 @@ export default {
 	},
 
 	beforeMount() {
-		this.settings = loadState('esig', 'settings')
+		this.settings = loadState('certificate24', 'settings')
 	},
 
 	methods: {
@@ -97,13 +97,13 @@ export default {
 			this.loading = true
 
 			const self = this
-			OCP.AppConfig.setValue('esig', 'insecure_skip_verify', this.settings.insecure_skip_verify, {
+			OCP.AppConfig.setValue('certificate24', 'insecure_skip_verify', this.settings.insecure_skip_verify, {
 				success() {
-					showSuccess(t('esig', 'Settings saved'))
+					showSuccess(t('certificate24', 'Settings saved'))
 					self.loading = false
 				},
 				error() {
-					showError(t('esig', 'Could not save settings'))
+					showError(t('certificate24', 'Could not save settings'))
 					self.loading = false
 				},
 			})
@@ -117,13 +117,13 @@ export default {
 			this.loading = true
 
 			const self = this
-			OCP.AppConfig.setValue('esig', 'background_verify', this.settings.background_verify, {
+			OCP.AppConfig.setValue('certificate24', 'background_verify', this.settings.background_verify, {
 				success() {
-					showSuccess(t('esig', 'Settings saved'))
+					showSuccess(t('certificate24', 'Settings saved'))
 					self.loading = false
 				},
 				error() {
-					showError(t('esig', 'Could not save settings'))
+					showError(t('certificate24', 'Could not save settings'))
 					self.loading = false
 				},
 			})
@@ -135,8 +135,8 @@ export default {
 
 		clearVerification() {
 			OC.dialogs.confirm(
-				t('esig', 'Do you really want to delete the verification cache? This will require that all files need to be verified again.'),
-				t('esig', 'Clear verification cache'),
+				t('certificate24', 'Do you really want to delete the verification cache? This will require that all files need to be verified again.'),
+				t('certificate24', 'Clear verification cache'),
 				async function(decision) {
 					if (!decision) {
 						return
@@ -150,10 +150,10 @@ export default {
 						if (unverifiedCount !== null) {
 							this.settings.unverified_count = unverifiedCount
 						}
-						showSuccess(t('esig', 'Verification cache cleared.'))
+						showSuccess(t('certificate24', 'Verification cache cleared.'))
 					} catch (error) {
 						console.error('Could not clear verification cache', error)
-						showError(t('esig', 'Error while clearing verification cache.'))
+						showError(t('certificate24', 'Error while clearing verification cache.'))
 					} finally {
 						this.clearing = false
 					}

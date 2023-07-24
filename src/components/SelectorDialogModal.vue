@@ -19,12 +19,12 @@
 -->
 
 <template>
-	<NcModal :aria-label="t('esig', 'Select signature position')"
-		:title="t('esig', 'Select signature position')"
+	<NcModal :aria-label="t('certificate24', 'Select signature position')"
+		:title="t('certificate24', 'Select signature position')"
 		size="large"
 		@close="closeModal">
 		<div class="modal__content">
-			<h1>{{ t('esig', 'Select signature position') }}</h1>
+			<h1>{{ t('certificate24', 'Select signature position') }}</h1>
 			<div class="document">
 				<PdfSelector :width="800"
 					:height="1132"
@@ -39,7 +39,7 @@
 			<NcButton type="primary"
 				:disabled="loading > 0"
 				@click="savePositions()">
-				{{ t('esig', 'Save') }}
+				{{ t('certificate24', 'Save') }}
 				<template #icon>
 					<Check :size="20" />
 				</template>

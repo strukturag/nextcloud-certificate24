@@ -22,7 +22,7 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig;
+namespace OCA\Certificate24;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -55,7 +55,7 @@ class Verify {
 
 		$signatures = json_encode($signatures);
 		$update = $this->db->getQueryBuilder();
-		$update->update('esig_file_signatures')
+		$update->update('c24_file_signatures')
 			->set('updated', $update->createFunction('now()'))
 			->set('signatures', $update->createNamedParameter($signatures))
 			->where($update->expr()->eq('file_id', $update->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
@@ -65,7 +65,7 @@ class Verify {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->insert('esig_file_signatures')
+		$query->insert('c24_file_signatures')
 			->values(
 				[
 					'file_id' => $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT),
@@ -86,7 +86,7 @@ class Verify {
 	public function getFileSignatures(File $file): ?array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('esig_file_signatures')
+			->from('c24_file_signatures')
 			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
 		$result = $query->executeQuery();
 		$row = $result->fetch();
@@ -100,21 +100,21 @@ class Verify {
 
 	public function deleteFileSignatures(File $file): void {
 		$query = $this->db->getQueryBuilder();
-		$query->delete('esig_file_signatures')
+		$query->delete('c24_file_signatures')
 			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
 		$query->executeStatement();
 	}
 
 	public function deleteAllFileSignatures(): void {
 		$query = $this->db->getQueryBuilder();
-		$query->delete('esig_file_signatures');
+		$query->delete('c24_file_signatures');
 		$query->executeStatement();
 	}
 
 	public function getLastVerified(): ?\DateTime {
 		$query = $this->db->getQueryBuilder();
 		$query->selectAlias($query->func()->max('updated'), 'last')
-			->from('esig_file_signatures');
+			->from('c24_file_signatures');
 		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
@@ -131,7 +131,7 @@ class Verify {
 		$query = $this->db->getQueryBuilder();
 		$query->selectAlias($query->func()->count('*'), 'count')
 			->from('filecache', 'fc')
-			->leftJoin('fc', 'esig_file_signatures', 'fs', $query->expr()->eq('fc.fileid', 'fs.file_id'))
+			->leftJoin('fc', 'c24_file_signatures', 'fs', $query->expr()->eq('fc.fileid', 'fs.file_id'))
 			->where($query->expr()->isNull('fs.file_id'))
 			->andWhere($query->expr()->eq('mimetype', $query->expr()->literal($pdfMimeTypeId)))
 			->andWhere($query->expr()->like('path', $query->expr()->literal('files/%')));

@@ -22,17 +22,17 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\AppInfo;
+namespace OCA\Certificate24\AppInfo;
 
-use OCA\Esig\Activity\Listener as ActivityListener;
-use OCA\Esig\Capabilities;
-use OCA\Esig\CSPSetter;
-use OCA\Esig\Dashboard\EsigWidget;
-use OCA\Esig\DeleteListener;
-use OCA\Esig\FilesLoader;
-use OCA\Esig\Manager;
-use OCA\Esig\Notification\Listener as NotificationListener;
-use OCA\Esig\Notification\Notifier;
+use OCA\Certificate24\Activity\Listener as ActivityListener;
+use OCA\Certificate24\Capabilities;
+use OCA\Certificate24\CSPSetter;
+use OCA\Certificate24\Dashboard\Certificate24Widget;
+use OCA\Certificate24\DeleteListener;
+use OCA\Certificate24\FilesLoader;
+use OCA\Certificate24\Manager;
+use OCA\Certificate24\Notification\Listener as NotificationListener;
+use OCA\Certificate24\Notification\Notifier;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -43,7 +43,7 @@ use OCP\IUser;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 
 class Application extends App implements IBootstrap {
-	public const APP_ID = 'esig';
+	public const APP_ID = 'certificate24';
 
 	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_ID, $urlParams);
@@ -53,7 +53,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPSetter::class);
 		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesLoader::class);
 		$context->registerCapability(Capabilities::class);
-		$context->registerDashboardWidget(EsigWidget::class);
+		$context->registerDashboardWidget(Certificate24Widget::class);
 	}
 
 	public function boot(IBootContext $context): void {
@@ -64,8 +64,8 @@ class Application extends App implements IBootstrap {
 			$user = $server->getUserSession()->getUser();
 			return [
 				'id' => self::APP_ID,
-				'name' => $server->getL10N(self::APP_ID)->t('eSignatures'),
-				'href' => $server->getURLGenerator()->linkToRouteAbsolute('esig.Page.index'),
+				'name' => $server->getL10N(self::APP_ID)->t('Certificate24'),
+				'href' => $server->getURLGenerator()->linkToRouteAbsolute(self::APP_ID . '.Page.index'),
 				'icon' => $server->getURLGenerator()->imagePath(self::APP_ID, 'app.svg'),
 				'order' => 3,
 				'type' => 'link',

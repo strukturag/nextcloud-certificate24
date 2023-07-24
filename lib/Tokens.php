@@ -22,11 +22,11 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig;
+namespace OCA\Certificate24;
 
 use DomainException;
-use OCA\Esig\Vendor\Firebase\JWT\JWT;
-use OCA\Esig\Vendor\Firebase\JWT\Key;
+use OCA\Certificate24\Vendor\Firebase\JWT\JWT;
+use OCA\Certificate24\Vendor\Firebase\JWT\Key;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;

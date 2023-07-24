@@ -22,11 +22,11 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig;
+namespace OCA\Certificate24;
 
-use OCA\Esig\Vendor\Opis\JsonSchema\Errors\ErrorFormatter;
-use OCA\Esig\Vendor\Opis\JsonSchema\Helper;
-use OCA\Esig\Vendor\Opis\JsonSchema\Validator as JsonValidator;
+use OCA\Certificate24\Vendor\Opis\JsonSchema\Errors\ErrorFormatter;
+use OCA\Certificate24\Vendor\Opis\JsonSchema\Helper;
+use OCA\Certificate24\Vendor\Opis\JsonSchema\Validator as JsonValidator;
 
 class Validator {
 	private function validateWithSchema(string $filename, ?array $data): ?array {

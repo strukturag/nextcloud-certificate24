@@ -19,35 +19,35 @@
 -->
 
 <template>
-	<NcSettingsSection :title="t('esig', 'Signature properties')"
-		:description="t('esig', 'Additional properties for signature processing can be configured here.')">
+	<NcSettingsSection :title="t('certificate24', 'Signature properties')"
+		:description="t('certificate24', 'Additional properties for signature processing can be configured here.')">
 		<div>
-			<h4>{{ t('esig', 'Default action to perform when a file was signed successfully.') }}</h4>
+			<h4>{{ t('certificate24', 'Default action to perform when a file was signed successfully.') }}</h4>
 			<NcCheckboxRadioSwitch :checked.sync="settings.signed_save_mode"
 				value="new"
 				name="signed_save_mode"
 				type="radio"
 				@update:checked="debounceUpdateMode">
-				{{ t('esig', 'Create new signed file next to original file') }}
+				{{ t('certificate24', 'Create new signed file next to original file') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch :checked.sync="settings.signed_save_mode"
 				value="replace"
 				name="signed_save_mode"
 				type="radio"
 				@update:checked="debounceUpdateMode">
-				{{ t('esig', 'Replace original file with signed file') }}
+				{{ t('certificate24', 'Replace original file with signed file') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch :checked.sync="settings.signed_save_mode"
 				value="none"
 				name="signed_save_mode"
 				type="radio"
 				@update:checked="debounceUpdateMode">
-				{{ t('esig', 'Don\'t save signed file automatically') }}
+				{{ t('certificate24', 'Don\'t save signed file automatically') }}
 			</NcCheckboxRadioSwitch>
 		</div>
 		<div>
 			<NcTextField :value.sync="settings.delete_max_age"
-				:label="t('esig', 'Number of days after which fully signed signature requests are deleted.')"
+				:label="t('certificate24', 'Number of days after which fully signed signature requests are deleted.')"
 				:label-visible="true"
 				:error="!!errors.delete_max_age"
 				:helper-text="errors.delete_max_age"
@@ -86,7 +86,7 @@ export default {
 	},
 
 	beforeMount() {
-		this.settings = loadState('esig', 'settings')
+		this.settings = loadState('certificate24', 'settings')
 		if (this.settings.delete_max_age) {
 			this.settings.delete_max_age = String(this.settings.delete_max_age)
 		}
@@ -101,13 +101,13 @@ export default {
 			this.loading = true
 
 			const self = this
-			OCP.AppConfig.setValue('esig', 'signed_save_mode', this.settings.signed_save_mode, {
+			OCP.AppConfig.setValue('certificate24', 'signed_save_mode', this.settings.signed_save_mode, {
 				success() {
-					showSuccess(t('esig', 'Settings saved'))
+					showSuccess(t('certificate24', 'Settings saved'))
 					self.loading = false
 				},
 				error() {
-					showError(t('esig', 'Could not save settings'))
+					showError(t('certificate24', 'Could not save settings'))
 					self.loading = false
 				},
 			})
@@ -121,23 +121,23 @@ export default {
 			this.$delete(this.errors, 'delete_max_age')
 			const val = this.settings.delete_max_age
 			if (!val) {
-				this.$set(this.errors, 'delete_max_age', t('esig', 'The value may not be empty.'))
+				this.$set(this.errors, 'delete_max_age', t('certificate24', 'The value may not be empty.'))
 				return
 			} else if (val < 0) {
-				this.$set(this.errors, 'delete_max_age', t('esig', 'The value may not be negative.'))
+				this.$set(this.errors, 'delete_max_age', t('certificate24', 'The value may not be negative.'))
 				return
 			}
 
 			this.loading = true
 
 			const self = this
-			OCP.AppConfig.setValue('esig', 'delete_max_age', this.settings.delete_max_age, {
+			OCP.AppConfig.setValue('certificate24', 'delete_max_age', this.settings.delete_max_age, {
 				success() {
-					showSuccess(t('esig', 'Settings saved'))
+					showSuccess(t('certificate24', 'Settings saved'))
 					self.loading = false
 				},
 				error() {
-					showError(t('esig', 'Could not save settings'))
+					showError(t('certificate24', 'Could not save settings'))
 					self.loading = false
 				},
 			})

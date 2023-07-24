@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
@@ -35,10 +35,11 @@ class Version1000Date20221117161043 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 */
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
+		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('esig_file_metadata')) {
-			$table = $schema->createTable('esig_file_metadata');
+		if (!$schema->hasTable('c24_file_metadata')) {
+			$table = $schema->createTable('c24_file_metadata');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -61,7 +62,7 @@ class Version1000Date20221117161043 extends SimpleMigrationStep {
 				'notnull' => true,
 			]);
 			$table->setPrimaryKey(['id']);
-			$table->addUniqueIndex(['file_id'], 'efm_file_id');
+			$table->addUniqueIndex(['file_id']);
 		}
 		return $schema;
 	}

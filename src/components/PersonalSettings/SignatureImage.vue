@@ -19,8 +19,8 @@
 -->
 
 <template>
-	<div id="signature_image" class="esig section">
-		<h2>{{ t('esig', 'Signature Image') }}</h2>
+	<div id="signature_image" class="certificate24 section">
+		<h2>{{ t('certificate24', 'Signature Image') }}</h2>
 
 		<div v-if="settings['has-signature-image']">
 			<div class="signature-image">
@@ -33,18 +33,18 @@
 					<template #icon>
 						<Close :size="20" />
 					</template>
-					{{ t('esig', 'Reset') }}
+					{{ t('certificate24', 'Reset') }}
 				</NcButton>
 			</div>
 		</div>
 
 		<div>
-			<div>{{ t('esig', 'Upload signature image') }}</div>
+			<div>{{ t('certificate24', 'Upload signature image') }}</div>
 			<input ref="image"
 				type="file"
 				accept="image/png, image/jpeg"
 				:disabled="loading"
-				:aria-label="t('esig', 'Signature image')"
+				:aria-label="t('certificate24', 'Signature image')"
 				@change="updateFiles">
 		</div>
 		<div class="buttons">
@@ -54,11 +54,11 @@
 				<template #icon>
 					<Upload :size="20" />
 				</template>
-				{{ t('esig', 'Upload') }}
+				{{ t('certificate24', 'Upload') }}
 			</NcButton>
 		</div>
 		<div>
-			<div>{{ t('esig', 'Draw written signature') }}</div>
+			<div>{{ t('certificate24', 'Draw written signature') }}</div>
 			<div class="drawer">
 				<SignatureDrawer ref="drawer"
 					:width="600"
@@ -73,7 +73,7 @@
 				<template #icon>
 					<ContentSave :size="20" />
 				</template>
-				{{ t('esig', 'Save') }}
+				{{ t('certificate24', 'Save') }}
 			</NcButton>
 			<NcButton :disabled="loading || !drawImage"
 				type="secondary"
@@ -81,7 +81,7 @@
 				<template #icon>
 					<Close :size="20" />
 				</template>
-				{{ t('esig', 'Clear') }}
+				{{ t('certificate24', 'Clear') }}
 			</NcButton>
 		</div>
 	</div>
@@ -132,7 +132,7 @@ export default {
 	},
 
 	beforeMount() {
-		this.settings = loadState('esig', 'settings')
+		this.settings = loadState('certificate24', 'settings')
 	},
 
 	methods: {
@@ -156,7 +156,7 @@ export default {
 		async uploadImage() {
 			const files = this.$refs.image.files
 			if (!files || !files.length) {
-				showError(t('esig', 'Please select a file first.'))
+				showError(t('certificate24', 'Please select a file first.'))
 				return
 			}
 
@@ -165,14 +165,14 @@ export default {
 				await this.loadFile(file)
 			} catch (error) {
 				console.error('Could not open file', file, error)
-				showError(t('esig', 'Could not open file.'))
+				showError(t('certificate24', 'Could not open file.'))
 				return
 			}
 
 			this.loading = true
 			try {
 				await uploadSignatureImage(file)
-				showSuccess(t('esig', 'Signature image uploaded.'))
+				showSuccess(t('certificate24', 'Signature image uploaded.'))
 				this.ts = (new Date()).getTime()
 				this.settings['has-signature-image'] = true
 				this.$refs.image.value = ''
@@ -182,10 +182,10 @@ export default {
 				console.error('Could not upload signature image', error)
 				switch (error.response?.status) {
 				case 413:
-					showError(t('esig', 'The uploaded image is too large.'))
+					showError(t('certificate24', 'The uploaded image is too large.'))
 					break
 				default:
-					showError(t('esig', 'Error while uploading signature image.'))
+					showError(t('certificate24', 'Error while uploading signature image.'))
 				}
 			} finally {
 				this.loading = false
@@ -205,7 +205,7 @@ export default {
 			this.loading = true
 			try {
 				await uploadSignatureImage(this.drawImage)
-				showSuccess(t('esig', 'Signature image uploaded.'))
+				showSuccess(t('certificate24', 'Signature image uploaded.'))
 				this.ts = (new Date()).getTime()
 				this.settings['has-signature-image'] = true
 				this.clearDrawImage()
@@ -214,10 +214,10 @@ export default {
 				console.error('Could not upload signature image', error)
 				switch (error.response?.status) {
 				case 413:
-					showError(t('esig', 'The uploaded image is too large.'))
+					showError(t('certificate24', 'The uploaded image is too large.'))
 					break
 				default:
-					showError(t('esig', 'Error while uploading signature image.'))
+					showError(t('certificate24', 'Error while uploading signature image.'))
 				}
 			} finally {
 				this.loading = false
@@ -226,8 +226,8 @@ export default {
 
 		resetImage() {
 			OC.dialogs.confirm(
-				t('esig', 'Do you really want to reset the signature image?'),
-				t('esig', 'Reset signature image'),
+				t('certificate24', 'Do you really want to reset the signature image?'),
+				t('certificate24', 'Reset signature image'),
 				async (decision) => {
 					if (!decision) {
 						return
@@ -236,11 +236,11 @@ export default {
 					this.loading = true
 					try {
 						await resetSignatureImage()
-						showSuccess(t('esig', 'Signature image reset.'))
+						showSuccess(t('certificate24', 'Signature image reset.'))
 						this.settings['has-signature-image'] = false
 					} catch (error) {
 						console.error('Could not reset signature image', error)
-						showError(t('esig', 'Error while resetting signature image.'))
+						showError(t('certificate24', 'Error while resetting signature image.'))
 					} finally {
 						this.loading = false
 					}

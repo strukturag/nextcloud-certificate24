@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Migration;
+namespace OCA\Certificate24\Migration;
 
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
@@ -35,15 +35,16 @@ class Version1000Date20230511152148 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 */
 	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
+		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		$table = $schema->getTable('esig_requests');
+		$table = $schema->getTable('c24_requests');
 		if (!$table->hasColumn('recipient_display_name')) {
 			$table->addColumn('recipient_display_name', Types::TEXT, [
 				'notnull' => false,
 			]);
 		}
-		$table = $schema->getTable('esig_recipients');
+		$table = $schema->getTable('c24_recipients');
 		if (!$table->hasColumn('display_name')) {
 			$table->addColumn('display_name', Types::TEXT, [
 				'notnull' => false,

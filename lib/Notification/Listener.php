@@ -22,11 +22,11 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Notification;
+namespace OCA\Certificate24\Notification;
 
-use OCA\Esig\AppInfo\Application;
-use OCA\Esig\Events\ShareEvent;
-use OCA\Esig\Events\SignEvent;
+use OCA\Certificate24\AppInfo\Application;
+use OCA\Certificate24\Events\ShareEvent;
+use OCA\Certificate24\Events\SignEvent;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;

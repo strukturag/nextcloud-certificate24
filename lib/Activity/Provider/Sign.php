@@ -22,8 +22,9 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Activity\Provider;
+namespace OCA\Certificate24\Activity\Provider;
 
+use OCA\Certificate24\AppInfo\Application;
 use OCP\Activity\IEvent;
 use OCP\IL10N;
 
@@ -40,13 +41,13 @@ class Sign extends Base {
 		$event = $this->preParse($event);
 
 		if ($event->getSubject() === 'sign') {
-			$l = $this->languageFactory->get('esig', $language);
+			$l = $this->languageFactory->get(Application::APP_ID, $language);
 			$parameters = $event->getSubjectParameters();
 
 			$result = $this->parseSign($event, $l);
 			$this->setSubjects($event, $result['subject'], $result['params']);
 		} elseif ($event->getSubject() === 'last_signature') {
-			$l = $this->languageFactory->get('esig', $language);
+			$l = $this->languageFactory->get(Application::APP_ID, $language);
 			$parameters = $event->getSubjectParameters();
 
 			$result = $this->parseLastSignature($event, $l);

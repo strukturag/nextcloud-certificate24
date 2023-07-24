@@ -21,17 +21,17 @@
 <template>
 	<div>
 		<NcModal v-if="showDialog"
-			:aria-label="t('esig', 'Request signature')"
-			:title="t('esig', 'Request signature')"
+			:aria-label="t('certificate24', 'Request signature')"
+			:title="t('certificate24', 'Request signature')"
 			@close="closeModal">
 			<div ref="content" class="modal__content">
-				<h1>{{ t('esig', 'Request signature') }}</h1>
+				<h1>{{ t('certificate24', 'Request signature') }}</h1>
 				<div v-if="error" class="error">
 					{{ error }}
 				</div>
 				<div v-if="recipients.length > 0"
 					class="recipients_section">
-					<h2>{{ t('esig', 'Recipients') }}</h2>
+					<h2>{{ t('certificate24', 'Recipients') }}</h2>
 					<ul>
 						<NcListItemIcon v-for="recipient in recipients"
 							:key="recipient.type + '-' + recipient.value"
@@ -46,7 +46,7 @@
 									<template #icon>
 										<Delete :size="20" />
 									</template>
-									{{ t('esig', 'Delete recipient') }}
+									{{ t('certificate24', 'Delete recipient') }}
 								</NcActionButton>
 							</NcActions>
 						</NcListItemIcon>
@@ -58,7 +58,7 @@
 						value="user"
 						name="recipient_type"
 						type="radio">
-						{{ t('esig', 'Add user') }}
+						{{ t('certificate24', 'Add user') }}
 					</NcCheckboxRadioSwitch>
 					<div v-if="userSelected" class="search">
 						<NcTextField ref="userField"
@@ -66,7 +66,7 @@
 							:disabled="shareLoading"
 							:value.sync="user"
 							type="text"
-							:placeholder="t('esig', 'Search users')"
+							:placeholder="t('certificate24', 'Search users')"
 							@input="handleUserInput">
 							<Magnify :size="16" />
 						</NcTextField>
@@ -95,7 +95,7 @@
 						value="email"
 						name="recipient_type"
 						type="radio">
-						{{ t('esig', 'Add email address') }}
+						{{ t('certificate24', 'Add email address') }}
 					</NcCheckboxRadioSwitch>
 					<div v-if="!userSelected" class="search">
 						<NcTextField ref="emailField"
@@ -103,7 +103,7 @@
 							:disabled="shareLoading"
 							:value.sync="email"
 							type="text"
-							:placeholder="t('esig', 'E-mail address')"
+							:placeholder="t('certificate24', 'E-mail address')"
 							@input="handleEmailInput">
 							<Magnify :size="16" />
 						</NcTextField>
@@ -128,22 +128,22 @@
 				</div>
 				<div>
 					<label>
-						{{ t('esig', 'Action to perform when the file was signed successfully:') }}
+						{{ t('certificate24', 'Action to perform when the file was signed successfully:') }}
 						<select id="signed_save_mode" v-model="signed_save_mode">
 							<option value="new">
-								{{ t('esig', 'Create new signed file next to original file') }}
+								{{ t('certificate24', 'Create new signed file next to original file') }}
 							</option>
 							<option value="replace">
-								{{ t('esig', 'Replace original file with signed file') }}
+								{{ t('certificate24', 'Replace original file with signed file') }}
 							</option>
 							<option value="none">
-								{{ t('esig', 'Don\'t save signed file automatically') }}
+								{{ t('certificate24', 'Don\'t save signed file automatically') }}
 							</option>
 						</select>
 					</label>
 				</div>
 				<div v-if="signaturePositions && signaturePositions.length">
-					{{ n('esig', '%n signature field positioned', '%n signature fields positioned', signaturePositions.length) }}
+					{{ n('certificate24', '%n signature field positioned', '%n signature fields positioned', signaturePositions.length) }}
 				</div>
 				<div class="buttons">
 					<NcButton v-if="fileModel && fileModel.canDownload()"
@@ -154,7 +154,7 @@
 							<NcLoadingIcon v-show="selectModalLoading" :size="24" />
 							<FileSign v-show="!selectModalLoading" />
 						</template>
-						{{ t('esig', 'Select signature position') }}
+						{{ t('certificate24', 'Select signature position') }}
 					</NcButton>
 					<NcButton type="primary"
 						:disabled="shareLoading || !recipients.length"
@@ -163,7 +163,7 @@
 							<NcLoadingIcon v-show="shareLoading" :size="24" />
 							<FileSign v-show="!shareLoading" />
 						</template>
-						{{ t('esig', 'Request signature') }}
+						{{ t('certificate24', 'Request signature') }}
 					</NcButton>
 				</div>
 			</div>
@@ -257,7 +257,7 @@ export default {
 			return this.email !== ''
 		},
 		cancelSearchLabel() {
-			return t('esig', 'Cancel search')
+			return t('certificate24', 'Cancel search')
 		},
 	},
 
@@ -275,7 +275,7 @@ export default {
 	},
 
 	beforeMount() {
-		this.settings = loadState('esig', 'public-settings')
+		this.settings = loadState('certificate24', 'public-settings')
 	},
 
 	created() {
@@ -340,7 +340,7 @@ export default {
 				}
 			} catch (exception) {
 				console.error(exception)
-				showError(t('esig', 'An error occurred while performing the search'))
+				showError(t('certificate24', 'An error occurred while performing the search'))
 			}
 		},
 
@@ -495,12 +495,12 @@ export default {
 
 		async requestSignature() {
 			if (!this.fileModel) {
-				showError(t('esig', 'No file selected.'))
+				showError(t('certificate24', 'No file selected.'))
 				return
 			}
 
 			if (!this.recipients.length) {
-				this.renderError(t('esig', 'Please add at least one recipient first.'))
+				this.renderError(t('certificate24', 'Please add at least one recipient first.'))
 				return
 			}
 
@@ -520,7 +520,7 @@ export default {
 			try {
 				let signaturePositions = this.signaturePositions
 				if (!signaturePositions || !signaturePositions.length) {
-					this.renderError(t('esig', 'Please create signature fields first.'))
+					this.renderError(t('certificate24', 'Please create signature fields first.'))
 					return
 				}
 
@@ -549,10 +549,10 @@ export default {
 						}
 					})
 					if (missingIndexes) {
-						this.renderError(t('esig', 'At least one field has no recipient assigned.'))
+						this.renderError(t('certificate24', 'At least one field has no recipient assigned.'))
 						return
 					} else if (required.length) {
-						this.renderError(t('esig', 'At least one recipient has no field assigned.'))
+						this.renderError(t('certificate24', 'At least one recipient has no field assigned.'))
 						return
 					}
 				}
@@ -565,7 +565,7 @@ export default {
 				}
 				await shareFile(this.fileModel.id, recipients, options, metadata)
 				this.closeModal()
-				showSuccess(t('esig', 'Requested signature.'))
+				showSuccess(t('certificate24', 'Requested signature.'))
 			} catch (error) {
 				this.shareLoading = false
 				console.error('Could not request signature', this.fileModel, error)
@@ -574,16 +574,16 @@ export default {
 				let errorMessage = ''
 				switch (data.error) {
 				case 'unknown_user':
-					errorMessage = t('esig', 'Unknown user.')
+					errorMessage = t('certificate24', 'Unknown user.')
 					break
 				case 'invalid_email':
-					errorMessage = t('esig', 'Invalid email address.')
+					errorMessage = t('certificate24', 'Invalid email address.')
 					break
 				case 'error_connecting':
-					errorMessage = t('esig', 'Error connecting to esig service.')
+					errorMessage = t('certificate24', 'Error connecting to Certificate24 service.')
 					break
 				default:
-					errorMessage = t('esig', 'Error while requesting signature.')
+					errorMessage = t('certificate24', 'Error while requesting signature.')
 				}
 				this.renderError(errorMessage)
 			} finally {
@@ -601,14 +601,14 @@ export default {
 					const msg = error.message || error
 					switch (msg) {
 					case 'client_unsupported':
-						showError(t('esig', 'The server requires a newer version of the app. Please contact your administrator.'))
+						showError(t('certificate24', 'The server requires a newer version of the app. Please contact your administrator.'))
 						break
 					case 'server_unsupported':
-						showError(t('esig', 'This app requires a newer version of the server. Please contact your administrator.'))
+						showError(t('certificate24', 'This app requires a newer version of the server. Please contact your administrator.'))
 						break
 					default:
-						console.error('Error loading esig API', error)
-						showError(t('esig', 'Error loading serverside API, please try again later.'))
+						console.error('Error loading Certificate24 API', error)
+						showError(t('certificate24', 'Error loading serverside API, please try again later.'))
 					}
 				})
 				.finally(() => {

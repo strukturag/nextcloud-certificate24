@@ -20,9 +20,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Tests\php;
+namespace OCA\Certificate24\Tests\php;
 
-use OCA\Esig\Validator;
+use OCA\Certificate24\Validator;
 use Test\TestCase;
 
 class ValidatorTest extends TestCase {

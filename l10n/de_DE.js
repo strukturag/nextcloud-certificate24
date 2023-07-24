@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "esig",
+    "certificate24",
     {
     "{user} requested your signature of \"{filename}\"" : "{user} hat Ihre Signatur von \"{filename}\" angefordert",
     "You signed the file \"{filename}\"" : "Sie haben die Datei \"{filename}\" signiert",
@@ -16,7 +16,7 @@ OC.L10N.register(
     "Server" : "Server",
     "Account Id" : "Account-Id",
     "Account Secret" : "Account-Schlüssel",
-    "If you don't have an account on the esig service yet, please login to {server} and create an account with the following data:" : "Wenn Sie noch keinen Account auf dem esig Server haben, loggen Sie sich bitte auf {server} ein und legen einen Account mit den folgenden Daten an:",
+    "If you don't have an account at Certificate24 yet, please login to {server} and create an account with the following data:" : "Wenn Sie noch keinen Account bei Certificate24 haben, loggen Sie sich bitte auf {server} ein und legen einen Account mit den folgenden Daten an:",
     "Name: {theme}" : "Name: {theme}",
     "Nextcloud Url: {url}" : "Nextcloud-Url: {url}",
     "Account settings saved" : "Account-Einstellungen gespeichert",
@@ -137,7 +137,7 @@ OC.L10N.register(
     "Requested signature." : "Signatur angefordert.",
     "Unknown user." : "Unbekannter Benutzer.",
     "Invalid email address." : "Ungültige E-Mail Adresse.",
-    "Error connecting to esig service." : "Fehler beim Verbinden mit dem esig Service.",
+    "Error connecting to Certificate24 service." : "Fehler beim Verbinden mit Certificate24.",
     "Error while requesting signature." : "Fehler beim Anfragen der Signatur.",
     "_%n signature field positioned_::_%n signature fields positioned_" : ["%n Signaturfeld positioniert","%n Signaturfelder positioniert"],
     "Checked on: {date}" : "Geprüft am: {date}",

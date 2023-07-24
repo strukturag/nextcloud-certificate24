@@ -22,11 +22,11 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\BackgroundJob;
+namespace OCA\Certificate24\BackgroundJob;
 
-use OCA\Esig\Config;
-use OCA\Esig\Manager;
-use OCA\Esig\Requests;
+use OCA\Certificate24\Config;
+use OCA\Certificate24\Manager;
+use OCA\Certificate24\Requests;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -67,7 +67,7 @@ class RetryDownloads extends TimedJob {
 
 		$pending = $this->requests->getPendingDownloads();
 		foreach ($pending as $request) {
-			if ($account['id'] !== $request['esig_account_id']) {
+			if ($account['id'] !== $request['c24_account_id']) {
 				continue;
 			}
 

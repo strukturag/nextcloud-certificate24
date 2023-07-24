@@ -19,10 +19,10 @@
 -->
 
 <template>
-	<DashboardWidget id="esig-panel"
+	<DashboardWidget id="certificate24-panel"
 		:items="requests"
 		:loading="loading"
-		:show-more-label="t('esig', 'More signature requests…')"
+		:show-more-label="t('certificate24', 'More signature requests…')"
 		:show-more-url="showMoreUrl">
 		<template #default="{ item }">
 			<DashboardWidgetItem :target-url="getItemTargetUrl(item)"
@@ -32,9 +32,9 @@
 				:item="item" />
 		</template>
 		<template #empty-content>
-			<NcEmptyContent :description="t('esig', 'No signature requests')">
+			<NcEmptyContent :description="t('certificate24', 'No signature requests')">
 				<template #icon>
-					<span class="icon icon-esig" />
+					<span class="icon icon-certificate24" />
 				</template>
 			</NcEmptyContent>
 		</template>
@@ -65,14 +65,14 @@ export default {
 			loading: true,
 			windowVisibility: true,
 			pollInverval: null,
-			showMoreUrl: generateUrl('apps/esig#incoming_requests'),
+			showMoreUrl: generateUrl('apps/certificate24#incoming_requests'),
 		}
 	},
 
 	computed: {
 		getItemTargetUrl() {
 			return (request) => {
-				return generateUrl(`apps/esig#incoming-${request.request_id}`)
+				return generateUrl(`apps/certificate24#incoming-${request.request_id}`)
 			}
 		},
 
@@ -84,7 +84,7 @@ export default {
 
 		getSubText() {
 			return (request) => {
-				return t('esig', 'Requested by {display_name} on {date}', {
+				return t('certificate24', 'Requested by {display_name} on {date}', {
 					display_name: request.display_name,
 					date: formatDate(request.created),
 				})
@@ -118,7 +118,7 @@ export default {
 				return
 			}
 
-			axios.get(generateOcsUrl('apps/esig/api/v1/share/incoming')).then((response) => {
+			axios.get(generateOcsUrl('apps/certificate24/api/v1/share/incoming')).then((response) => {
 				const requests = response.data.ocs.data
 				this.requests = requests
 				this.loading = false
@@ -137,7 +137,7 @@ export default {
 	text-align: center;
 	margin-top: 0 !important;
 
-	.icon-esig {
+	.icon-certificate24 {
 		width: 64px;
 		height: 64px;
 		background-size: 64px;

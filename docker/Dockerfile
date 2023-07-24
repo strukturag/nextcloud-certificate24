@@ -26,7 +26,7 @@ RUN make npm-init && \
 		make build-production && \
 		make appstore && \
 		mkdir build/output && \
-		tar -C build/output -xf build/artifacts/esig.tar.gz
+		tar -C build/output -xf build/artifacts/certificate24.tar.gz
 
 
 FROM nextcloud:26-apache
@@ -39,7 +39,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY docker/supervisord.conf /
 COPY docker/prepare.sh /
-COPY --from=builder /workdir/build/output/esig /usr/src/nextcloud/custom_apps/esig/
+COPY --from=builder /workdir/build/output/certificate24 /usr/src/nextcloud/custom_apps/certificate24/
 
 ENV NEXTCLOUD_UPDATE=1
 

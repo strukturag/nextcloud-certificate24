@@ -41,8 +41,8 @@
 			</ul>
 		</template>
 
-		<Hint v-if="entriesLoading" :hint="t('esig', 'Searching …')" />
-		<Hint v-if="noResults && !entriesLoading && sourcesWithoutResults" :hint="t('esig', 'No search results')" />
+		<Hint v-if="entriesLoading" :hint="t('certificate24', 'Searching …')" />
+		<Hint v-if="noResults && !entriesLoading && sourcesWithoutResults" :hint="t('certificate24', 'No search results')" />
 	</div>
 </template>
 

@@ -22,10 +22,10 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-namespace OCA\Esig\Notification;
+namespace OCA\Certificate24\Notification;
 
-use OCA\Esig\AppInfo\Application;
-use OCA\Esig\Requests;
+use OCA\Certificate24\AppInfo\Application;
+use OCA\Certificate24\Requests;
 use OCP\HintException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -67,7 +67,7 @@ class Notifier implements INotifier {
 	 * @since 17.0.0
 	 */
 	public function getID(): string {
-		return 'esig';
+		return Application::APP_ID;
 	}
 
 	/**
@@ -77,7 +77,7 @@ class Notifier implements INotifier {
 	 * @since 17.0.0
 	 */
 	public function getName(): string {
-		return $this->lFactory->get(Application::APP_ID)->t('eSignatures');
+		return $this->lFactory->get(Application::APP_ID)->t('Certificate24');
 	}
 
 	/**
@@ -126,7 +126,7 @@ class Notifier implements INotifier {
 		}
 
 		$notification
-			->setLink($this->url->linkToRouteAbsolute('esig.Page.index') . '#incoming-' . $parameters['request_id']);
+			->setLink($this->url->linkToRouteAbsolute(Application::APP_ID . '.Page.index') . '#incoming-' . $parameters['request_id']);
 
 		$message = $l->t('{user} requested your signature of "{filename}"');
 
@@ -166,7 +166,7 @@ class Notifier implements INotifier {
 	protected function parseSign(INotification $notification, IL10N $l): INotification {
 		$parameters = $notification->getSubjectParameters();
 		$notification
-			->setLink($this->url->linkToRouteAbsolute('esig.Page.index') . '#outgoing-' . $parameters['request_id']);
+			->setLink($this->url->linkToRouteAbsolute(Application::APP_ID . '.Page.index') . '#outgoing-' . $parameters['request_id']);
 
 		$message = $l->t('The file "{filename}" was signed by {user}');
 
@@ -220,9 +220,9 @@ class Notifier implements INotifier {
 		$parameters = $notification->getSubjectParameters();
 		$request = $parameters['request'];
 		if ($notification->getUser() === $request['user_id']) {
-			$url = $this->url->linkToRouteAbsolute('esig.Page.index') . '#outgoing-' . $parameters['request_id'];
+			$url = $this->url->linkToRouteAbsolute(Application::APP_ID . '.Page.index') . '#outgoing-' . $parameters['request_id'];
 		} else {
-			$url = $this->url->linkToRouteAbsolute('esig.Page.index') . '#incoming-' . $parameters['request_id'];
+			$url = $this->url->linkToRouteAbsolute(Application::APP_ID . '.Page.index') . '#incoming-' . $parameters['request_id'];
 		}
 		$notification->setLink($url);
 

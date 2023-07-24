@@ -28,16 +28,16 @@ const isEnabled = function(fileInfo) {
 
 let tabInstance = null
 
-if (!window.OCA.Esig) {
-	window.OCA.Esig = {}
+if (!window.OCA.Certificate24) {
+	window.OCA.Certificate24 = {}
 }
 
 window.addEventListener('DOMContentLoaded', () => {
 	if (OCA.Files && OCA.Files.Sidebar) {
 		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab({
 			id: 'signatures',
-			name: t('esig', 'Signatures'),
-			icon: 'icon-esig',
+			name: t('certificate24', 'Signatures'),
+			icon: 'icon-certificate24',
 			enabled: isEnabled,
 
 			async mount(el, fileInfo, context) {
@@ -49,15 +49,15 @@ window.addEventListener('DOMContentLoaded', () => {
 				const tabChat = document.querySelector('#tab-signatures')
 				tabChat.style.height = '100%'
 
-				OCA.Esig.fileInfo = this.fileInfo
-				tabInstance = OCA.Esig.newTab()
+				OCA.Certificate24.fileInfo = this.fileInfo
+				tabInstance = OCA.Certificate24.newTab()
 				tabInstance.$mount(el)
 			},
 			update(fileInfo) {
-				OCA.Esig.fileInfo = fileInfo
+				OCA.Certificate24.fileInfo = fileInfo
 			},
 			destroy() {
-				OCA.Esig.fileInfo = null
+				OCA.Certificate24.fileInfo = null
 				tabInstance.$destroy()
 				tabInstance = null
 			},

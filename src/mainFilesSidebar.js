@@ -35,7 +35,7 @@ __webpack_nonce__ = btoa(getRequestToken())
 // OC.generateUrl ensure the index.php (or not)
 // We do not want the index.php since we're loading files
 // eslint-disable-next-line
-__webpack_public_path__ = generateFilePath('esig', '', 'js/')
+__webpack_public_path__ = generateFilePath('certificate24', '', 'js/')
 
 Vue.prototype.t = translate
 Vue.prototype.n = translatePlural
@@ -43,14 +43,14 @@ Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
 const newTab = () => new Vue({
-	id: 'esig-signatures-tab',
+	id: 'certificate24-signatures-tab',
 	render: h => h(FilesSidebarTab),
 })
 
-if (!window.OCA.Esig) {
-	window.OCA.Esig = {}
+if (!window.OCA.Certificate24) {
+	window.OCA.Certificate24 = {}
 }
-Object.assign(window.OCA.Esig, {
+Object.assign(window.OCA.Certificate24, {
 	fileInfo: null,
 	newTab,
 })
