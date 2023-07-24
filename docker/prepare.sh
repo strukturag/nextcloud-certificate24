@@ -4,9 +4,6 @@ set -e
 # Let /entrypoint.sh not run apache
 tail -1 /entrypoint.sh | grep exec && sed -i '$ d' /entrypoint.sh
 
-# Launch canonical entrypoint
-/entrypoint.sh $@
-
 # Function from the Nextcloud's original entrypoint
 run_as() {
     if [ "$(id -u)" = 0 ]; then
@@ -15,6 +12,14 @@ run_as() {
         sh -c "$1"
     fi
 }
+
+if [ -d "/var/www/html/custom_apps/esig/" ]; then
+    run_as 'php /var/www/html/occ app:disable esig' || true
+    rm -rf /var/www/html/custom_apps/esig/
+fi
+
+# Launch canonical entrypoint
+/entrypoint.sh $@
 
 rsync -rlDog --delete --chown www-data:www-data /usr/src/nextcloud/custom_apps/certificate24/ /var/www/html/custom_apps/certificate24/
 
