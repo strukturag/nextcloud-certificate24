@@ -18,6 +18,12 @@
 	<bugs>https://github.com/astrairidium/nextcloud-certificate24/issues</bugs>
 	<repository>https://github.com/astrairidium/nextcloud-certificate24.git</repository>
 
+	<screenshot>https://raw.githubusercontent.com/astrairidium/nextcloud-certificate24/master/screenshots/request-signature.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/astrairidium/nextcloud-certificate24/master/screenshots/select-recipients.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/astrairidium/nextcloud-certificate24/master/screenshots/signing-requests.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/astrairidium/nextcloud-certificate24/master/screenshots/sign-pdf.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/astrairidium/nextcloud-certificate24/master/screenshots/notifications.png</screenshot>
+
 	<category>files</category>
 	<category>office</category>
 	<category>organization</category>
