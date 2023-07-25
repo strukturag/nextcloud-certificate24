@@ -67,13 +67,13 @@ class Version1000Date20221121132914 extends SimpleMigrationStep {
 				'length' => 255,
 			]);
 			$table->setPrimaryKey(['id']);
-			$table->addUniqueConstraint(['request_id', 'type', 'value'], 'recipients_unique_recipient');
+			$table->addUniqueConstraint(['request_id', 'type', 'value']);
 
 			$requestsTable = $schema->getTable('c24_requests');
 			$table->addForeignKeyConstraint($requestsTable, ['request_id'], ['id'], [
 				'onDelete' => 'cascade',
 				'onUpdate' => 'cascade',
-			], 'fk_request_id');
+			]);
 		}
 
 		$this->ensureColumnIsNullable($schema, 'c24_requests', 'recipient_type');
