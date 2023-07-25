@@ -136,7 +136,7 @@ class Manager {
 			return;
 		}
 
-		$lang = $this->l10nFactory->getUserLanguage($user);
+		$lang = $this->l10nFactory->getUserLanguage($owner);
 		$timeZone = $this->systemConfig->getUserValue($owner->getUID(), 'core', 'timezone', null);
 		if ($timeZone) {
 			$timeZone = new \DateTimeZone($timeZone);
