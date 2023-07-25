@@ -45,7 +45,7 @@
 				v-model="account_secret"
 				type="text"
 				name="account_secret"
-				placeholder="the-secret-value"
+				:placeholder="t('certificate24', 'the-secret-value')"
 				:disabled="loading"
 				:aria-label="t('certificate24', 'Account Secret')"
 				@input="debounceUpdateAccount">

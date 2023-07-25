@@ -14,6 +14,7 @@
     "Server" : "Server",
     "Account Id" : "Account-Id",
     "Account Secret" : "Account-Schlüssel",
+    "the-secret-value" : "der-geheime-schlüssel",
     "Name: {theme}" : "Name: {theme}",
     "Nextcloud Url: {url}" : "Nextcloud-Url: {url}",
     "If you don't have an account at Certificate24 yet, please login to <a href=\"{server}\" target=\"_blank\">{server}</a> and create an account with the following data:" : "Wenn Du noch keinen Account bei Certificate24 hast, logge Dich bitte auf <a href=\"{server}\" target=\"_blank\">{server}</a> ein und lege einen Account mit den folgenden Daten an:",
