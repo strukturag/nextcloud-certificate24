@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <!--
   - @copyright Copyright (c) 2022, struktur AG.
   -
@@ -50,7 +51,7 @@
 				@input="debounceUpdateAccount">
 		</div>
 
-		<div>{{ t('certificate24', 'If you don\'t have an account at Certificate24 yet, please login to {server} and create an account with the following data:', {'server': web_server}) }}</div>
+		<div v-html="accountDescription" />
 		<div>{{ t('certificate24', 'Name: {theme}', {'theme': theme.name}) }}</div>
 		<div>{{ t('certificate24', 'Nextcloud Url: {url}', {'url': nextcloud.url}) }}</div>
 	</NcSettingsSection>
@@ -80,6 +81,14 @@ export default {
 			nextcloud: {},
 			theme: OC.theme,
 		}
+	},
+
+	computed: {
+		accountDescription() {
+			return t('certificate24', 'If you don\'t have an account at Certificate24 yet, please login to <a href="{server}" target="_blank">{server}</a> and create an account with the following data:', {
+				server: this.web_server,
+			})
+		},
 	},
 
 	beforeMount() {
@@ -130,5 +139,15 @@ export default {
 input {
 	width: 400px;
 	vertical-align: middle;
+}
+
+div:deep {
+	a {
+		color: var(--color-primary-default);
+
+		&:hover {
+			color: var(--color-primary-hover)
+		}
+	}
 }
 </style>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-07-24 14:23+0200\n"
+"POT-Creation-Date: 2023-07-25 13:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,8 +47,8 @@ msgstr ""
 
 #: lib/AppInfo/Application.php:67
 #: lib/Notification/Notifier.php:80
-#: lib/Settings/Admin/Section.php:72
-#: lib/Settings/Section.php:72
+#: lib/Settings/Admin/Section.php:73
+#: lib/Settings/Section.php:73
 #: specialAppInfoFakeDummyForL10nScript.php:2
 msgid "Certificate24"
 msgstr ""
@@ -75,59 +75,60 @@ msgstr ""
 msgid "Certificate24 - Digital Document Signature"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:22
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:23
 #: specialVueFakeDummyForL10nScript.js:2
 msgid "Account settings"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:23
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:24
 #: specialVueFakeDummyForL10nScript.js:4
 msgid ""
 "The configured account will be used to request signatures and sign files."
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:25
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:26
 #: specialVueFakeDummyForL10nScript.js:6
 msgid "Server"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:30
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:37
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:31
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:38
 #: specialVueFakeDummyForL10nScript.js:8
 #: specialVueFakeDummyForL10nScript.js:10
 msgid "Account Id"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:42
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:49
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:43
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:50
 #: specialVueFakeDummyForL10nScript.js:12
 #: specialVueFakeDummyForL10nScript.js:14
 msgid "Account Secret"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:53
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:55
 #: specialVueFakeDummyForL10nScript.js:16
-msgid ""
-"If you don't have an account at Certificate24 yet, please login to {server} "
-"and create an account with the following data:"
-msgstr ""
-
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:54
-#: specialVueFakeDummyForL10nScript.js:18
 msgid "Name: {theme}"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:55
-#: specialVueFakeDummyForL10nScript.js:20
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:56
+#: specialVueFakeDummyForL10nScript.js:18
 msgid "Nextcloud Url: {url}"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:108
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:88
+#: specialVueFakeDummyForL10nScript.js:20
+msgid ""
+"If you don't have an account at Certificate24 yet, please login to <a href="
+"\"{server}\" target=\"_blank\">{server}</a> and create an account with the "
+"following data:"
+msgstr ""
+
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:117
 #: specialVueFakeDummyForL10nScript.js:22
 msgid "Account settings saved"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:113
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:122
 #: specialVueFakeDummyForL10nScript.js:24
 msgid "Could not save account settings"
 msgstr ""
