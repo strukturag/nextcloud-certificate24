@@ -130,13 +130,15 @@ export default {
 
 	data() {
 		return {
-			requests: [],
 			loading: false,
 			hash: '',
 		}
 	},
 
 	computed: {
+		requests() {
+			return this.$store.getters.getOwnRequests()
+		},
 		selectedRequest() {
 			let r = this.hash
 			let pos = r.indexOf('outgoing-')
@@ -209,7 +211,8 @@ export default {
 			} finally {
 				this.loading = false
 			}
-			this.requests = response.data.ocs.data
+			const requests = response?.data?.ocs?.data || []
+			this.$store.dispatch('setOwnRequests', requests)
 			this.$nextTick(() => {
 				this.scrollToSelected()
 			})
@@ -227,9 +230,7 @@ export default {
 					this.loading = true
 					try {
 						await deleteRequest(request.request_id)
-						this.requests = this.requests.filter((r) => {
-							return r.request_id !== request.request_id
-						})
+						this.$store.dispatch('deleteOwnRequest', request)
 						showSuccess(t('certificate24', 'Request deleted.'))
 					} catch (error) {
 						console.error('Could not delete request', request, error)

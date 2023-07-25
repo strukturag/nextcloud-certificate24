@@ -1,5 +1,5 @@
 /**
- * @copyright Copyright (c) 2022, struktur AG.
+ * @copyright Copyright (c) 2023, struktur AG.
  *
  * @author Joachim Bauch <bauch@struktur.de>
  *
@@ -19,26 +19,16 @@
  */
 
 import Vue from 'vue'
-import Vuex from 'vuex'
-import App from './App.vue'
-import { Tooltip } from '@nextcloud/vue'
-import store from './store.js'
+import Vuex, { Store } from 'vuex'
 
-// Styles
-import '@nextcloud/dialogs/dist/index.css'
-
-Vue.prototype.t = t
-Vue.prototype.n = n
-Vue.prototype.OC = OC
-Vue.prototype.OCA = OCA
-Vue.prototype.OCP = OCP
-
-Vue.directive('tooltip', Tooltip)
+import requestsStore from './store/requestsStore.js'
 
 Vue.use(Vuex)
 
-export default new Vue({
-	el: '#content',
-	store,
-	render: h => h(App),
+export default new Store({
+	modules: {
+		requestsStore,
+	},
+	mutations: {},
+	strict: process.env.NODE_ENV !== 'production',
 })

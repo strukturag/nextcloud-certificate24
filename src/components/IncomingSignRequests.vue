@@ -144,7 +144,6 @@ export default {
 
 	data() {
 		return {
-			requests: [],
 			loading: false,
 			signDialog: null,
 			hash: '',
@@ -152,6 +151,9 @@ export default {
 	},
 
 	computed: {
+		requests() {
+			return this.$store.getters.getIncomingRequests()
+		},
 		selectedRequest() {
 			let r = this.hash
 			let pos = r.indexOf('incoming-')
@@ -207,7 +209,8 @@ export default {
 			} finally {
 				this.loading = false
 			}
-			this.requests = response.data.ocs.data
+			const requests = response?.data?.ocs?.data || []
+			this.$store.dispatch('setIncomingRequests', requests)
 			this.$nextTick(() => {
 				this.scrollToSelected()
 			})
