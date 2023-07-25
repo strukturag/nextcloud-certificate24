@@ -619,6 +619,9 @@ export default {
 		closeSelectModal(positions) {
 			this.showSelectModal = false
 			this.signaturePositions = positions
+			if (positions && positions.length) {
+				this.clearError()
+			}
 		},
 
 		getFileUrl(model) {
