@@ -217,7 +217,7 @@ export default {
 		},
 
 		async signRequest(request) {
-			this.$set(request, 'loading', true)
+			this.$store.dispatch('setRequestLoading', { request, loading: true })
 			getVinegarApi()
 				.then(() => {
 					this.signDialog = request
@@ -237,7 +237,7 @@ export default {
 					}
 				})
 				.finally(() => {
-					this.$delete(request, 'loading')
+					this.$store.dispatch('setRequestLoading', { request, loading: false })
 				})
 		},
 

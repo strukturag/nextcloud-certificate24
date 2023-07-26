@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License, version 3,
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
+import Vue, { set } from 'vue'
 
 const state = {
 	incoming: [],
@@ -48,6 +49,13 @@ const mutations = {
 			return x.request_id !== request.request_id
 		})
 	},
+	setRequestLoading(state, { request, loading }) {
+		if (loading) {
+			set(request, 'loading', true)
+		} else {
+			Vue.delete(request, 'loading')
+		}
+	},
 }
 
 const actions = {
@@ -59,6 +67,9 @@ const actions = {
 	},
 	deleteOwnRequest(context, request) {
 		context.commit('deleteOwnRequest', request)
+	},
+	setRequestLoading(context, { request, loading }) {
+		context.commit('setRequestLoading', { request, loading })
 	},
 }
 
