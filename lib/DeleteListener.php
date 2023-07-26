@@ -29,6 +29,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\NodeDeletedEvent;
 use OCP\Files\Events\Node\NodeWrittenEvent;
+use OCP\Files\File;
 use OCP\User\Events\UserDeletedEvent;
 use Psr\Log\LoggerInterface;
 
@@ -79,6 +80,10 @@ class DeleteListener implements IEventListener {
 		}
 		if ($event instanceof NodeDeletedEvent || $event instanceof NodeWrittenEvent) {
 			$file = $event->getNode();
+			if (!$file instanceof File) {
+				return;
+			}
+
 			$this->metadata->deleteMetadata($file);
 			$this->verify->deleteFileSignatures($file);
 			$requests = $this->requests->getRequestsForFile($file, true);
