@@ -32,6 +32,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\L10N\IFactory;
+use OCP\Mail\IEMailTemplate;
 use OCP\Mail\IMailer;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
@@ -80,6 +81,46 @@ class Mails {
 		return trim($result);
 	}
 
+	private function generateEmailTemplate(string $id, array $options, string $subject, string $body, string $buttonText, string $lang): IEMailTemplate {
+		$template = $this->mailer->createEMailTemplate($id, $options);
+		$template->setSubject($subject);
+		$template->addHeader();
+		$blocks = explode("\n\n", $body);
+		foreach ($blocks as $block) {
+			$posStart = strpos($block, "http://");
+			if ($posStart === false) {
+				$posStart = strpos($block, "https://");
+			}
+			if ($posStart !== false) {
+				// The paragraph contains a line with an URL.
+				if ($posStart > 0) {
+					$text = trim(substr($block, 0, $posStart));
+					if ($text) {
+						$template->addBodyText($text);
+					}
+				}
+
+				$posEnd = strpos($block, "\n", $posStart);
+				if ($posEnd === false) {
+					$url = substr($block, $posStart);
+				} else {
+					$url = substr($block, $posStart, $posEnd - $posStart);
+				}
+				$template->addBodyButton($buttonText, $url, false);
+				if ($posEnd !== false) {
+					$text = trim(substr($block, $posEnd + 1));
+					$template->addBodyText($text);
+				} else {
+					$template->addBodyText('');
+				}
+			} else {
+				$template->addBodyText($block);
+			}
+		}
+		$template->addFooter('', $lang);
+		return $template;
+	}
+
 	public function sendRequestMail(string $id, IUser $user, File $file, array $recipient, string $server) {
 		$signature_id = $recipient['c24_signature_id'] ?? null;
 		if (!$signature_id) {
@@ -100,6 +141,11 @@ class Mails {
 		if (empty($lang)) {
 			$lang = $this->l10n->getLanguageCode();
 		}
+		$l10n = $this->l10nFactory->get(Application::APP_ID, $lang);
+		if (!$l10n) {
+			$l10n = $this->l10n;
+		}
+
 		$dn = $recipient['display_name'] ?? null;
 		$templateOptions = [
 			'file' => $file,
@@ -112,6 +158,9 @@ class Mails {
 		$body = $this->renderTemplate('email.share.body', $templateOptions, $lang);
 		$subject = $this->renderTemplate('email.share.subject', $templateOptions, $lang);
 
+		$buttonText = $l10n->t('Sign');
+		$template = $this->generateEmailTemplate('certificate24.requestSignature', $templateOptions, $subject, $body, $buttonText, $lang);
+
 		$from = Util::getDefaultEmailAddress('noreply');
 		/** @var Message $message */
 		$message = $this->mailer->createMessage();
@@ -123,8 +172,9 @@ class Mails {
 			$to[] = $recipient['value'];
 		}
 		$message->setTo($to);
-		$message->setSubject($subject);
-		$message->setPlainBody($body);
+		$message->setSubject($template->renderSubject());
+		$message->setPlainBody($template->renderText());
+		$message->setHtmlBody($template->renderHtml());
 		$failed_recipients = $this->mailer->send($message);
 		if (!empty($failed_recipients)) {
 			$this->logger->error('Could not send email for request ' . $id . ' to ' . $recipient['value']);
@@ -156,6 +206,11 @@ class Mails {
 		if (empty($lang)) {
 			$lang = $this->l10n->getLanguageCode();
 		}
+		$l10n = $this->l10nFactory->get(Application::APP_ID, $lang);
+		if (!$l10n) {
+			$l10n = $this->l10n;
+		}
+
 		$dn = $recipient['display_name'] ?? null;
 		$templateOptions = [
 			'file' => $file,
@@ -166,6 +221,9 @@ class Mails {
 		];
 		$body = $this->renderTemplate('email.lastsignature.body', $templateOptions, $lang);
 		$subject = $this->renderTemplate('email.lastsignature.subject', $templateOptions, $lang);
+
+		$buttonText = $l10n->t('Details');
+		$template = $this->generateEmailTemplate('certificate24.lastSignature', $templateOptions, $subject, $body, $buttonText, $lang);
 
 		$from = Util::getDefaultEmailAddress('noreply');
 		/** @var Message $message */
@@ -178,8 +236,9 @@ class Mails {
 			$to[] = $recipient['value'];
 		}
 		$message->setTo($to);
-		$message->setSubject($subject);
-		$message->setPlainBody($body);
+		$message->setSubject($template->renderSubject());
+		$message->setPlainBody($template->renderText());
+		$message->setHtmlBody($template->renderHtml());
 		$failed_recipients = $this->mailer->send($message);
 		if (!empty($failed_recipients)) {
 			$this->logger->error('Could not send last signature email for request ' . $id . ' to ' . $recipient['value']);

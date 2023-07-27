@@ -69,7 +69,7 @@
     <MissingDependency occurrences="2">
       <code>TranslatedTemplate</code>
     </MissingDependency>
-    <UndefinedDocblockClass occurrences="10">
+    <UndefinedDocblockClass occurrences="12">
       <code>Message</code>
     </UndefinedDocblockClass>
   </file>
