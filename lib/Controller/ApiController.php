@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace OCA\Certificate24\Controller;
 
 use GuzzleHttp\Exception\ConnectException;
+use OCA\Certificate24\AppInfo\Application;
 use OCA\Certificate24\Client;
 use OCA\Certificate24\Config;
 use OCA\Certificate24\Events\SignEvent;
@@ -34,6 +35,7 @@ use OCA\Certificate24\Metadata;
 use OCA\Certificate24\Requests;
 use OCA\Certificate24\Tokens;
 use OCA\Certificate24\Validator;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -64,6 +66,7 @@ class ApiController extends OCSController {
 	public const MAX_IMAGE_SIZE = 1024 * 1024;
 
 	private LoggerInterface $logger;
+	private IAppManager $appManager;
 	private IUserManager $userManager;
 	private IUserSession $userSession;
 	private IRootFolder $root;
@@ -82,6 +85,7 @@ class ApiController extends OCSController {
 	public function __construct(string $appName,
 		IRequest $request,
 		LoggerInterface $logger,
+		IAppManager $appManager,
 		IUserManager $userManager,
 		IUserSession $userSession,
 		IRootFolder $root,
@@ -98,6 +102,7 @@ class ApiController extends OCSController {
 		Tokens $tokens) {
 		parent::__construct($appName, $request);
 		$this->logger = $logger;
+		$this->appManager = $appManager;
 		$this->userManager = $userManager;
 		$this->userSession = $userSession;
 		$this->root = $root;
@@ -1105,6 +1110,49 @@ class ApiController extends OCSController {
 		$offset = 0;
 		$lookup = false;  // Don't use lookup server.
 		[$result, $hasMoreResults] = $this->search->search($search, $shareTypes, $lookup, $limit, $offset);
+		if ($type === 'user') {
+			// Filter out users not allowed to use the app.
+			$userCache = [];
+			$filterFunc = function ($elem) use ($userCache) {
+				$userId = $elem['value']['shareWith'];
+				$user = $userCache[$userId] ?? null;
+				if (!$user) {
+					$user = $this->userManager->get($userId);
+					if (!$user) {
+						return true;
+					}
+					$userCache[$userId] = $user;
+				}
+				return $this->appManager->isEnabledForUser(Application::APP_ID, $user);
+			};
+
+			$totalResults = count($result['exact']['users'] ?? []) + count($result['users'] ?? []);
+			if (isset($result['exact']['users'])) {
+				$result['exact']['users'] = array_filter($result['exact']['users'], $filterFunc);
+			}
+			if (isset($result['users'])) {
+				$result['users'] = array_filter($result['users'], $filterFunc);
+			}
+			$total = count($result['exact']['users'] ?? []) + count($result['users'] ?? []);
+			while ($totalResults > 0 && $total < $limit && $hasMoreResults) {
+				$offset += $limit;
+				[$additional, $hasMoreResults] = $this->search->search($search, $shareTypes, $lookup, $limit, $offset);
+				$totalResults = count($additional['exact']['users'] ?? []) + count($additional['users'] ?? []);
+				if (!$totalResults) {
+					break;
+				}
+
+				if (isset($additional['exact']['users'])) {
+					$additional['exact']['users'] = array_filter($additional['exact']['users'], $filterFunc);
+				}
+				if (isset($additional['users'])) {
+					$additional['users'] = array_filter($additional['users'], $filterFunc);
+				}
+				$result['exact']['users'] = array_merge($result['exact']['users'], $additional['exact']['users']);
+				$result['users'] = array_merge($result['users'], $additional['users']);
+				$total = count($result['exact']['users'] ?? []) + count($result['users'] ?? []);
+			}
+		}
 		$response = new DataResponse($result);
 		return $response;
 	}

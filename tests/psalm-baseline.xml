@@ -19,6 +19,9 @@
     </MissingDependency>
   </file>
   <file src="lib/Controller/ApiController.php">
+    <EmptyArrayAccess occurrences="1">
+      <code>$userCache[$userId]</code>
+    </EmptyArrayAccess>
     <InvalidArgument occurrences="1">
       <code>$e</code>
     </InvalidArgument>
