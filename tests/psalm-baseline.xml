@@ -19,6 +19,9 @@
     </MissingDependency>
   </file>
   <file src="lib/Controller/ApiController.php">
+    <EmptyArrayAccess occurrences="1">
+      <code>$userCache[$userId]</code>
+    </EmptyArrayAccess>
     <InvalidArgument occurrences="1">
       <code>$e</code>
     </InvalidArgument>
@@ -56,6 +59,9 @@
     <InvalidArgument occurrences="1">
       <code>addServiceListener</code>
     </InvalidArgument>
+    <UndefinedClass occurrences="3">
+      <code>LoadSidebar</code>
+    </UndefinedClass>
   </file>
   <file src="lib/DeleteListener.php">
     <InvalidArgument occurrences="2">

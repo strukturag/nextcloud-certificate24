@@ -25,6 +25,8 @@ declare(strict_types=1);
 namespace OCA\Certificate24;
 
 use OCA\Certificate24\AppInfo\Application;
+use OCA\Files\Event\LoadSidebar;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\Event;
@@ -37,24 +39,32 @@ use OCP\Util;
  */
 class FilesLoader implements IEventListener {
 	protected IInitialState $initialState;
+	protected IAppManager $appManager;
 	protected Config $config;
 
 	public function __construct(IInitialState $initialState,
+		IAppManager $appManager,
 		Config $config) {
 		$this->initialState = $initialState;
+		$this->appManager = $appManager;
 		$this->config = $config;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
 		$dispatcher->addServiceListener(LoadAdditionalScriptsEvent::class, self::class);
+		$dispatcher->addServiceListener(LoadSidebar::class, self::class);
 	}
 
 	public function handle(Event $event): void {
-		if (!($event instanceof LoadAdditionalScriptsEvent)) {
-			return;
+		if ($event instanceof LoadAdditionalScriptsEvent) {
+			$this->handleAdditionalScripts($event);
 		}
+		if ($event instanceof LoadSidebar) {
+			$this->handleSidebar($event);
+		}
+	}
 
-		$server = $this->config->getApiServer();
+	private function setupInitialState(string $server) {
 		if (empty($server)) {
 			return;
 		}
@@ -70,8 +80,30 @@ class FilesLoader implements IEventListener {
 				'signed_save_mode' => $this->config->getSignedSaveMode(),
 			]
 		);
+	}
 
+	private function handleAdditionalScripts(LoadAdditionalScriptsEvent $event): void {
+		if (!$this->appManager->isEnabledForUser(Application::APP_ID)) {
+			return;
+		}
+
+		$server = $this->config->getApiServer();
+		if (empty($server)) {
+			return;
+		}
+
+		$this->setupInitialState($server);
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-loader');
+		Util::addStyle(Application::APP_ID, 'icons');
+	}
+
+	private function handleSidebar(LoadSidebar $event): void {
+		$server = $this->config->getApiServer();
+		if (empty($server)) {
+			return;
+		}
+
+		$this->setupInitialState($server);
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-files-sidebar');
 		Util::addStyle(Application::APP_ID, 'icons');
 	}
