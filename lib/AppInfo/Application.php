@@ -37,7 +37,6 @@ use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
-use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
@@ -51,7 +50,6 @@ class Application extends App implements IBootstrap {
 
 	public function register(IRegistrationContext $context): void {
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPSetter::class);
-		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesLoader::class);
 		$context->registerCapability(Capabilities::class);
 		$context->registerDashboardWidget(Certificate24Widget::class);
 	}
@@ -76,6 +74,7 @@ class Application extends App implements IBootstrap {
 		$dispatcher = $server->get(IEventDispatcher::class);
 
 		ActivityListener::register($dispatcher);
+		FilesLoader::register($dispatcher);
 		NotificationListener::register($dispatcher);
 		DeleteListener::register($dispatcher);
 		Manager::register($dispatcher);
