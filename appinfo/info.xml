@@ -4,7 +4,12 @@
 	<id>certificate24</id>
 	<name>Certificate24</name>
 	<summary><![CDATA[Certificate24 - Digital Document Signature]]></summary>
-	<description><![CDATA[Certificate24 - Digital Document Signature]]></description>
+	<description><![CDATA[Certificate24 - Digital Document Signature
+
+With Certificate24 you can request digital signatures of documents stored in your Nextcloud from other users in Nextcloud or from external users (by email).
+
+See [the website](https://www.certificate24.com) for further information.
+]]></description>
 
 	<version>0.1.1</version>
 	<license>agpl</license>
