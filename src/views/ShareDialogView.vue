@@ -149,6 +149,7 @@
 					<NcButton v-if="fileModel && fileModel.canDownload()"
 						type="secondary"
 						:disabled="selectModalLoading"
+						:title="t('certificate24', 'Select signature position')"
 						@click="openSelectModal">
 						<template #icon>
 							<NcLoadingIcon v-show="selectModalLoading" :size="24" />
@@ -158,6 +159,7 @@
 					</NcButton>
 					<NcButton type="primary"
 						:disabled="shareLoading || !recipients.length"
+						:title="t('certificate24', 'Request signature')"
 						@click="requestSignature">
 						<template #icon>
 							<NcLoadingIcon v-show="shareLoading" :size="24" />
