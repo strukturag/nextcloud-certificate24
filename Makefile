@@ -73,6 +73,9 @@ translationfiles/%/certificate24.po: translationfiles/templates/certificate24.po
 l10n: translationtool.phar $(PO_FILES)
 	./translationtool.phar convert-po-files
 
+build-l10n: translationtool.phar
+	./translationtool.phar convert-po-files
+
 check-translations: l10n
 	@out=$$(git diff l10n); \
 	if [ ! -z "$$out" ]; then \
