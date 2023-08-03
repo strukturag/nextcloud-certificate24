@@ -882,17 +882,17 @@ msgstr "Timestamp della firma"
 #. TRANSLATORS src/views/SignaturesView.vue:100
 #: specialVueFakeDummyForL10nScript.js:360
 msgid "Certificate chain"
-msgstr ""
+msgstr "Catena di certificati"
 
 #. TRANSLATORS src/views/SignaturesView.vue:175
 #: specialVueFakeDummyForL10nScript.js:362
 msgid "Unknown"
-msgstr ""
+msgstr "Sconosciuto"
 
 #: templates/email.lastsignature.body.php:17 templates/email.share.body.php:17
 #, php-format
 msgid "Hello %1$s,"
-msgstr ""
+msgstr "Ciao %1$s,"
 
 #: templates/email.lastsignature.body.php:21
 #, php-format
