@@ -919,11 +919,11 @@ msgstr "Firme terminate per \"%1$s\" su %2$s"
 #: templates/email.share.body.php:21
 #, php-format
 msgid "%1$s has requested your signature of \"%2$s\" on %3$s."
-msgstr ""
+msgstr "%1$s ha richiesto la tua firma di \"%2$s\" su %3$s."
 
 #: templates/email.share.body.php:29
 msgid "Please open the following URL to sign the file:"
-msgstr ""
+msgstr "Si prega di aprire il seguente URL per firmare il file:"
 
 #: templates/email.share.subject.php:7
 #, php-format
