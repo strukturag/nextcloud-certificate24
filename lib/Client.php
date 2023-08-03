@@ -194,6 +194,9 @@ class Client {
 	}
 
 	public function getDetailsUrl(string $id, string $server): string {
+		if ($server === $this->config->getApiServer()) {
+			$server = $this->config->getWebServer();
+		}
 		$url = $server . 'details/' . rawurlencode($id);
 		return $url;
 	}
