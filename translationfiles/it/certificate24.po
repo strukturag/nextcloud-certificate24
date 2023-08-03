@@ -897,17 +897,19 @@ msgstr "Ciao %1$s,"
 #: templates/email.lastsignature.body.php:21
 #, php-format
 msgid "all recipients have signed \"%1$s\" on %2$s."
-msgstr ""
+msgstr "tutti i destinatari hanno firmato \"%1$s\" su %2$s."
 
 #: templates/email.lastsignature.body.php:28
 msgid ""
 "You can find additional information and download the signed file from the "
 "following url:"
 msgstr ""
+"È possibile trovare informazioni aggiuntive e scaricare il file firmato dal "
+"seguente url:"
 
 #: templates/email.lastsignature.body.php:34 templates/email.share.body.php:35
 msgid "Thanks"
-msgstr ""
+msgstr "Grazie"
 
 #: templates/email.lastsignature.subject.php:8
 #, php-format
