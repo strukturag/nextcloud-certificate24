@@ -756,7 +756,7 @@ msgstr "Aggiungere l'indirizzo e-mail"
 #. TRANSLATORS src/views/ShareDialogView.vue:106
 #: specialVueFakeDummyForL10nScript.js:290
 msgid "E-mail address"
-msgstr ""
+msgstr "Indirizzo e-mail"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:131
 #: specialVueFakeDummyForL10nScript.js:292
