@@ -1,0 +1,42 @@
+name: build-l10n
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/build-l10n.yml'
+      - 'translationfiles/*/*.po'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    name: translations
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install gettext
+
+      - name: Build translations
+        run: |
+          make build-l10n
+
+      - name: Commit changes
+        run: |
+          CHANGES=$(git status --porcelain)
+          if [ -z "$CHANGES" ]; then
+            echo "No files have changed, no need to commit / push."
+          else
+            git config user.name "$(git log -n 1 --pretty=format:%an)"
+            git config user.email "$(git log -n 1 --pretty=format:%ae)"
+            git commit -m "Update l10n files from $GITHUB_SHA" l10n/*
+            git push
+          fi
