@@ -761,12 +761,12 @@ msgstr "Indirizzo e-mail"
 #. TRANSLATORS src/views/ShareDialogView.vue:131
 #: specialVueFakeDummyForL10nScript.js:292
 msgid "Action to perform when the file was signed successfully:"
-msgstr ""
+msgstr "Azione da eseguire quando il file è stato firmato con successo:"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:260
 #: specialVueFakeDummyForL10nScript.js:304
 msgid "Cancel search"
-msgstr ""
+msgstr "Annulla la ricerca"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:343
 #: specialVueFakeDummyForL10nScript.js:306
