@@ -776,7 +776,7 @@ msgstr "Si è verificato un errore durante l'esecuzione della ricerca"
 #. TRANSLATORS src/views/ShareDialogView.vue:498
 #: specialVueFakeDummyForL10nScript.js:308
 msgid "No file selected."
-msgstr ""
+msgstr "Non è stato selezionato alcun file."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:503
 #: specialVueFakeDummyForL10nScript.js:310
