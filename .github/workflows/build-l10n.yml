@@ -31,13 +31,19 @@ jobs:
 
       - name: Commit changes
         run: |
-          git add l10n/*.js l10n/*.json
-          CHANGES=$(git status --porcelain)
-          if [ -z "$CHANGES" ]; then
-            echo "No files have changed, no need to commit / push."
+          CHECKOUT_SHA=$(git rev-parse HEAD)
+          echo "Checked out $CHECKOUT_SHA"
+          if [ "$CHECKOUT_SHA" != "${{github.event.pull_request.head.sha}}" ]; then
+            echo "More changes since this commit ${{github.event.pull_request.head.sha}}, skipping"
           else
-            git config user.name "$(git log -n 1 --pretty=format:%an)"
-            git config user.email "$(git log -n 1 --pretty=format:%ae)"
-            git commit -m "Update l10n files from $GITHUB_SHA" l10n/*
-            git push
+            git add l10n/*.js l10n/*.json
+            CHANGES=$(git status --porcelain)
+            if [ -z "$CHANGES" ]; then
+              echo "No files have changed, no need to commit / push."
+            else
+              git config user.name "$(git log -n 1 --pretty=format:%an)"
+              git config user.email "$(git log -n 1 --pretty=format:%ae)"
+              git commit -m "Update l10n files from ${{github.event.pull_request.head.sha}}" l10n/*
+              git push
+            fi
           fi
