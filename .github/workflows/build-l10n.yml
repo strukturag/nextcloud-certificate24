@@ -38,6 +38,6 @@ jobs:
           else
             git config user.name "$(git log -n 1 --pretty=format:%an)"
             git config user.email "$(git log -n 1 --pretty=format:%ae)"
-            git commit -m "Update l10n files from $GITHUB_SHA" l10n/*
+            git commit -m "Update l10n files from ${{github.event.pull_request.head.sha}}" l10n/*
             git push
           fi
