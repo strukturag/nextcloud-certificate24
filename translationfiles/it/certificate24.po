@@ -872,12 +872,12 @@ msgstr "Il file non è stato modificato da quando è stato firmato."
 #. TRANSLATORS src/views/SignaturesView.vue:75
 #: specialVueFakeDummyForL10nScript.js:354
 msgid "The file was modified since it was signed."
-msgstr ""
+msgstr "Il file è stato modificato da quando è stato firmato."
 
 #. TRANSLATORS src/views/SignaturesView.vue:87
 #: specialVueFakeDummyForL10nScript.js:358
 msgid "Signature timestamp"
-msgstr ""
+msgstr "Timestamp della firma"
 
 #. TRANSLATORS src/views/SignaturesView.vue:100
 #: specialVueFakeDummyForL10nScript.js:360
