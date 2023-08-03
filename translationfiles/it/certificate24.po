@@ -928,4 +928,4 @@ msgstr "Si prega di aprire il seguente URL per firmare il file:"
 #: templates/email.share.subject.php:7
 #, php-format
 msgid "Signing request on %1$s"
-msgstr ""
+msgstr "Richiesta di firma su %1$s"
