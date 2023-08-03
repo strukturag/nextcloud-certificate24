@@ -31,6 +31,7 @@ jobs:
 
       - name: Commit changes
         run: |
+          git add l10n/*.js l10n/*.json
           CHANGES=$(git status --porcelain)
           if [ -z "$CHANGES" ]; then
             echo "No files have changed, no need to commit / push."
