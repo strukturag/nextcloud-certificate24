@@ -2,21 +2,24 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the Nextcloud package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+# Translators:
+# Joachim Bauch <mail@joachim-bauch.de>, 2023
+# 
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
 "POT-Creation-Date: 2023-07-25 13:43+0200\n"
-"PO-Revision-Date: 2023-07-25 13:43+0200\n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Language: de_DE\n"
+"PO-Revision-Date: 2023-08-02 15:11+0000\n"
+"Last-Translator: Joachim Bauch <mail@joachim-bauch.de>, 2023\n"
+"Language-Team: German (Germany) (https://app.transifex.com/strukturag/teams/173038/de_DE/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3\n"
 
 #: lib/Activity/Provider/Share.php:61 lib/Notification/Notifier.php:131
 msgid "{user} requested your signature of \"{filename}\""
@@ -90,7 +93,8 @@ msgstr "Server"
 
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:31
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:38
-#: specialVueFakeDummyForL10nScript.js:8 specialVueFakeDummyForL10nScript.js:10
+#: specialVueFakeDummyForL10nScript.js:8
+#: specialVueFakeDummyForL10nScript.js:10
 msgid "Account Id"
 msgstr "Account-Id"
 
@@ -119,9 +123,9 @@ msgstr "Nextcloud-Url: {url}"
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:88
 #: specialVueFakeDummyForL10nScript.js:22
 msgid ""
-"If you don't have an account at Certificate24 yet, please login to <a href="
-"\"{server}\" target=\"_blank\">{server}</a> and create an account with the "
-"following data:"
+"If you don't have an account at Certificate24 yet, please login to <a "
+"href=\"{server}\" target=\"_blank\">{server}</a> and create an account with "
+"the following data:"
 msgstr ""
 "Wenn Sie noch keinen Account bei Certificate24 haben, loggen Sie sich bitte "
 "auf <a href=\"{server}\" target=\"_blank\">{server}</a> ein und legen einen "
@@ -217,8 +221,8 @@ msgid ""
 "Do you really want to delete the verification cache? This will require that "
 "all files need to be verified again."
 msgstr ""
-"Wollen Sie wirklich den Validierungs-Cache löschen? Anschließend müssen alle "
-"Dateien erneut validiert werden."
+"Wollen Sie wirklich den Validierungs-Cache löschen? Anschließend müssen alle"
+" Dateien erneut validiert werden."
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:153
 #: specialVueFakeDummyForL10nScript.js:58
@@ -241,8 +245,8 @@ msgstr "Signatur-Eigenschaften"
 #: specialVueFakeDummyForL10nScript.js:64
 msgid "Additional properties for signature processing can be configured here."
 msgstr ""
-"Weitere Eigenschaften für die Signatur-Verarbeitung können hier konfiguriert "
-"werden."
+"Weitere Eigenschaften für die Signatur-Verarbeitung können hier konfiguriert"
+" werden."
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:25
 #: specialVueFakeDummyForL10nScript.js:66
@@ -274,7 +278,8 @@ msgstr "Signierte Dateien nicht automatisch speichern"
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:50
 #: specialVueFakeDummyForL10nScript.js:74
-msgid "Number of days after which fully signed signature requests are deleted."
+msgid ""
+"Number of days after which fully signed signature requests are deleted."
 msgstr ""
 "Anzahl der Tage, nach denen abgeschlossene Signaturanfragen gelöscht werden."
 
@@ -381,8 +386,8 @@ msgid ""
 "This app requires a newer version of the server. Please contact your "
 "administrator."
 msgstr ""
-"Diese App benötigt eine neuere Version des Servers. Bitte wenden Sie sich an "
-"den Administrator."
+"Diese App benötigt eine neuere Version des Servers. Bitte wenden Sie sich an"
+" den Administrator."
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:233
 #. TRANSLATORS src/views/ShareDialogView.vue:611
@@ -561,8 +566,8 @@ msgstr "Persönliche Signatur in Feldern einbetten"
 #. TRANSLATORS src/components/SignDialogModal.vue:126
 #: specialVueFakeDummyForL10nScript.js:208
 msgid ""
-"Please upload a signature image in the <a href=\"{link}\">personal settings</"
-"a> to sign this file."
+"Please upload a signature image in the <a href=\"{link}\">personal "
+"settings</a> to sign this file."
 msgstr ""
 "Bitte laden ein Signaturbid in den <a href=\"{link}\">persönlichen "
 "Einstellungen</a> hoch, um die Datei zu signieren."
@@ -926,34 +931,3 @@ msgstr "Bitte öffnen Sie den folgenden Link, um die Datei zu signieren:"
 #, php-format
 msgid "Signing request on %1$s"
 msgstr "Signaturanfrage auf %1$s"
-
-#, fuzzy
-#~ msgid "settings-section"
-#~ msgstr "Einstellungen gespeichert"
-
-#~ msgid ""
-#~ "If you don't have an account at Certificate24 yet, please login to "
-#~ "{server} and create an account with the following data:"
-#~ msgstr ""
-#~ "Wenn Sie noch keinen Account bei Certificate24 haben, loggen Sie sich "
-#~ "bitte auf {server} ein und legen einen Account mit den folgenden Daten an:"
-
-#, fuzzy
-#~ msgid "action"
-#~ msgid_plural "action--disabled"
-#~ msgstr[0] "Aktionen"
-#~ msgstr[1] "Aktionen"
-
-#, fuzzy
-#~ msgid "icon icon-certificate24"
-#~ msgstr "Zertifikat herunterladen"
-
-#, fuzzy
-#~ msgid "actions"
-#~ msgid_plural "vs__actions"
-#~ msgstr[0] "Aktionen"
-#~ msgstr[1] "Aktionen"
-
-#, fuzzy
-#~ msgid "unknown"
-#~ msgstr "Unbekannt"
