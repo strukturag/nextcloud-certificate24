@@ -771,7 +771,7 @@ msgstr "Annulla la ricerca"
 #. TRANSLATORS src/views/ShareDialogView.vue:343
 #: specialVueFakeDummyForL10nScript.js:306
 msgid "An error occurred while performing the search"
-msgstr ""
+msgstr "Si è verificato un errore durante l'esecuzione della ricerca"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:498
 #: specialVueFakeDummyForL10nScript.js:308
