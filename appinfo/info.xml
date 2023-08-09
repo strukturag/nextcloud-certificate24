@@ -11,10 +11,10 @@ With Certificate24 you can request digital signatures of documents stored in you
 See [the website](https://www.certificate24.com) for further information.
 ]]></description>
 
-	<version>0.1.2</version>
+	<version>0.2.0</version>
 	<license>agpl</license>
 
-	<author>struktur AG</author>
+	<author>Struktur AG</author>
 	<author>Joachim Bauch</author>
 
 	<namespace>Certificate24</namespace>
