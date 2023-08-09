@@ -737,7 +737,7 @@ msgstr "Il file non è firmato."
 #: specialVueFakeDummyForL10nScript.js:268
 #: specialVueFakeDummyForL10nScript.js:344
 msgid "The file is encrypted and can not be checked."
-msgstr ""
+msgstr "Il file è criptato e non può essere controllato."
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:50
 #. TRANSLATORS src/views/SignaturesView.vue:117
