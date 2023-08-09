@@ -74,6 +74,8 @@ class ResendMails extends TimedJob {
 			$recipient = [
 				'type' => $entry['recipient_type'],
 				'value' => $entry['recipient'],
+				'display_name' => $entry['recipient_display_name'],
+				'c24_signature_id' => $entry['c24_signature_id'],
 			];
 			$this->mails->sendRequestMail($entry['id'], $user, $file, $recipient, $entry['c24_server']);
 		}
@@ -96,6 +98,8 @@ class ResendMails extends TimedJob {
 			$recipient = [
 				'type' => $entry['type'],
 				'value' => $entry['value'],
+				'display_name' => $entry['display_name'],
+				'c24_signature_id' => $entry['c24_signature_id'],
 			];
 			$this->mails->sendRequestMail($entry['request_id'], $user, $file, $recipient, $request['c24_server']);
 		}
