@@ -156,6 +156,7 @@ appstore:
 			--path=$(sign_dir)/$(app_name); \
 	fi
 	tar -czf $(build_dir)/$(app_name).tar.gz \
+		--owner root --group root \
 		-C $(sign_dir) $(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
 		echo "Signing package…"; \
