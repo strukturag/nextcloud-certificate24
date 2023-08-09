@@ -33,7 +33,9 @@ https://www.certificate24.com.
 
 ## Translations
 
-Run `make l10n` to update the translation files. Translations can be changed
-using [poedit](https://poedit.net/) or similar tools in the `translationfiles`
-folder. Make sure to run `make l10n` afterwards to update the files necessary
-for Nextcloud.
+Run `make translationfiles/templates/certificate24.pot` to update the
+translation template.
+
+We are using transifex to manage translations. If you want to contribute,
+open https://explore.transifex.com/strukturag/nextcloud-certificate24/ to
+join the project.
