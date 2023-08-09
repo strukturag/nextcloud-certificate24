@@ -19,15 +19,20 @@
 -->
 
 <template>
-	<div>
-		<div v-if="signatures === undefined" class="emptycontent">
+	<div :class="isEmptyContent ? 'emptycontent' : ''">
+		<div v-if="signatures === undefined">
 			<div class="icon icon-loading" />
 		</div>
 
-		<div v-else-if="signatures.status === 'not_signed'" class="emptycontent">
+		<div v-else-if="signatures.status === 'not_signed' || signatures.code === 'error_encrypted_file'">
 			<div class="icon icon-certificate24" />
 			<h2>{{ t('certificate24', 'Signatures') }}</h2>
-			<p>{{ t('certificate24', 'The file is not signed.') }}</p>
+			<p v-if="signatures.status === 'not_signed'">
+				{{ t('certificate24', 'The file is not signed.') }}
+			</p>
+			<p v-else-if="signatures.code === 'error_encrypted_file'">
+				{{ t('certificate24', 'The file is encrypted and can not be checked.') }}
+			</p>
 		</div>
 
 		<template v-else>
@@ -106,10 +111,16 @@
 				</div>
 			</div>
 		</template>
+
+		<NcButton v-if="signatures !== undefined"
+			@click="$emit('recheck')">
+			{{ t('certificate24', 'Force recheck') }}
+		</NcButton>
 	</div>
 </template>
 
 <script>
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import CertificateDetails from '../components/CertificateDetails.vue'
 import SignatureProperties from '../components/SignatureProperties.vue'
 import SignatureStatus from '../components/SignatureStatus.vue'
@@ -124,6 +135,7 @@ export default {
 		CertificateDetails,
 		SignatureProperties,
 		SignatureStatus,
+		NcButton,
 	},
 
 	props: {
@@ -137,6 +149,12 @@ export default {
 		return {
 			signatures: undefined,
 		}
+	},
+
+	computed: {
+		isEmptyContent() {
+			return this.signatures === 'undefined' || this.signatures?.status === 'not_signed'
+		},
 	},
 
 	watch: {
@@ -163,6 +181,22 @@ export default {
 
 				this.signatures = response.data.ocs?.data || {}
 			} catch (error) {
+				switch (error.response?.status) {
+				case 400:
+					switch (error.response.data.ocs?.data?.code) {
+					case 'error_encrypted_file':
+						this.signatures = error.response.data.ocs?.data
+						return
+					}
+					break
+				case 404:
+					switch (error.response.data.ocs?.data?.status) {
+					case 'not_signed':
+						this.signatures = error.response.data.ocs?.data
+						return
+					}
+					break
+				}
 				console.error('Error loading signatures', error)
 			}
 		},
@@ -205,5 +239,18 @@ h3 {
 	&:not(:first-of-type) {
 		margin-bottom: 0.5em;
 	}
+}
+
+.emptycontent {
+	/* Override default top margin set in server and center vertically
+	 * instead. */
+	margin-top: unset;
+
+	height: 100%;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 }
 </style>

@@ -24,7 +24,6 @@ declare(strict_types=1);
  */
 namespace OCA\Certificate24\Controller;
 
-use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
 use OCA\Certificate24\Client;
 use OCA\Certificate24\Config;
@@ -106,23 +105,12 @@ class VerifyController extends OCSController {
 				]);
 				return new DataResponse(['error' => 'error_connecting'], Http::STATUS_BAD_GATEWAY);
 			} catch (\Exception $e) {
-				switch ($e->getCode()) {
-					case Http::STATUS_NOT_FOUND:
-						/** @var BadResponseException $e */
-						$response = $e->getResponse();
-						$body = (string) $response->getBody();
-						$signatures = json_decode($body, true);
-						if ($signatures) {
-							$this->verify->storeFileSignatures($file, $signatures);
-						}
-						return new DataResponse($signatures, Http::STATUS_NOT_FOUND);
-				}
-
 				$this->logger->error('Error sending request to ' . $server, [
 					'exception' => $e,
 				]);
 				return new DataResponse(['error' => $e->getCode()], Http::STATUS_BAD_GATEWAY);
 			}
+
 			$this->verify->storeFileSignatures($file, $signatures);
 		}
 
@@ -134,6 +122,8 @@ class VerifyController extends OCSController {
 				], Http::STATUS_PRECONDITION_FAILED);
 			} elseif ($signatures['status'] === 'not_signed') {
 				return new DataResponse($signatures, Http::STATUS_NOT_FOUND);
+			} elseif (isset($signatures['code'])) {
+				return new DataResponse($signatures, Http::STATUS_BAD_REQUEST);
 			}
 		}
 

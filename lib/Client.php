@@ -24,8 +24,10 @@ declare(strict_types=1);
  */
 namespace OCA\Certificate24;
 
+use GuzzleHttp\Exception\BadResponseException;
 use OCA\Certificate24\AppInfo\Application;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Http;
 use OCP\Files\File;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -223,13 +225,32 @@ class Client {
 			],
 		];
 
-		$response = $client->post($server . 'api/v1/files/' . rawurlencode($account['id']) . '/verify', [
-			'headers' => $headers,
-			'multipart' => $multipart,
-			'verify' => !$this->config->insecureSkipVerify(),
-		]);
-		$body = $response->getBody();
-		return json_decode($body, true);
+		try {
+			$response = $client->post($server . 'api/v1/files/' . rawurlencode($account['id']) . '/verify', [
+				'headers' => $headers,
+				'multipart' => $multipart,
+				'verify' => !$this->config->insecureSkipVerify(),
+			]);
+			$body = $response->getBody();
+			return json_decode($body, true);
+		} catch (\Exception $e) {
+			switch ($e->getCode()) {
+				case Http::STATUS_BAD_REQUEST:
+					// Fallthrough
+				case Http::STATUS_NOT_FOUND:
+					/** @var BadResponseException $e */
+					$response = $e->getResponse();
+					$body = (string) $response->getBody();
+					$signatures = json_decode($body, true);
+					if ($signatures) {
+						return $signatures;
+					}
+					break;
+			}
+
+			/** @var \Exception $e */
+			throw $e;
+		}
 	}
 
 }

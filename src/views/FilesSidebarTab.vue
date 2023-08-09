@@ -37,19 +37,22 @@
 				{{ t('certificate24', 'Check manually') }}
 			</NcButton>
 		</div>
-		<div v-else-if="isSidebarSupportedForFile && notSigned" class="emptycontent">
+		<div v-else-if="isSidebarSupportedForFile && (notSigned || encryptedFile)" class="emptycontent">
 			<div class="icon icon-certificate24" />
 			<h2>{{ t('certificate24', 'Signatures') }}</h2>
-			<p>{{ t('certificate24', 'The file is not signed.') }}</p>
+			<p v-if="notSigned">
+				{{ t('certificate24', 'The file is not signed.') }}
+			</p>
+			<p v-else-if="encryptedFile">
+				{{ t('certificate24', 'The file is encrypted and can not be checked.') }}
+			</p>
 			<NcButton @click="forceCheck">
 				{{ t('certificate24', 'Force recheck') }}
 			</NcButton>
 		</div>
 		<template v-else>
-			<SignaturesView :file-id="fileId" />
-			<NcButton @click="forceCheck">
-				{{ t('certificate24', 'Force recheck') }}
-			</NcButton>
+			<SignaturesView :file-id="fileId"
+				@recheck="forceCheck" />
 		</template>
 	</div>
 </template>
@@ -76,6 +79,7 @@ export default {
 			sidebarState: OCA.Files.Sidebar.state,
 			signaturesPending: false,
 			notSigned: false,
+			encryptedFile: false,
 			isSidebarSupportedForFile: undefined,
 			prevSignaturesPending: false,
 			prevNotSigned: false,
@@ -202,6 +206,14 @@ export default {
 
 		handleGetSignaturesError(error) {
 			switch (error.response?.status) {
+			case 400:
+				switch (error.response.data.ocs?.data?.code) {
+				case 'error_encrypted_file':
+					this.isSidebarSupportedForFile = true
+					this.encryptedFile = true
+					break
+				}
+				break
 			case 404:
 				switch (error.response.data.ocs?.data?.status) {
 				case 'not_signed':

@@ -24,12 +24,10 @@ declare(strict_types=1);
  */
 namespace OCA\Certificate24\BackgroundJob;
 
-use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
 use OCA\Certificate24\Client;
 use OCA\Certificate24\Config;
 use OCA\Certificate24\Verify;
-use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -185,18 +183,6 @@ class BackgroundVerify extends TimedJob {
 			]);
 			return;
 		} catch (\Exception $e) {
-			switch ($e->getCode()) {
-				case Http::STATUS_NOT_FOUND:
-					/** @var BadResponseException $e */
-					$response = $e->getResponse();
-					$body = (string) $response->getBody();
-					$signatures = json_decode($body, true);
-					if ($signatures) {
-						$this->verify->storeFileSignatures($file, $signatures);
-					}
-					return;
-			}
-
 			$this->logger->error('Error sending request to ' . $server . ' for ' . $file->getPath(), [
 				'exception' => $e,
 			]);

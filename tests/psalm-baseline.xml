@@ -4,9 +4,6 @@
     <MissingDependency occurrences="3">
       <code>IRootFolder</code>
     </MissingDependency>
-    <UndefinedDocblockClass occurrences="2">
-      <code>BadResponseException</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="lib/BackgroundJob/FetchSigned.php">
     <InvalidArgument occurrences="2">
@@ -46,6 +43,8 @@
     <MissingDependency occurrences="3">
       <code>IRootFolder</code>
     </MissingDependency>
+  </file>
+  <file src="lib/Client.php">
     <UndefinedDocblockClass occurrences="2">
       <code>BadResponseException</code>
     </UndefinedDocblockClass>
