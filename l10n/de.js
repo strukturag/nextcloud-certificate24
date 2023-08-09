@@ -119,7 +119,7 @@ OC.L10N.register(
     "Signature status is pending for this file." : "Der Signaturstatus dieser Datei wird noch verarbeitet.",
     "Check manually" : "Manuell prüfen",
     "The file is not signed." : "Die Datei ist nicht signiert.",
-    "The file is encrypted and can not be checked." : "Die Datei ist verschlüsselt und kann nicht überprüft werden.",
+    "The file is encrypted and can not be checked." : "Die Datei ist verschlüsselt und kann nicht geprüft werden.",
     "Force recheck" : "Erneut prüfen",
     "Error fetching signature details." : "Fehler beim Abrufen der Signaturdetails.",
     "Request signature" : "Signatur anfragen",
