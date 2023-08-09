@@ -118,6 +118,7 @@ OC.L10N.register(
     "Signature status is pending for this file." : "Lo stato della firma è in sospeso per questo file.",
     "Check manually" : "Verifica manuale",
     "The file is not signed." : "Il file non è firmato.",
+    "The file is encrypted and can not be checked." : "Il file è criptato e non può essere controllato.",
     "Force recheck" : "Forza il ricontrollo",
     "Error fetching signature details." : "Errore nell'acquisizione dei dettagli della firma.",
     "Request signature" : "Firma della richiesta",
