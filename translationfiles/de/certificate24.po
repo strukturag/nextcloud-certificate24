@@ -739,7 +739,7 @@ msgstr "Die Datei ist nicht signiert."
 #: specialVueFakeDummyForL10nScript.js:268
 #: specialVueFakeDummyForL10nScript.js:344
 msgid "The file is encrypted and can not be checked."
-msgstr "Die Datei ist verschlüsselt und kann nicht überprüft werden."
+msgstr "Die Datei ist verschlüsselt und kann nicht geprüft werden."
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:50
 #. TRANSLATORS src/views/SignaturesView.vue:117
