@@ -19,7 +19,7 @@
 		"@nextcloud/router": "^2.1.2",
 		"@nextcloud/vue": "^7.12.4",
 		"@nextcloud/vue-dashboard": "^2.0.1",
-		"@peculiar/x509": "^1.9.3",
+		"@peculiar/x509": "^1.9.5",
 		"debounce": "^1.2.1",
 		"jquery": "3.7.0",
 		"vue": "^2.7.14",
