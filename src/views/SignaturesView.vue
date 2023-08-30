@@ -24,7 +24,7 @@
 			<div class="icon icon-loading" />
 		</div>
 
-		<div v-else-if="signatures.status === 'not_signed' || signatures.code === 'error_encrypted_file'">
+		<div v-else-if="signatures.status === 'not_signed' || signatures.code">
 			<div class="icon icon-certificate24" />
 			<h2>{{ t('certificate24', 'Signatures') }}</h2>
 			<p v-if="signatures.status === 'not_signed'">
@@ -32,6 +32,12 @@
 			</p>
 			<p v-else-if="signatures.code === 'error_encrypted_file'">
 				{{ t('certificate24', 'The file is encrypted and can not be checked.') }}
+			</p>
+			<p v-else-if="signatures.code === 'error_parsing_file'">
+				{{ t('certificate24', 'The file could not be parsed and can not be checked.') }}
+			</p>
+			<p v-else>
+				{{ t('certificate24', 'Error fetching signature details.') }}
 			</p>
 		</div>
 
@@ -153,7 +159,7 @@ export default {
 
 	computed: {
 		isEmptyContent() {
-			return this.signatures === 'undefined' || this.signatures?.status === 'not_signed'
+			return this.signatures === 'undefined' || this.signatures?.status === 'not_signed' || this.signatures?.code
 		},
 	},
 
@@ -183,8 +189,7 @@ export default {
 			} catch (error) {
 				switch (error.response?.status) {
 				case 400:
-					switch (error.response.data.ocs?.data?.code) {
-					case 'error_encrypted_file':
+					if (error.response.data.ocs?.data?.code) {
 						this.signatures = error.response.data.ocs?.data
 						return
 					}

@@ -37,14 +37,20 @@
 				{{ t('certificate24', 'Check manually') }}
 			</NcButton>
 		</div>
-		<div v-else-if="isSidebarSupportedForFile && (notSigned || encryptedFile)" class="emptycontent">
+		<div v-else-if="isSidebarSupportedForFile && (notSigned || errorValidating)" class="emptycontent">
 			<div class="icon icon-certificate24" />
 			<h2>{{ t('certificate24', 'Signatures') }}</h2>
 			<p v-if="notSigned">
 				{{ t('certificate24', 'The file is not signed.') }}
 			</p>
-			<p v-else-if="encryptedFile">
+			<p v-else-if="errorValidating === 'error_encrypted_file'">
 				{{ t('certificate24', 'The file is encrypted and can not be checked.') }}
+			</p>
+			<p v-else-if="errorValidating === 'error_parsing_file'">
+				{{ t('certificate24', 'The file could not be parsed and can not be checked.') }}
+			</p>
+			<p v-else>
+				{{ t('certificate24', 'Error fetching signature details.') }}
 			</p>
 			<NcButton @click="forceCheck">
 				{{ t('certificate24', 'Force recheck') }}
@@ -79,7 +85,7 @@ export default {
 			sidebarState: OCA.Files.Sidebar.state,
 			signaturesPending: false,
 			notSigned: false,
-			encryptedFile: false,
+			errorValidating: null,
 			isSidebarSupportedForFile: undefined,
 			prevSignaturesPending: false,
 			prevNotSigned: false,
@@ -164,6 +170,7 @@ export default {
 				// When it is not possible to know whether the sidebar is
 				// supported for a file or not only from the data in the
 				// FileInfo it is necessary to query the server.
+				this.errorValidating = null
 				try {
 					this.isSidebarSupportedForFile = (await getFileSignatures({ fileId: fileInfo.id }, { force })) || false
 				} catch (error) {
@@ -191,6 +198,7 @@ export default {
 				// When it is not possible to know whether the sidebar is
 				// supported for a file or not only from the data in the
 				// FileInfo it is necessary to query the server.
+				this.errorValidating = null
 				try {
 					this.isSidebarSupportedForFile = (await getFileSignatures({ fileId: fileInfo.id }, { force })) || false
 				} catch (error) {
@@ -207,12 +215,8 @@ export default {
 		handleGetSignaturesError(error) {
 			switch (error.response?.status) {
 			case 400:
-				switch (error.response.data.ocs?.data?.code) {
-				case 'error_encrypted_file':
-					this.isSidebarSupportedForFile = true
-					this.encryptedFile = true
-					break
-				}
+				this.isSidebarSupportedForFile = true
+				this.errorValidating = error.response.data.ocs?.data?.code || null
 				break
 			case 404:
 				switch (error.response.data.ocs?.data?.status) {

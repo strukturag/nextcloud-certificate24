@@ -86,6 +86,7 @@ class DeleteListener implements IEventListener {
 
 			$this->metadata->deleteMetadata($file);
 			$this->verify->deleteFileSignatures($file);
+			$this->verify->deleteFailed($file);
 			$requests = $this->requests->getRequestsForFile($file, true);
 			foreach ($requests as $request) {
 				$this->manager->deleteRequest($request, $account);
