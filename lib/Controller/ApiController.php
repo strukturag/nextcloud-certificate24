@@ -42,10 +42,13 @@ use OCP\AppFramework\OCSController;
 use OCP\Collaboration\Collaborators\ISearch;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
+use OCP\IConfig;
+use OCP\IL10N;
 use OCP\Image;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\L10N\IFactory;
 use OCP\Mail\IMailer;
 use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
@@ -73,6 +76,9 @@ class ApiController extends OCSController {
 	private ISearch $search;
 	private IMailer $mailer;
 	private IEventDispatcher $dispatcher;
+	private IFactory $l10nFactory;
+	private IL10N $l10n;
+	private IConfig $systemConfig;
 	private Client $client;
 	private Config $config;
 	private Requests $requests;
@@ -92,6 +98,9 @@ class ApiController extends OCSController {
 		ISearch $search,
 		IMailer $mailer,
 		IEventDispatcher $dispatcher,
+		IFactory $l10nFactory,
+		IL10N $l10n,
+		IConfig $systemConfig,
 		Client $client,
 		Config $config,
 		Requests $requests,
@@ -109,6 +118,9 @@ class ApiController extends OCSController {
 		$this->search = $search;
 		$this->mailer = $mailer;
 		$this->dispatcher = $dispatcher;
+		$this->l10nFactory = $l10nFactory;
+		$this->l10n = $l10n;
+		$this->systemConfig = $systemConfig;
 		$this->client = $client;
 		$this->config = $config;
 		$this->requests = $requests;
@@ -300,6 +312,18 @@ class ApiController extends OCSController {
 				'error' => 'invalid_options',
 				'details' => $error
 			], Http::STATUS_BAD_REQUEST);
+		}
+
+		$lang = $this->l10nFactory->getUserLanguage($user);
+		if (empty($lang)) {
+			$lang = $this->l10n->getLanguageCode();
+		}
+		$metadata['sender'] = [
+			'language' => $lang,
+		];
+		$timezone = $this->systemConfig->getUserValue($user->getUID(), 'core', 'timezone', null);
+		if (!empty($timezone)) {
+			$metadata['sender']['timezone'] = $timezone;
 		}
 
 		$server = $this->config->getApiServer();
