@@ -747,6 +747,7 @@ msgstr "Die Datei ist verschlüsselt und kann nicht geprüft werden."
 #: specialVueFakeDummyForL10nScript.js:350
 msgid "The file could not be parsed and can not be checked."
 msgstr ""
+"Die Datei konnte nicht verarbeitet werden und wurde daher nicht geprüft."
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:53
 #. TRANSLATORS src/views/FilesSidebarTab.vue:236
