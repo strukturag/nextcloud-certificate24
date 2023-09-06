@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-08-09 14:46+0200\n"
+"POT-Creation-Date: 2023-09-06 09:13+0200\n"
 "PO-Revision-Date: 2023-08-02 15:11+0000\n"
 "Last-Translator: Joachim Bauch <mail@joachim-bauch.de>, 2023\n"
 "Language-Team: Italian (https://app.transifex.com/strukturag/teams/173038/it/)\n"
@@ -255,9 +255,9 @@ msgid "Error while clearing verification cache."
 msgstr "Errore durante la cancellazione della cache di verifica."
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:22
-#. TRANSLATORS src/views/SignaturesView.vue:85
+#. TRANSLATORS src/views/SignaturesView.vue:91
 #: specialVueFakeDummyForL10nScript.js:62
-#: specialVueFakeDummyForL10nScript.js:362
+#: specialVueFakeDummyForL10nScript.js:370
 msgid "Signature properties"
 msgstr "Proprietà della firma"
 
@@ -277,21 +277,21 @@ msgstr ""
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:31
 #. TRANSLATORS src/views/ShareDialogView.vue:134
 #: specialVueFakeDummyForL10nScript.js:68
-#: specialVueFakeDummyForL10nScript.js:294
+#: specialVueFakeDummyForL10nScript.js:298
 msgid "Create new signed file next to original file"
 msgstr "Creare un nuovo file firmato accanto al file originale"
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:38
 #. TRANSLATORS src/views/ShareDialogView.vue:137
 #: specialVueFakeDummyForL10nScript.js:70
-#: specialVueFakeDummyForL10nScript.js:296
+#: specialVueFakeDummyForL10nScript.js:300
 msgid "Replace original file with signed file"
 msgstr "Sostituire il file originale con un file firmato"
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:45
 #. TRANSLATORS src/views/ShareDialogView.vue:140
 #: specialVueFakeDummyForL10nScript.js:72
-#: specialVueFakeDummyForL10nScript.js:298
+#: specialVueFakeDummyForL10nScript.js:302
 msgid "Don't save signed file automatically"
 msgstr "Non salvare automaticamente il file firmato"
 
@@ -383,7 +383,7 @@ msgstr "In attesa di altre firme."
 #. TRANSLATORS src/components/IncomingSignRequests.vue:229
 #. TRANSLATORS src/views/ShareDialogView.vue:606
 #: specialVueFakeDummyForL10nScript.js:112
-#: specialVueFakeDummyForL10nScript.js:332
+#: specialVueFakeDummyForL10nScript.js:336
 msgid ""
 "The server requires a newer version of the app. Please contact your "
 "administrator."
@@ -394,7 +394,7 @@ msgstr ""
 #. TRANSLATORS src/components/IncomingSignRequests.vue:232
 #. TRANSLATORS src/views/ShareDialogView.vue:609
 #: specialVueFakeDummyForL10nScript.js:114
-#: specialVueFakeDummyForL10nScript.js:334
+#: specialVueFakeDummyForL10nScript.js:338
 msgid ""
 "This app requires a newer version of the server. Please contact your "
 "administrator."
@@ -405,7 +405,7 @@ msgstr ""
 #. TRANSLATORS src/components/IncomingSignRequests.vue:236
 #. TRANSLATORS src/views/ShareDialogView.vue:613
 #: specialVueFakeDummyForL10nScript.js:116
-#: specialVueFakeDummyForL10nScript.js:336
+#: specialVueFakeDummyForL10nScript.js:340
 msgid "Error loading serverside API, please try again later."
 msgstr "Errore nel caricamento dell'API lato server, riprovare più tardi."
 
@@ -422,7 +422,7 @@ msgstr "Ultimo firmato"
 #. TRANSLATORS src/components/OwnSignRequests.vue:45
 #. TRANSLATORS src/views/ShareDialogView.vue:34
 #: specialVueFakeDummyForL10nScript.js:128
-#: specialVueFakeDummyForL10nScript.js:280
+#: specialVueFakeDummyForL10nScript.js:284
 msgid "Recipients"
 msgstr "Destinatari"
 
@@ -558,8 +558,8 @@ msgstr "Nessun risultato di ricerca"
 #: specialVueFakeDummyForL10nScript.js:190
 #: specialVueFakeDummyForL10nScript.js:192
 #: specialVueFakeDummyForL10nScript.js:194
-#: specialVueFakeDummyForL10nScript.js:300
-#: specialVueFakeDummyForL10nScript.js:302
+#: specialVueFakeDummyForL10nScript.js:304
+#: specialVueFakeDummyForL10nScript.js:306
 msgid "Select signature position"
 msgstr "Selezionare la posizione della firma"
 
@@ -705,8 +705,8 @@ msgstr "Richiesto da {display_name} il {date}"
 #. TRANSLATORS src/views/SignaturesView.vue:29
 #: specialVueFakeDummyForL10nScript.js:256
 #: specialVueFakeDummyForL10nScript.js:264
-#: specialVueFakeDummyForL10nScript.js:340
-#: specialVueFakeDummyForL10nScript.js:346 src/mainFilesSidebarLoader.js:39
+#: specialVueFakeDummyForL10nScript.js:344
+#: specialVueFakeDummyForL10nScript.js:354 src/mainFilesSidebarLoader.js:39
 msgid "Signatures"
 msgstr "Firme"
 
@@ -728,161 +728,172 @@ msgstr "Verifica manuale"
 #. TRANSLATORS src/views/FilesSidebarTab.vue:44
 #. TRANSLATORS src/views/SignaturesView.vue:31
 #: specialVueFakeDummyForL10nScript.js:266
-#: specialVueFakeDummyForL10nScript.js:342
+#: specialVueFakeDummyForL10nScript.js:346
 msgid "The file is not signed."
 msgstr "Il file non è firmato."
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:47
 #. TRANSLATORS src/views/SignaturesView.vue:34
 #: specialVueFakeDummyForL10nScript.js:268
-#: specialVueFakeDummyForL10nScript.js:344
+#: specialVueFakeDummyForL10nScript.js:348
 msgid "The file is encrypted and can not be checked."
 msgstr "Il file è criptato e non può essere controllato."
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:50
-#. TRANSLATORS src/views/SignaturesView.vue:117
+#. TRANSLATORS src/views/SignaturesView.vue:37
 #: specialVueFakeDummyForL10nScript.js:270
-#: specialVueFakeDummyForL10nScript.js:368
-msgid "Force recheck"
-msgstr "Forza il ricontrollo"
+#: specialVueFakeDummyForL10nScript.js:350
+msgid "The file could not be parsed and can not be checked."
+msgstr ""
 
-#. TRANSLATORS src/views/FilesSidebarTab.vue:232
+#. TRANSLATORS src/views/FilesSidebarTab.vue:53
+#. TRANSLATORS src/views/FilesSidebarTab.vue:236
+#. TRANSLATORS src/views/SignaturesView.vue:40
 #: specialVueFakeDummyForL10nScript.js:272
+#: specialVueFakeDummyForL10nScript.js:276
+#: specialVueFakeDummyForL10nScript.js:352
 msgid "Error fetching signature details."
 msgstr "Errore nell'acquisizione dei dettagli della firma."
 
-#. TRANSLATORS src/views/ShareDialogView.vue:24
-#. TRANSLATORS src/views/ShareDialogView.vue:28
-#. TRANSLATORS src/views/ShareDialogView.vue:24
-#. TRANSLATORS src/views/ShareDialogView.vue:28
+#. TRANSLATORS src/views/FilesSidebarTab.vue:56
+#. TRANSLATORS src/views/SignaturesView.vue:123
 #: specialVueFakeDummyForL10nScript.js:274
-#: specialVueFakeDummyForL10nScript.js:276
+#: specialVueFakeDummyForL10nScript.js:376
+msgid "Force recheck"
+msgstr "Forza il ricontrollo"
+
+#. TRANSLATORS src/views/ShareDialogView.vue:24
+#. TRANSLATORS src/views/ShareDialogView.vue:28
+#. TRANSLATORS src/views/ShareDialogView.vue:24
+#. TRANSLATORS src/views/ShareDialogView.vue:28
 #: specialVueFakeDummyForL10nScript.js:278
-#: specialVueFakeDummyForL10nScript.js:304
-#: specialVueFakeDummyForL10nScript.js:306 src/mainLoader.js:73
+#: specialVueFakeDummyForL10nScript.js:280
+#: specialVueFakeDummyForL10nScript.js:282
+#: specialVueFakeDummyForL10nScript.js:308
+#: specialVueFakeDummyForL10nScript.js:310 src/mainLoader.js:73
 msgid "Request signature"
 msgstr "Firma della richiesta"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:49
-#: specialVueFakeDummyForL10nScript.js:282
+#: specialVueFakeDummyForL10nScript.js:286
 msgid "Delete recipient"
 msgstr "Cancellare il destinatario"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:61
-#: specialVueFakeDummyForL10nScript.js:284
+#: specialVueFakeDummyForL10nScript.js:288
 msgid "Add user"
 msgstr "Aggiungi utente"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:69
-#: specialVueFakeDummyForL10nScript.js:286
+#: specialVueFakeDummyForL10nScript.js:290
 msgid "Search users"
 msgstr "Ricerca utenti"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:98
-#: specialVueFakeDummyForL10nScript.js:288
+#: specialVueFakeDummyForL10nScript.js:292
 msgid "Add email address"
 msgstr "Aggiungere l'indirizzo e-mail"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:106
-#: specialVueFakeDummyForL10nScript.js:290
+#: specialVueFakeDummyForL10nScript.js:294
 msgid "E-mail address"
 msgstr "Indirizzo e-mail"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:131
-#: specialVueFakeDummyForL10nScript.js:292
+#: specialVueFakeDummyForL10nScript.js:296
 msgid "Action to perform when the file was signed successfully:"
 msgstr "Azione da eseguire quando il file è stato firmato con successo:"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:262
-#: specialVueFakeDummyForL10nScript.js:308
+#: specialVueFakeDummyForL10nScript.js:312
 msgid "Cancel search"
 msgstr "Annulla la ricerca"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:345
-#: specialVueFakeDummyForL10nScript.js:310
+#: specialVueFakeDummyForL10nScript.js:314
 msgid "An error occurred while performing the search"
 msgstr "Si è verificato un errore durante l'esecuzione della ricerca"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:500
-#: specialVueFakeDummyForL10nScript.js:312
+#: specialVueFakeDummyForL10nScript.js:316
 msgid "No file selected."
 msgstr "Non è stato selezionato alcun file."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:505
-#: specialVueFakeDummyForL10nScript.js:314
+#: specialVueFakeDummyForL10nScript.js:318
 msgid "Please add at least one recipient first."
 msgstr "Si prega di aggiungere prima almeno un destinatario."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:525
-#: specialVueFakeDummyForL10nScript.js:316
+#: specialVueFakeDummyForL10nScript.js:320
 msgid "Please create signature fields first."
 msgstr "Si prega di creare prima i campi per la firma."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:554
-#: specialVueFakeDummyForL10nScript.js:318
+#: specialVueFakeDummyForL10nScript.js:322
 msgid "At least one field has no recipient assigned."
 msgstr "Ad almeno un campo non è stato assegnato alcun destinatario."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:557
-#: specialVueFakeDummyForL10nScript.js:320
+#: specialVueFakeDummyForL10nScript.js:324
 msgid "At least one recipient has no field assigned."
 msgstr "Ad almeno un destinatario non è stato assegnato alcun campo."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:570
-#: specialVueFakeDummyForL10nScript.js:322
+#: specialVueFakeDummyForL10nScript.js:326
 msgid "Requested signature."
 msgstr "Firma richiesta."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:579
-#: specialVueFakeDummyForL10nScript.js:324
+#: specialVueFakeDummyForL10nScript.js:328
 msgid "Unknown user."
 msgstr "Utente sconosciuto."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:582
-#: specialVueFakeDummyForL10nScript.js:326
+#: specialVueFakeDummyForL10nScript.js:330
 msgid "Invalid email address."
 msgstr "Indirizzo e-mail non valido."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:585
-#: specialVueFakeDummyForL10nScript.js:328
+#: specialVueFakeDummyForL10nScript.js:332
 msgid "Error connecting to Certificate24 service."
 msgstr "Errore di connessione al servizio Certificate24."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:588
-#: specialVueFakeDummyForL10nScript.js:330
+#: specialVueFakeDummyForL10nScript.js:334
 msgid "Error while requesting signature."
 msgstr "Errore durante la richiesta di firma."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:146
-#: specialVueFakeDummyForL10nScript.js:338
+#: specialVueFakeDummyForL10nScript.js:342
 msgid "%n signature field positioned"
 msgid_plural "%n signature fields positioned"
 msgstr[0] "%n campo firma posizionato"
 msgstr[1] "%n campi firma posizionati"
 msgstr[2] "%n campi firma posizionati"
 
-#. TRANSLATORS src/views/SignaturesView.vue:41
-#: specialVueFakeDummyForL10nScript.js:348
+#. TRANSLATORS src/views/SignaturesView.vue:47
+#: specialVueFakeDummyForL10nScript.js:356
 msgid "Checked on: {date}"
 msgstr "Controllato il: {date}"
 
-#. TRANSLATORS src/views/SignaturesView.vue:52
-#: specialVueFakeDummyForL10nScript.js:350
+#. TRANSLATORS src/views/SignaturesView.vue:58
+#: specialVueFakeDummyForL10nScript.js:358
 msgid "Signature {index}"
 msgstr "Firma {index}"
 
-#. TRANSLATORS src/views/SignaturesView.vue:58
-#: specialVueFakeDummyForL10nScript.js:352
+#. TRANSLATORS src/views/SignaturesView.vue:64
+#: specialVueFakeDummyForL10nScript.js:360
 msgid "Signed by: {signer}"
 msgstr "Firmato da: {signer}"
 
-#. TRANSLATORS src/views/SignaturesView.vue:63
-#: specialVueFakeDummyForL10nScript.js:354
+#. TRANSLATORS src/views/SignaturesView.vue:69
+#: specialVueFakeDummyForL10nScript.js:362
 msgid "Signed on: {date}"
 msgstr "Firmato il: {date}"
 
-#. TRANSLATORS src/views/SignaturesView.vue:69
-#: specialVueFakeDummyForL10nScript.js:356
+#. TRANSLATORS src/views/SignaturesView.vue:75
+#: specialVueFakeDummyForL10nScript.js:364
 msgid ""
 "The signature timestamp was generated on the signers machine and is "
 "untrusted."
@@ -890,28 +901,28 @@ msgstr ""
 "Il timestamp della firma è stato generato dal computer del firmatario e non "
 "è attendibile."
 
-#. TRANSLATORS src/views/SignaturesView.vue:77
-#: specialVueFakeDummyForL10nScript.js:358
+#. TRANSLATORS src/views/SignaturesView.vue:83
+#: specialVueFakeDummyForL10nScript.js:366
 msgid "The file was not modified since it was signed."
 msgstr "Il file non è stato modificato da quando è stato firmato."
 
-#. TRANSLATORS src/views/SignaturesView.vue:80
-#: specialVueFakeDummyForL10nScript.js:360
+#. TRANSLATORS src/views/SignaturesView.vue:86
+#: specialVueFakeDummyForL10nScript.js:368
 msgid "The file was modified since it was signed."
 msgstr "Il file è stato modificato da quando è stato firmato."
 
-#. TRANSLATORS src/views/SignaturesView.vue:92
-#: specialVueFakeDummyForL10nScript.js:364
+#. TRANSLATORS src/views/SignaturesView.vue:98
+#: specialVueFakeDummyForL10nScript.js:372
 msgid "Signature timestamp"
 msgstr "Timestamp della firma"
 
-#. TRANSLATORS src/views/SignaturesView.vue:105
-#: specialVueFakeDummyForL10nScript.js:366
+#. TRANSLATORS src/views/SignaturesView.vue:111
+#: specialVueFakeDummyForL10nScript.js:374
 msgid "Certificate chain"
 msgstr "Catena di certificati"
 
-#. TRANSLATORS src/views/SignaturesView.vue:209
-#: specialVueFakeDummyForL10nScript.js:370
+#. TRANSLATORS src/views/SignaturesView.vue:214
+#: specialVueFakeDummyForL10nScript.js:378
 msgid "Unknown"
 msgstr "Sconosciuto"
 
