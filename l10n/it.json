@@ -117,6 +117,7 @@
     "Check manually" : "Verifica manuale",
     "The file is not signed." : "Il file non è firmato.",
     "The file is encrypted and can not be checked." : "Il file è criptato e non può essere controllato.",
+    "The file could not be parsed and can not be checked." : "Il file non è stato analizzato e non può essere controllato.",
     "Error fetching signature details." : "Errore nell'acquisizione dei dettagli della firma.",
     "Force recheck" : "Forza il ricontrollo",
     "Request signature" : "Firma della richiesta",
