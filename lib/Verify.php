@@ -50,9 +50,11 @@ class Verify {
 	public function storeFileSignatures(File $file, ?array $signatures): void {
 		if (empty($signatures)) {
 			$this->deleteFileSignatures($file);
+			$this->deleteFailed($file);
 			return;
 		}
 
+		$this->deleteFailed($file);
 		$signatures = json_encode($signatures);
 		$update = $this->db->getQueryBuilder();
 		$update->update('c24_file_signatures')
@@ -144,4 +146,63 @@ class Verify {
 
 		return $row['count'];
 	}
+
+	public function deleteFailed(File $file): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete('c24_verify_failed')
+			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
+		$query->executeStatement();
+	}
+
+	public function getFailedCount(File $file): int {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('c24_verify_failed')
+			->where($query->expr()->eq('file_id', $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+		if ($row === false) {
+			return 0;
+		}
+
+		return (int) $row['count'];
+	}
+
+	public function storeFailed(File $file): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update('c24_verify_failed')
+			->set('updated', $update->createFunction('now()'))
+			->set('count', $update->createFunction('`count` + 1'))
+			->where($update->expr()->eq('file_id', $update->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT)));
+		if ($update->executeStatement() > 0) {
+			// Updated existing entry.
+			return;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->insert('c24_verify_failed')
+			->values(
+				[
+					'file_id' => $query->createNamedParameter($file->getId(), IQueryBuilder::PARAM_INT),
+					'created' => $query->createFunction('now()'),
+					'updated' => $query->createFunction('now()'),
+					'count' => $query->createNamedParameter(1, IQueryBuilder::PARAM_INT),
+				]
+			);
+
+		try {
+			$query->executeStatement();
+		} catch (UniqueConstraintViolationException $e) {
+			// Another user added the entry concurrently.
+			return;
+		}
+	}
+
+	public function deleteAllFailed(): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete('c24_verify_failed');
+		$query->executeStatement();
+	}
+
 }

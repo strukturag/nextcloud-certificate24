@@ -41,6 +41,10 @@ use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 class BackgroundVerify extends TimedJob {
+
+	// Retry files with errors after 1 hour.
+	private const VERIFY_ERROR_DELAY_MINUTES = 60;
+
 	private LoggerInterface $logger;
 	private IUserManager $userManager;
 	private IDBConnection $db;
@@ -160,13 +164,24 @@ class BackgroundVerify extends TimedJob {
 	private function getPendingFiles(): IResult {
 		$pdfMimeTypeId = $this->mimeTypeLoader->getId('application/pdf');
 
+		$since = new \DateTime();
+		$since->setTimezone(new \DateTimeZone('UTC'));
+		$since = $since->sub(new \DateInterval('PT' . self::VERIFY_ERROR_DELAY_MINUTES . 'M'));
+
 		$query = $this->db->getQueryBuilder();
 		$query->select('fc.fileid', 'storage')
 			->from('filecache', 'fc')
 			->leftJoin('fc', 'c24_file_signatures', 'fs', $query->expr()->eq('fc.fileid', 'fs.file_id'))
+			->leftJoin('fc', 'c24_verify_failed', 'vf', $query->expr()->eq('fc.fileid', 'vf.file_id'))
 			->where($query->expr()->isNull('fs.file_id'))
 			->andWhere($query->expr()->eq('mimetype', $query->expr()->literal($pdfMimeTypeId)))
 			->andWhere($query->expr()->like('path', $query->expr()->literal('files/%')))
+			->andWhere(
+				$query->expr()->orX(
+					$query->expr()->isNull('vf.updated'),
+					$query->expr()->lte('vf.updated', $query->createNamedParameter($since, 'datetimetz'))
+				),
+			)
 			->setMaxResults($this->getBatchSize() * 10);
 
 		return $query->executeQuery();
@@ -186,6 +201,7 @@ class BackgroundVerify extends TimedJob {
 			$this->logger->error('Error sending request to ' . $server . ' for ' . $file->getPath(), [
 				'exception' => $e,
 			]);
+			$this->verify->storeFailed($file);
 			return;
 		}
 
