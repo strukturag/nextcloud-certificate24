@@ -744,7 +744,7 @@ msgstr "Il file è criptato e non può essere controllato."
 #: specialVueFakeDummyForL10nScript.js:270
 #: specialVueFakeDummyForL10nScript.js:350
 msgid "The file could not be parsed and can not be checked."
-msgstr ""
+msgstr "Il file non è stato analizzato e non può essere controllato."
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:53
 #. TRANSLATORS src/views/FilesSidebarTab.vue:236
