@@ -584,7 +584,7 @@ msgid ""
 "Please upload a signature image in the <a href=\"{link}\">personal "
 "settings</a> to sign this file."
 msgstr ""
-"Bitte laden ein Signaturbid in den <a href=\"{link}\">persönlichen "
+"Bitte laden ein Signaturbild in den <a href=\"{link}\">persönlichen "
 "Einstellungen</a> hoch, um die Datei zu signieren."
 
 #. TRANSLATORS src/components/SignDialogModal.vue:148
