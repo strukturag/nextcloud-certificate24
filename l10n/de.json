@@ -88,7 +88,7 @@
     "Select signature position" : "Position der Signatur auswählen",
     "Sign {filename}" : "{filename} signieren",
     "Embed personal signature in fields" : "Persönliche Signatur in Feldern einbetten",
-    "Please upload a signature image in the <a href=\"{link}\">personal settings</a> to sign this file." : "Bitte lade ein Signaturbid in den <a href=\"{link}\">persönlichen Einstellungen</a> hoch, um die Datei zu signieren.",
+    "Please upload a signature image in the <a href=\"{link}\">personal settings</a> to sign this file." : "Bitte lade ein Signaturbild in den <a href=\"{link}\">persönlichen Einstellungen</a> hoch, um die Datei zu signieren.",
     "Could not load document, please download and review manually." : "Das Dokument konnte nicht geladen werden, bitte lade es herunter und prüfe es manuell.",
     "Could not render page {page}." : "Seite {page} konnte nicht angezeigt werden.",
     "Do you really want to sign this request?" : "Willst Du die Anfrage wirklich signieren?",
