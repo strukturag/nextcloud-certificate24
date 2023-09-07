@@ -44,6 +44,7 @@
 				{{ t('certificate24', 'Embed personal signature in fields') }}
 			</NcCheckboxRadioSwitch>
 			<div v-if="signature_fields && !canEmbedImages"
+				class="upload-message"
 				v-html="uploadMessage" />
 			<NcButton type="primary"
 				:disabled="submitDisabled"
@@ -203,6 +204,13 @@ h1 {
 
 .document {
 	margin-bottom: 1em;
+}
+
+.upload-message {
+	margin: 1em 0;
+	padding: 12px;
+	border: 1px solid var(--color-warning);
+	color: var(--color-warning);
 }
 
 .modal__content:deep a {
