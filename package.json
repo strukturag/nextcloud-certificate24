@@ -17,7 +17,7 @@
 		"@nextcloud/l10n": "^2.2.0",
 		"@nextcloud/moment": "^1.2.1",
 		"@nextcloud/router": "^2.1.2",
-		"@nextcloud/vue": "^7.12.4",
+		"@nextcloud/vue": "^7.12.6",
 		"@nextcloud/vue-dashboard": "^2.0.1",
 		"@peculiar/x509": "^1.9.5",
 		"debounce": "^1.2.1",
