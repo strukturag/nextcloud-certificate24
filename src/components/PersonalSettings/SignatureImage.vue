@@ -268,6 +268,7 @@ input[type=file] {
 		width: 100%;
 		height: auto;
 		object-fit: contain;
+		background-color: white;
 	}
 }
 
@@ -286,5 +287,6 @@ input[type=file] {
 	width: 600px;
 	height: 400px;
 	margin-bottom: 1em;
+	background-color: white;
 }
 </style>
