@@ -951,7 +951,7 @@ msgstr ""
 
 #: templates/email.lastsignature.body.php:34 templates/email.share.body.php:35
 msgid "Thanks"
-msgstr ""
+msgstr "Merci"
 
 #: templates/email.lastsignature.subject.php:8
 #, php-format
