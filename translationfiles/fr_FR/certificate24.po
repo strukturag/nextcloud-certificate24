@@ -919,7 +919,7 @@ msgstr " Le fichier a été modifié depuis sa signature."
 #. TRANSLATORS src/views/SignaturesView.vue:98
 #: specialVueFakeDummyForL10nScript.js:372
 msgid "Signature timestamp"
-msgstr ""
+msgstr "Horodatage de la signature"
 
 #. TRANSLATORS src/views/SignaturesView.vue:111
 #: specialVueFakeDummyForL10nScript.js:374
