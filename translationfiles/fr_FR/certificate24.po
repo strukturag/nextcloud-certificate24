@@ -956,7 +956,7 @@ msgstr "Merci"
 #: templates/email.lastsignature.subject.php:8
 #, php-format
 msgid "Signatures finished for \"%1$s\" on %2$s"
-msgstr ""
+msgstr "Signatures terminées pour \" %1$s\" le %2$s"
 
 #: templates/email.share.body.php:21
 #, php-format
