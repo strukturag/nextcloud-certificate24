@@ -903,11 +903,13 @@ msgid ""
 "The signature timestamp was generated on the signers machine and is "
 "untrusted."
 msgstr ""
+"L'horodatage de la signature a été généré sur la machine des signataires et "
+"n'est pas fiable."
 
 #. TRANSLATORS src/views/SignaturesView.vue:83
 #: specialVueFakeDummyForL10nScript.js:366
 msgid "The file was not modified since it was signed."
-msgstr ""
+msgstr "Le fichier n'a pas été modifié depuis sa signature."
 
 #. TRANSLATORS src/views/SignaturesView.vue:86
 #: specialVueFakeDummyForL10nScript.js:368
