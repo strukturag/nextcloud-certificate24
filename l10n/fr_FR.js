@@ -156,6 +156,8 @@ OC.L10N.register(
     "Signature timestamp" : "Horodatage de la signature",
     "Certificate chain" : "Chaîne de certificats",
     "Unknown" : "Inconnu",
-    "Hello %1$s," : "Bonjour %1$s,"
+    "Hello %1$s," : "Bonjour %1$s,",
+    "all recipients have signed \"%1$s\" on %2$s." : "tous les destinataires ont signé \" %1$s le %2$s.",
+    "You can find additional information and download the signed file from the following url:" : "Vous pouvez trouver des informations supplémentaires et télécharger le fichier signé à partir de l'url suivante :"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
