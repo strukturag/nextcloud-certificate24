@@ -961,7 +961,7 @@ msgstr "Signatures terminées pour \" %1$s\" le %2$s"
 #: templates/email.share.body.php:21
 #, php-format
 msgid "%1$s has requested your signature of \"%2$s\" on %3$s."
-msgstr ""
+msgstr "%1$s a demandé votre signature pour \"%2$s\" le %3$s. "
 
 #: templates/email.share.body.php:29
 msgid "Please open the following URL to sign the file:"
