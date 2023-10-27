@@ -162,6 +162,7 @@ OC.L10N.register(
     "Thanks" : "Merci",
     "Signatures finished for \"%1$s\" on %2$s" : "Signatures terminées pour \" %1$s\" le %2$s",
     "%1$s has requested your signature of \"%2$s\" on %3$s." : "%1$s a demandé votre signature pour \"%2$s\" le %3$s. ",
-    "Please open the following URL to sign the file:" : " Veuillez ouvrir l'URL suivante pour signer le fichier :"
+    "Please open the following URL to sign the file:" : " Veuillez ouvrir l'URL suivante pour signer le fichier :",
+    "Signing request on %1$s" : "Demande de signature le %1$s"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
