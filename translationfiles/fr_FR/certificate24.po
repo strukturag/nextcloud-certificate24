@@ -924,7 +924,7 @@ msgstr "Horodatage de la signature"
 #. TRANSLATORS src/views/SignaturesView.vue:111
 #: specialVueFakeDummyForL10nScript.js:374
 msgid "Certificate chain"
-msgstr ""
+msgstr "Chaîne de certificats"
 
 #. TRANSLATORS src/views/SignaturesView.vue:214
 #: specialVueFakeDummyForL10nScript.js:378
