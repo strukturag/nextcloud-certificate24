@@ -965,7 +965,7 @@ msgstr "%1$s a demandé votre signature pour \"%2$s\" le %3$s. "
 
 #: templates/email.share.body.php:29
 msgid "Please open the following URL to sign the file:"
-msgstr ""
+msgstr " Veuillez ouvrir l'URL suivante pour signer le fichier :"
 
 #: templates/email.share.subject.php:7
 #, php-format
