@@ -914,7 +914,7 @@ msgstr "Le fichier n'a pas été modifié depuis sa signature."
 #. TRANSLATORS src/views/SignaturesView.vue:86
 #: specialVueFakeDummyForL10nScript.js:368
 msgid "The file was modified since it was signed."
-msgstr ""
+msgstr " Le fichier a été modifié depuis sa signature."
 
 #. TRANSLATORS src/views/SignaturesView.vue:98
 #: specialVueFakeDummyForL10nScript.js:372
