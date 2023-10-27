@@ -970,4 +970,4 @@ msgstr " Veuillez ouvrir l'URL suivante pour signer le fichier :"
 #: templates/email.share.subject.php:7
 #, php-format
 msgid "Signing request on %1$s"
-msgstr ""
+msgstr "Demande de signature le %1$s"
