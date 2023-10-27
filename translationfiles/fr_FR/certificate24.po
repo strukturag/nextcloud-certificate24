@@ -929,7 +929,7 @@ msgstr "Chaîne de certificats"
 #. TRANSLATORS src/views/SignaturesView.vue:214
 #: specialVueFakeDummyForL10nScript.js:378
 msgid "Unknown"
-msgstr ""
+msgstr "Inconnu"
 
 #: templates/email.lastsignature.body.php:17 templates/email.share.body.php:17
 #, php-format
