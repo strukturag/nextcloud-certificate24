@@ -934,7 +934,7 @@ msgstr "Inconnu"
 #: templates/email.lastsignature.body.php:17 templates/email.share.body.php:17
 #, php-format
 msgid "Hello %1$s,"
-msgstr ""
+msgstr "Bonjour %1$s,"
 
 #: templates/email.lastsignature.body.php:21
 #, php-format
