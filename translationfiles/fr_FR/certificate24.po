@@ -4,7 +4,7 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
-# Jerome FLAMENT, 2023
+# Joachim Bauch <mail@joachim-bauch.de>, 2023
 # 
 #, fuzzy
 msgid ""
@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
 "POT-Creation-Date: 2023-09-06 09:13+0200\n"
-"PO-Revision-Date: 2023-08-02 15:11+0000\n"
-"Last-Translator: Jerome FLAMENT, 2023\n"
+"PO-Revision-Date: 2023-11-27 09:55+0000\n"
+"Last-Translator: Joachim Bauch <mail@joachim-bauch.de>, 2023\n"
 "Language-Team: French (France) (https://app.transifex.com/strukturag/teams/173038/fr_FR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -50,7 +50,7 @@ msgstr "D'autres activités"
 #: lib/Settings/Admin/Section.php:73 lib/Settings/Section.php:73
 #: specialAppInfoFakeDummyForL10nScript.php:2
 msgid "Certificate24"
-msgstr "Certificat24"
+msgstr "Certificate24"
 
 #: lib/Dashboard/Certificate24Widget.php:62
 msgid "Signature requests"
@@ -94,7 +94,10 @@ msgid ""
 "See [the website](https://www.certificate24.com) for further information."
 msgstr ""
 "Certificate24 - Signature de document numérique \n"
-"Avec Certificate24, vous pouvez demander des signatures numériques de documents stockés dans votre Nextcloud à d'autres utilisateurs de Nextcloud ou à des utilisateurs externes (par e-mail). Voir [the website](https://www.certificate24.com) pour plus d'informations."
+"\n"
+"Avec Certificate24, vous pouvez demander des signatures numériques de documents stockés dans votre Nextcloud à d'autres utilisateurs de Nextcloud ou à des utilisateurs externes (par e-mail).\n"
+"\n"
+"Voir [the website](https://www.certificate24.com) pour plus d'informations."
 
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:23
 #: specialVueFakeDummyForL10nScript.js:2
@@ -136,12 +139,12 @@ msgstr "la-valeur-secrète"
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:55
 #: specialVueFakeDummyForL10nScript.js:18
 msgid "Name: {theme}"
-msgstr "Nom : {thème}"
+msgstr "Nom: {thème}"
 
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:56
 #: specialVueFakeDummyForL10nScript.js:20
 msgid "Nextcloud Url: {url}"
-msgstr "URL Nextcloud : {url}"
+msgstr "URL Nextcloud: {url}"
 
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:88
 #: specialVueFakeDummyForL10nScript.js:22
@@ -152,7 +155,7 @@ msgid ""
 msgstr ""
 "Si vous n'avez pas encore de compte sur Certificate24, veuillez vous "
 "connecter à <a href=\"{server}\" target=\"_blank\"> {server} </a>et créer un"
-" compte avec les données suivantes :"
+" compte avec les données suivantes:"
 
 #. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:117
 #: specialVueFakeDummyForL10nScript.js:24
@@ -200,17 +203,17 @@ msgstr "Vérifiez les signatures des documents en arrière-plan."
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:39
 #: specialVueFakeDummyForL10nScript.js:38
 msgid "Last verification: {timestamp}"
-msgstr "Dernière vérification : {timestamp}"
+msgstr "Dernière vérification: {timestamp}"
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:44
 #: specialVueFakeDummyForL10nScript.js:40
 msgid "Last verification: none yet"
-msgstr "Dernière vérification : aucune pour l'instant"
+msgstr "Dernière vérification: aucune pour l'instant"
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:47
 #: specialVueFakeDummyForL10nScript.js:42
 msgid "Number of pending verifications: {count}"
-msgstr "Nombre de vérifications en attente : {count}"
+msgstr "Nombre de vérifications en attente: {count}"
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:53
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:139
@@ -254,7 +257,7 @@ msgstr "Cache de vérification vidé."
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:156
 #: specialVueFakeDummyForL10nScript.js:60
 msgid "Error while clearing verification cache."
-msgstr " Erreur lors de la suppression du cache de vérification."
+msgstr "Erreur lors de la suppression du cache de vérification."
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:22
 #. TRANSLATORS src/views/SignaturesView.vue:91
@@ -274,7 +277,7 @@ msgstr ""
 #: specialVueFakeDummyForL10nScript.js:66
 msgid "Default action to perform when a file was signed successfully."
 msgstr ""
-" Action par défaut à effectuer lorsqu'un fichier a été signé avec succès."
+"Action par défaut à effectuer lorsqu'un fichier a été signé avec succès."
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:31
 #. TRANSLATORS src/views/ShareDialogView.vue:134
@@ -416,7 +419,7 @@ msgstr ""
 #. TRANSLATORS src/components/OwnSignRequests.vue:24
 #: specialVueFakeDummyForL10nScript.js:118
 msgid "Signing requests"
-msgstr " Demandes de signature"
+msgstr "Demandes de signature"
 
 #. TRANSLATORS src/components/OwnSignRequests.vue:42
 #: specialVueFakeDummyForL10nScript.js:126
@@ -438,7 +441,7 @@ msgstr "Supprimer"
 #. TRANSLATORS src/components/OwnSignRequests.vue:223
 #: specialVueFakeDummyForL10nScript.js:138
 msgid "Do you really want to delete this signing request?"
-msgstr " Voulez-vous vraiment supprimer cette demande de signature ?"
+msgstr "Voulez-vous vraiment supprimer cette demande de signature?"
 
 #. TRANSLATORS src/components/OwnSignRequests.vue:224
 #: specialVueFakeDummyForL10nScript.js:140
@@ -468,7 +471,7 @@ msgstr "Réinitialiser"
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:42
 #: specialVueFakeDummyForL10nScript.js:150
 msgid "Upload signature image"
-msgstr " Télécharger l'image de signature"
+msgstr "Télécharger l'image de signature"
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:47
 #: specialVueFakeDummyForL10nScript.js:152
@@ -505,7 +508,7 @@ msgstr "Veuillez d'abord sélectionner un fichier."
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:168
 #: specialVueFakeDummyForL10nScript.js:164
 msgid "Could not open file."
-msgstr "Could not open file."
+msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:175
 #: specialVueFakeDummyForL10nScript.js:166
@@ -528,7 +531,7 @@ msgstr "Erreur lors du téléchargement de l'image de signature."
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:229
 #: specialVueFakeDummyForL10nScript.js:178
 msgid "Do you really want to reset the signature image?"
-msgstr "Voulez-vous vraiment réinitialiser l’image de signature ?"
+msgstr "Voulez-vous vraiment réinitialiser l’image de signature?"
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:230
 #: specialVueFakeDummyForL10nScript.js:180
@@ -573,7 +576,7 @@ msgstr "Sélectionnez la position de la signature"
 #: specialVueFakeDummyForL10nScript.js:200
 #: specialVueFakeDummyForL10nScript.js:202
 msgid "Sign {filename}"
-msgstr " Signez {filename}"
+msgstr "Signez {filename}"
 
 #. TRANSLATORS src/components/SignDialogModal.vue:44
 #: specialVueFakeDummyForL10nScript.js:204
@@ -599,7 +602,7 @@ msgstr ""
 #. TRANSLATORS src/components/SignDialogModal.vue:153
 #: specialVueFakeDummyForL10nScript.js:212
 msgid "Could not render page {page}."
-msgstr " Impossible d'afficher la page {page}."
+msgstr "Impossible d'afficher la page {page}."
 
 #. TRANSLATORS src/components/SignDialogModal.vue:158
 #: specialVueFakeDummyForL10nScript.js:214
@@ -624,7 +627,7 @@ msgstr "Erreur lors de la signature de la demande."
 #. TRANSLATORS src/components/SignatureProperties.vue:24
 #: specialVueFakeDummyForL10nScript.js:222
 msgid "Reason: {reason}"
-msgstr "Raison : {raison}"
+msgstr "Raison: {reason}"
 
 #. TRANSLATORS src/components/SignatureProperties.vue:29
 #: specialVueFakeDummyForL10nScript.js:224
@@ -644,7 +647,7 @@ msgstr "URL Nextcloud:"
 #. TRANSLATORS src/components/SignatureStatus.vue:24
 #: specialVueFakeDummyForL10nScript.js:230
 msgid "Signature status: {status}"
-msgstr "Statut de la signature: {statut}"
+msgstr "Statut de la signature: {status}"
 
 #. TRANSLATORS src/components/SignatureStatus.vue:46
 #: specialVueFakeDummyForL10nScript.js:232
@@ -728,14 +731,14 @@ msgstr "Le statut de signature est en attente pour ce fichier."
 #. TRANSLATORS src/views/FilesSidebarTab.vue:37
 #: specialVueFakeDummyForL10nScript.js:262
 msgid "Check manually"
-msgstr " Vérifier manuellement"
+msgstr "Vérifier manuellement"
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:44
 #. TRANSLATORS src/views/SignaturesView.vue:31
 #: specialVueFakeDummyForL10nScript.js:266
 #: specialVueFakeDummyForL10nScript.js:346
 msgid "The file is not signed."
-msgstr " Le fichier n'est pas signé."
+msgstr "Le fichier n'est pas signé."
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:47
 #. TRANSLATORS src/views/SignaturesView.vue:34
@@ -807,7 +810,7 @@ msgstr "Adresse e-mail"
 #. TRANSLATORS src/views/ShareDialogView.vue:131
 #: specialVueFakeDummyForL10nScript.js:296
 msgid "Action to perform when the file was signed successfully:"
-msgstr "Action à effectuer lorsque le fichier a été signé avec succès :"
+msgstr "Action à effectuer lorsque le fichier a été signé avec succès:"
 
 #. TRANSLATORS src/views/ShareDialogView.vue:262
 #: specialVueFakeDummyForL10nScript.js:312
@@ -867,7 +870,7 @@ msgstr "Erreur de connexion au service Certificate24."
 #. TRANSLATORS src/views/ShareDialogView.vue:588
 #: specialVueFakeDummyForL10nScript.js:334
 msgid "Error while requesting signature."
-msgstr " Erreur lors de la demande de signature."
+msgstr "Erreur lors de la demande de signature."
 
 #. TRANSLATORS src/views/ShareDialogView.vue:146
 #: specialVueFakeDummyForL10nScript.js:342
@@ -880,7 +883,7 @@ msgstr[2] ""
 #. TRANSLATORS src/views/SignaturesView.vue:47
 #: specialVueFakeDummyForL10nScript.js:356
 msgid "Checked on: {date}"
-msgstr "Vérifié le : {date}"
+msgstr "Vérifié le: {date}"
 
 #. TRANSLATORS src/views/SignaturesView.vue:58
 #: specialVueFakeDummyForL10nScript.js:358
@@ -890,12 +893,12 @@ msgstr "Signature {index}"
 #. TRANSLATORS src/views/SignaturesView.vue:64
 #: specialVueFakeDummyForL10nScript.js:360
 msgid "Signed by: {signer}"
-msgstr "Signé par: {signataire}"
+msgstr "Signé par: {signer}"
 
 #. TRANSLATORS src/views/SignaturesView.vue:69
 #: specialVueFakeDummyForL10nScript.js:362
 msgid "Signed on: {date}"
-msgstr "Signé le : {date}"
+msgstr "Signé le: {date}"
 
 #. TRANSLATORS src/views/SignaturesView.vue:75
 #: specialVueFakeDummyForL10nScript.js:364
@@ -914,7 +917,7 @@ msgstr "Le fichier n'a pas été modifié depuis sa signature."
 #. TRANSLATORS src/views/SignaturesView.vue:86
 #: specialVueFakeDummyForL10nScript.js:368
 msgid "The file was modified since it was signed."
-msgstr " Le fichier a été modifié depuis sa signature."
+msgstr "Le fichier a été modifié depuis sa signature."
 
 #. TRANSLATORS src/views/SignaturesView.vue:98
 #: specialVueFakeDummyForL10nScript.js:372
@@ -939,7 +942,7 @@ msgstr "Bonjour %1$s,"
 #: templates/email.lastsignature.body.php:21
 #, php-format
 msgid "all recipients have signed \"%1$s\" on %2$s."
-msgstr "tous les destinataires ont signé \" %1$s le %2$s."
+msgstr "tous les destinataires ont signé \"%1$s\" le %2$s."
 
 #: templates/email.lastsignature.body.php:28
 msgid ""
@@ -947,7 +950,7 @@ msgid ""
 "following url:"
 msgstr ""
 "Vous pouvez trouver des informations supplémentaires et télécharger le "
-"fichier signé à partir de l'url suivante :"
+"fichier signé à partir de l'url suivante:"
 
 #: templates/email.lastsignature.body.php:34 templates/email.share.body.php:35
 msgid "Thanks"
@@ -956,7 +959,7 @@ msgstr "Merci"
 #: templates/email.lastsignature.subject.php:8
 #, php-format
 msgid "Signatures finished for \"%1$s\" on %2$s"
-msgstr "Signatures terminées pour \" %1$s\" le %2$s"
+msgstr "Signatures terminées pour \"%1$s\" le %2$s"
 
 #: templates/email.share.body.php:21
 #, php-format
@@ -965,7 +968,7 @@ msgstr "%1$s a demandé votre signature pour \"%2$s\" le %3$s. "
 
 #: templates/email.share.body.php:29
 msgid "Please open the following URL to sign the file:"
-msgstr " Veuillez ouvrir l'URL suivante pour signer le fichier :"
+msgstr " Veuillez ouvrir l'URL suivante pour signer le fichier:"
 
 #: templates/email.share.subject.php:7
 #, php-format
