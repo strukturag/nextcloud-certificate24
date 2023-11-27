@@ -20,14 +20,14 @@ See [the website](https://www.certificate24.com) for further information.
 	<namespace>Certificate24</namespace>
 
 	<website>https://www.certificate24.com</website>
-	<bugs>https://github.com/astrairidium/nextcloud-certificate24/issues</bugs>
-	<repository>https://github.com/astrairidium/nextcloud-certificate24.git</repository>
+	<bugs>https://github.com/strukturag/nextcloud-certificate24/issues</bugs>
+	<repository>https://github.com/strukturag/nextcloud-certificate24.git</repository>
 
-	<screenshot>https://raw.githubusercontent.com/astrairidium/nextcloud-certificate24/master/screenshots/request-signature.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/astrairidium/nextcloud-certificate24/master/screenshots/select-recipients.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/astrairidium/nextcloud-certificate24/master/screenshots/signing-requests.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/astrairidium/nextcloud-certificate24/master/screenshots/sign-pdf.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/astrairidium/nextcloud-certificate24/master/screenshots/notifications.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/strukturag/nextcloud-certificate24/master/screenshots/request-signature.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/strukturag/nextcloud-certificate24/master/screenshots/select-recipients.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/strukturag/nextcloud-certificate24/master/screenshots/signing-requests.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/strukturag/nextcloud-certificate24/master/screenshots/sign-pdf.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/strukturag/nextcloud-certificate24/master/screenshots/notifications.png</screenshot>
 
 	<category>files</category>
 	<category>office</category>
