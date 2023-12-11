@@ -184,7 +184,7 @@ export default {
 						this.loading--
 						this.signLoading = false
 					}
-				}.bind(this)
+				}.bind(this),
 			)
 		},
 	},

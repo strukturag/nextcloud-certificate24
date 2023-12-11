@@ -157,7 +157,7 @@ export default {
 					} finally {
 						this.clearing = false
 					}
-				}.bind(this)
+				}.bind(this),
 			)
 		},
 	},

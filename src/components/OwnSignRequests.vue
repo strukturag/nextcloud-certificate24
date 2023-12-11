@@ -238,7 +238,7 @@ export default {
 					} finally {
 						this.loading = false
 					}
-				}.bind(this)
+				}.bind(this),
 			)
 		},
 
