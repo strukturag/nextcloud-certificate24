@@ -2,3 +2,11 @@ root: true
 
 extends:
   - "@nextcloud"
+
+rules:
+  import/no-unresolved:
+    - "error"
+    - ignore:
+      # Ignore Webpack query parameters, not supported by eslint-plugin-import
+      # https://github.com/import-js/eslint-plugin-import/issues/2562
+      - "\\?raw$"

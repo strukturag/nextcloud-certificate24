@@ -146,7 +146,7 @@
 					{{ n('certificate24', '%n signature field positioned', '%n signature fields positioned', signaturePositions.length) }}
 				</div>
 				<div class="buttons">
-					<NcButton v-if="fileModel && fileModel.canDownload()"
+					<NcButton v-if="canDownload(fileModel)"
 						type="secondary"
 						:disabled="selectModalLoading"
 						:title="t('certificate24', 'Select signature position')"
@@ -170,7 +170,7 @@
 				</div>
 			</div>
 			<SelectorDialogModal v-if="showSelectModal"
-				:url="getFileUrl(fileModel)"
+				:url="fileModel.encodedSource"
 				:signature-positions="signaturePositions"
 				:recipients="recipients"
 				@close="closeSelectModal" />
@@ -194,7 +194,6 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import debounce from 'debounce'
 import { loadState } from '@nextcloud/initial-state'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import { generateRemoteUrl } from '@nextcloud/router'
 
 import { shareFile, search, getMetadata } from '../services/apiservice.js'
 import getVinegarApi from '../services/vinegarapi.js'
@@ -246,6 +245,9 @@ export default {
 	},
 
 	computed: {
+		fileid() {
+			return this.fileModel ? this.fileModel.fileid : null
+		},
 		showDialog() {
 			return !!this.fileModel
 		},
@@ -298,7 +300,7 @@ export default {
 			this.recipients = []
 			this.clearError()
 			if (newValue) {
-				const metadata = await getMetadata(newValue.id)
+				const metadata = await getMetadata(this.fileid)
 				if (metadata && metadata.signature_fields) {
 					this.signaturePositions = metadata.signature_fields
 				}
@@ -307,6 +309,33 @@ export default {
 	},
 
 	methods: {
+		canDownload(fileModel) {
+			if (!fileModel) {
+				return false
+			}
+
+			const saStr = fileModel.attributes['share-attributes']
+			if (!saStr) {
+				return true
+			}
+
+			let sa
+			try {
+				sa = JSON.parse(saStr)
+			} catch (e) {
+				console.error('Could not parse shared attributes', fileModel)
+				return true
+			}
+
+			for (const i in sa) {
+				const attr = this.shareAttributes[i]
+				if (attr.scope === 'permissions' && attr.key === 'download') {
+					return attr.enabled
+				}
+			}
+
+			return true
+		},
 		handleUserInput() {
 			this.clearError()
 			this.noUserResults = false
@@ -565,7 +594,7 @@ export default {
 				const options = {
 					signed_save_mode: this.signed_save_mode,
 				}
-				await shareFile(this.fileModel.id, recipients, options, metadata)
+				await shareFile(this.fileid, recipients, options, metadata)
 				this.closeModal()
 				showSuccess(t('certificate24', 'Requested signature.'))
 			} catch (error) {
@@ -624,10 +653,6 @@ export default {
 			if (positions && positions.length) {
 				this.clearError()
 			}
-		},
-
-		getFileUrl(model) {
-			return generateRemoteUrl('webdav') + model.getFullPath()
 		},
 
 		recipientName(recipient) {
