@@ -23,7 +23,7 @@ import VueObserveVisibility from 'vue-observe-visibility'
 import { Tooltip } from '@nextcloud/vue'
 import { FileAction, Permission, registerFileAction } from '@nextcloud/files'
 
-import '@nextcloud/dialogs/dist/index.css'
+import '@nextcloud/dialogs/style.css'
 
 import ShareDialogView from './views/ShareDialogView.vue'
 import Logo from '../img/app.svg?raw'
