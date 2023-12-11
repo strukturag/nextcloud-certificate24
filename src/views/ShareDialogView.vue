@@ -67,18 +67,13 @@
 							:value.sync="user"
 							type="text"
 							:placeholder="t('certificate24', 'Search users')"
+							trailing-button-icon="close"
+							:trailing-button-label="cancelSearchLabel"
+							:show-trailing-button="isSearchingUser"
+							@trailing-button-click="abortUserSearch"
 							@input="handleUserInput">
 							<Magnify :size="16" />
 						</NcTextField>
-						<NcButton v-if="isSearchingUser"
-							class="abort-search"
-							type="tertiary-no-background"
-							:aria-label="cancelSearchLabel"
-							@click="abortUserSearch">
-							<template #icon>
-								<Close :size="20" />
-							</template>
-						</NcButton>
 						<SearchResults v-if="user !== ''"
 							:search-text="user"
 							:search-results="userResults"
@@ -104,18 +99,13 @@
 							:value.sync="email"
 							type="text"
 							:placeholder="t('certificate24', 'E-mail address')"
+							trailing-button-icon="close"
+							:trailing-button-label="cancelSearchLabel"
+							:show-trailing-button="isSearchingEmail"
+							@trailing-button-click="abortEmailSearch"
 							@input="handleEmailInput">
 							<Magnify :size="16" />
 						</NcTextField>
-						<NcButton v-if="isSearchingEmail"
-							class="abort-search"
-							type="tertiary-no-background"
-							:aria-label="cancelSearchLabel"
-							@click="abortEmailSearch">
-							<template #icon>
-								<Close :size="20" />
-							</template>
-						</NcButton>
 						<SearchResults v-if="email !== ''"
 							:search-text="email"
 							:search-results="emailResults"
@@ -179,7 +169,6 @@
 </template>
 
 <script>
-import Close from 'vue-material-design-icons/Close.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
@@ -204,7 +193,6 @@ export default {
 	name: 'ShareDialogView',
 
 	components: {
-		Close,
 		Delete,
 		FileSign,
 		Magnify,
@@ -717,12 +705,6 @@ h1 {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	.abort-search {
-		position: absolute;
-		right: 0;
-		top: -2px;
-		z-index: 2;
-	}
 }
 
 .buttons {
