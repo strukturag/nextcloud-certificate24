@@ -22,7 +22,7 @@
 <template>
 	<NcModal :aria-label="t('certificate24', 'Sign {filename}', {filename: request.filename})"
 		size="large"
-		:title="t('certificate24', 'Sign {filename}', {filename: request.filename})"
+		:name="t('certificate24', 'Sign {filename}', {filename: request.filename})"
 		@close="$emit('close', arguments)">
 		<div class="modal__content">
 			<h1>{{ t('certificate24', 'Sign {filename}', {filename: request.filename}) }}</h1>
@@ -184,7 +184,7 @@ export default {
 						this.loading--
 						this.signLoading = false
 					}
-				}.bind(this)
+				}.bind(this),
 			)
 		},
 	},

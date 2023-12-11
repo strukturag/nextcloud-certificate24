@@ -22,7 +22,7 @@
 	<div>
 		<NcModal v-if="showDialog"
 			:aria-label="t('certificate24', 'Request signature')"
-			:title="t('certificate24', 'Request signature')"
+			:name="t('certificate24', 'Request signature')"
 			@close="closeModal">
 			<div ref="content" class="modal__content">
 				<h1>{{ t('certificate24', 'Request signature') }}</h1>
@@ -39,7 +39,7 @@
 							:disable-menu="true"
 							:show-user-status="false"
 							:show-user-status-compact="false"
-							:title="recipientName(recipient)"
+							:name="recipientName(recipient)"
 							:subtitle="recipientTitle(recipient)">
 							<NcActions>
 								<NcActionButton @click="deleteRecipient(recipient)">
@@ -67,18 +67,13 @@
 							:value.sync="user"
 							type="text"
 							:placeholder="t('certificate24', 'Search users')"
+							trailing-button-icon="close"
+							:trailing-button-label="cancelSearchLabel"
+							:show-trailing-button="isSearchingUser"
+							@trailing-button-click="abortUserSearch"
 							@input="handleUserInput">
 							<Magnify :size="16" />
 						</NcTextField>
-						<NcButton v-if="isSearchingUser"
-							class="abort-search"
-							type="tertiary-no-background"
-							:aria-label="cancelSearchLabel"
-							@click="abortUserSearch">
-							<template #icon>
-								<Close :size="20" />
-							</template>
-						</NcButton>
 						<SearchResults v-if="user !== ''"
 							:search-text="user"
 							:search-results="userResults"
@@ -104,18 +99,13 @@
 							:value.sync="email"
 							type="text"
 							:placeholder="t('certificate24', 'E-mail address')"
+							trailing-button-icon="close"
+							:trailing-button-label="cancelSearchLabel"
+							:show-trailing-button="isSearchingEmail"
+							@trailing-button-click="abortEmailSearch"
 							@input="handleEmailInput">
 							<Magnify :size="16" />
 						</NcTextField>
-						<NcButton v-if="isSearchingEmail"
-							class="abort-search"
-							type="tertiary-no-background"
-							:aria-label="cancelSearchLabel"
-							@click="abortEmailSearch">
-							<template #icon>
-								<Close :size="20" />
-							</template>
-						</NcButton>
 						<SearchResults v-if="email !== ''"
 							:search-text="email"
 							:search-results="emailResults"
@@ -179,7 +169,6 @@
 </template>
 
 <script>
-import Close from 'vue-material-design-icons/Close.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
@@ -204,7 +193,6 @@ export default {
 	name: 'ShareDialogView',
 
 	components: {
-		Close,
 		Delete,
 		FileSign,
 		Magnify,
@@ -717,12 +705,6 @@ h1 {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	.abort-search {
-		position: absolute;
-		right: 0;
-		top: -2px;
-		z-index: 2;
-	}
 }
 
 .buttons {

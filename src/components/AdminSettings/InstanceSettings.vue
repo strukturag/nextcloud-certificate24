@@ -19,7 +19,7 @@
 -->
 
 <template>
-	<NcSettingsSection :title="t('certificate24', 'Instance settings')"
+	<NcSettingsSection :name="t('certificate24', 'Instance settings')"
 		:description="t('certificate24', 'Settings of the Nextcloud instance can be configured here.')">
 		<div>
 			<NcCheckboxRadioSwitch :checked.sync="settings.insecure_skip_verify"
@@ -157,7 +157,7 @@ export default {
 					} finally {
 						this.clearing = false
 					}
-				}.bind(this)
+				}.bind(this),
 			)
 		},
 	},

@@ -19,7 +19,7 @@
 -->
 
 <template>
-	<NcSettingsSection :title="t('certificate24', 'Signature properties')"
+	<NcSettingsSection :name="t('certificate24', 'Signature properties')"
 		:description="t('certificate24', 'Additional properties for signature processing can be configured here.')">
 		<div>
 			<h4>{{ t('certificate24', 'Default action to perform when a file was signed successfully.') }}</h4>
@@ -46,9 +46,9 @@
 			</NcCheckboxRadioSwitch>
 		</div>
 		<div>
+			<h4>{{ t('certificate24', 'Number of days after which fully signed signature requests are deleted.') }}</h4>
 			<NcTextField :value.sync="settings.delete_max_age"
-				:label="t('certificate24', 'Number of days after which fully signed signature requests are deleted.')"
-				:label-visible="true"
+				:aria-label="t('certificate24', 'Number of days after which fully signed signature requests are deleted.')"
 				:error="!!errors.delete_max_age"
 				:helper-text="errors.delete_max_age"
 				type="number"
