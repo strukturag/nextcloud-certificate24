@@ -22,7 +22,7 @@
 	<div>
 		<NcModal v-if="showDialog"
 			:aria-label="t('certificate24', 'Request signature')"
-			:title="t('certificate24', 'Request signature')"
+			:name="t('certificate24', 'Request signature')"
 			@close="closeModal">
 			<div ref="content" class="modal__content">
 				<h1>{{ t('certificate24', 'Request signature') }}</h1>
@@ -39,7 +39,7 @@
 							:disable-menu="true"
 							:show-user-status="false"
 							:show-user-status-compact="false"
-							:title="recipientName(recipient)"
+							:name="recipientName(recipient)"
 							:subtitle="recipientTitle(recipient)">
 							<NcActions>
 								<NcActionButton @click="deleteRecipient(recipient)">

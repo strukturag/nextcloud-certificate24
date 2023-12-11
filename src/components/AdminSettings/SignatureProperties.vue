@@ -19,7 +19,7 @@
 -->
 
 <template>
-	<NcSettingsSection :title="t('certificate24', 'Signature properties')"
+	<NcSettingsSection :name="t('certificate24', 'Signature properties')"
 		:description="t('certificate24', 'Additional properties for signature processing can be configured here.')">
 		<div>
 			<h4>{{ t('certificate24', 'Default action to perform when a file was signed successfully.') }}</h4>

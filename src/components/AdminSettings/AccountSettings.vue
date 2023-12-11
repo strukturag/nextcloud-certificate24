@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<NcSettingsSection :title="t('certificate24', 'Account settings')"
+	<NcSettingsSection :name="t('certificate24', 'Account settings')"
 		:description="t('certificate24', 'The configured account will be used to request signatures and sign files.')">
 		<div>
 			<h4>{{ t('certificate24', 'Server') }}</h4>

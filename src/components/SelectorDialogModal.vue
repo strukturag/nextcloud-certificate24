@@ -20,7 +20,7 @@
 
 <template>
 	<NcModal :aria-label="t('certificate24', 'Select signature position')"
-		:title="t('certificate24', 'Select signature position')"
+		:name="t('certificate24', 'Select signature position')"
 		size="large"
 		@close="closeModal">
 		<div class="modal__content">
