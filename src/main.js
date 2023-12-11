@@ -25,7 +25,7 @@ import { Tooltip } from '@nextcloud/vue'
 import store from './store.js'
 
 // Styles
-import '@nextcloud/dialogs/dist/index.css'
+import '@nextcloud/dialogs/style.css'
 
 Vue.prototype.t = t
 Vue.prototype.n = n

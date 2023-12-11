@@ -22,7 +22,7 @@ import Vue from 'vue'
 import PersonalSettings from './views/PersonalSettings.vue'
 
 // Styles
-import '@nextcloud/dialogs/dist/index.css'
+import '@nextcloud/dialogs/style.css'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
