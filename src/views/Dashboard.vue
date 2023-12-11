@@ -19,13 +19,13 @@
 -->
 
 <template>
-	<DashboardWidget id="certificate24-panel"
+	<NcDashboardWidget id="certificate24-panel"
 		:items="requests"
 		:loading="loading"
 		:show-more-label="t('certificate24', 'More signature requests…')"
 		:show-more-url="showMoreUrl">
 		<template #default="{ item }">
-			<DashboardWidgetItem :target-url="getItemTargetUrl(item)"
+			<NcDashboardWidgetItem :target-url="getItemTargetUrl(item)"
 				:main-text="getMainText(item)"
 				:sub-text="getSubText(item)"
 				:avatar-username="item.user_id"
@@ -38,11 +38,12 @@
 				</template>
 			</NcEmptyContent>
 		</template>
-	</DashboardWidget>
+	</NcDashboardWidget>
 </template>
 
 <script>
-import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
+import NcDashboardWidget from '@nextcloud/vue/dist/Components/NcDashboardWidget.js'
+import NcDashboardWidgetItem from '@nextcloud/vue/dist/Components/NcDashboardWidgetItem.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
@@ -54,8 +55,8 @@ export default {
 	name: 'Dashboard',
 
 	components: {
-		DashboardWidget,
-		DashboardWidgetItem,
+		NcDashboardWidget,
+		NcDashboardWidgetItem,
 		NcEmptyContent,
 	},
 
