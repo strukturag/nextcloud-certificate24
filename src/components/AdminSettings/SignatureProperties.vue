@@ -46,9 +46,9 @@
 			</NcCheckboxRadioSwitch>
 		</div>
 		<div>
+			<h4>{{ t('certificate24', 'Number of days after which fully signed signature requests are deleted.') }}</h4>
 			<NcTextField :value.sync="settings.delete_max_age"
-				:label="t('certificate24', 'Number of days after which fully signed signature requests are deleted.')"
-				:label-visible="true"
+				:aria-label="t('certificate24', 'Number of days after which fully signed signature requests are deleted.')"
 				:error="!!errors.delete_max_age"
 				:helper-text="errors.delete_max_age"
 				type="number"
