@@ -21,10 +21,12 @@
 import Vue from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
 import { Tooltip } from '@nextcloud/vue'
+import { FileAction, Permission, registerFileAction } from '@nextcloud/files'
 
 import '@nextcloud/dialogs/dist/index.css'
 
 import ShareDialogView from './views/ShareDialogView.vue'
+import Logo from '../img/app.svg?raw'
 import './styles/loader.scss'
 
 Vue.prototype.t = t
@@ -56,37 +58,16 @@ app.$on('dialog:closed', () => {
 	app.$data.fileModel = null
 })
 
-OCA.Certificate24 = OCA.Certificate24 || {}
-
-/**
- * @namespace OCA.Certificate24.SignPlugin
- */
-OCA.Certificate24.SignPlugin = {
-
-	attach(fileList) {
-		if (fileList.$el && fileList.$el.attr('id') === 'app-content-trashbin') {
-			// Don't add action to files in trashbin.
-			return
-		}
-
-		fileList.fileActions.registerAction({
-			displayName: t('certificate24', 'Request signature'),
-			iconClass: 'icon-certificate24-sign',
-			name: 'Sign',
-			mime: 'application/pdf',
-			permissions: OC.PERMISSION_READ | OC.PERMISSION_WRITE,
-			actionHandler: function(fileName, context) {
-				const fileInfoModel = context.fileInfoModel || context.fileList.getModelForFile(fileName)
-				this.show(fileInfoModel)
-			}.bind(this),
-		})
+registerFileAction(new FileAction({
+	id: 'certificate24-sign',
+	displayName: () => t('certificate24', 'Request signature'),
+	iconSvgInline: () => Logo,
+	enabled: (files, view) => {
+		return (files.length === 1
+				&& files[0].mime === 'application/pdf'
+				&& (files[0].permissions & (Permission.READ | Permission.WRITE)) === (Permission.READ | Permission.WRITE))
 	},
-
-	show(id) {
-		app.$emit('dialog:open', id)
+	exec: (file, view, dir) => {
+		app.$emit('dialog:open', file)
 	},
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-	OC.Plugins.register('OCA.Files.FileList', OCA.Certificate24.SignPlugin)
-})
+}))
