@@ -39,9 +39,9 @@ jobs:
       matrix:
         php-versions: ['8.2']
         databases: ['sqlite']
-        server-versions: ['stable28']
+        server-versions: ['stable28', 'stable29']
 
-    name: php${{ matrix.php-versions }}-${{ matrix.databases }}
+    name: php${{ matrix.php-versions }}-${{ matrix.databases }}-${{ matrix.server-versions }}
 
     steps:
       - name: Checkout server
@@ -100,9 +100,9 @@ jobs:
       matrix:
         php-versions: ["8.1", "8.2"]
         databases: ['mysql']
-        server-versions: ['stable28']
+        server-versions: ['stable28', 'stable29']
 
-    name: php${{ matrix.php-versions }}-${{ matrix.databases }}
+    name: php${{ matrix.php-versions }}-${{ matrix.databases }}-${{ matrix.server-versions }}
 
     services:
       mysql:
@@ -175,9 +175,9 @@ jobs:
       matrix:
         php-versions: ['8.2']
         databases: ['pgsql']
-        server-versions: ['stable28']
+        server-versions: ['stable28', 'stable29']
 
-    name: php${{ matrix.php-versions }}-${{ matrix.databases }}
+    name: php${{ matrix.php-versions }}-${{ matrix.databases }}-${{ matrix.server-versions }}
 
     services:
       postgres:
