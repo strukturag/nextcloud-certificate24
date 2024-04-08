@@ -53,11 +53,13 @@ use OCP\Mail\IMailer;
 use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
 
-function str_to_stream(string $string) {
-	$stream = fopen('php://memory', 'r+');
-	fwrite($stream, $string);
-	rewind($stream);
-	return $stream;
+if (!function_exists(__NAMESPACE__ . '\str_to_stream')) {
+	function str_to_stream(string $string) {
+		$stream = fopen('php://memory', 'r+');
+		fwrite($stream, $string);
+		rewind($stream);
+		return $stream;
+	}
 }
 
 class ApiController extends OCSController {
