@@ -123,6 +123,12 @@ class Manager {
 		}
 	}
 
+	public static function safeFilename(string $filename): string {
+		$filename = str_replace(':', '.', $filename);
+		$filename = str_replace('\\', '_', $filename);
+		return $filename;
+	}
+
 	private function storeSignedResult(?IUser $user, array $row, \DateTime $signed, array $account) {
 		$owner = $this->userManager->get($row['user_id']);
 		if (!$owner) {
@@ -179,6 +185,7 @@ class Manager {
 		}
 
 		$data = $this->client->downloadSignedFile($row['c24_file_id'], $account, $row['c24_server']);
+		$filename = $this->safeFilename($filename);
 		$created = $folder->newFile($filename, $data);
 		return $created;
 	}
