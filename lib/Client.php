@@ -103,6 +103,7 @@ class Client {
 			'headers' => $headers,
 			'multipart' => $multipart,
 			'verify' => !$this->config->insecureSkipVerify(),
+			'timeout' => $this->config->getRequestTimeout(),
 		]);
 		$body = $response->getBody();
 		return json_decode($body, true);
@@ -120,6 +121,7 @@ class Client {
 			'headers' => $headers,
 			'multipart' => $multipart,
 			'verify' => !$this->config->insecureSkipVerify(),
+			'timeout' => $this->config->getRequestTimeout(),
 		]);
 		$body = $response->getBody();
 		return json_decode($body, true);
@@ -136,6 +138,7 @@ class Client {
 		$response = $client->delete($server . 'api/v1/files/' . rawurlencode($account['id']) . '/' . rawurlencode($id), [
 			'headers' => $headers,
 			'verify' => !$this->config->insecureSkipVerify(),
+			'timeout' => $this->config->getRequestTimeout(),
 		]);
 		$body = $response->getBody();
 		return json_decode($body, true);
@@ -172,6 +175,7 @@ class Client {
 		$response = $client->get($url, [
 			'headers' => $headers,
 			'verify' => !$this->config->insecureSkipVerify(),
+			'timeout' => $this->config->getRequestTimeout(),
 		]);
 		$body = $response->getBody();
 		return $body;
@@ -190,6 +194,7 @@ class Client {
 		$response = $client->get($url, [
 			'headers' => $headers,
 			'verify' => !$this->config->insecureSkipVerify(),
+			'timeout' => $this->config->getRequestTimeout(),
 		]);
 		$body = $response->getBody();
 		return $body;
@@ -230,6 +235,7 @@ class Client {
 				'headers' => $headers,
 				'multipart' => $multipart,
 				'verify' => !$this->config->insecureSkipVerify(),
+				'timeout' => $this->config->getRequestTimeout(),
 			]);
 			$body = $response->getBody();
 			return json_decode($body, true);
