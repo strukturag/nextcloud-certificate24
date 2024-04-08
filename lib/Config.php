@@ -36,6 +36,7 @@ class Config {
 
 	public const DEFAULT_API_SERVER = "https://api.certificate24.com/";
 	public const DEFAULT_WEB_SERVER = "https://www.certificate24.com/";
+	public const DEFAULT_REQUEST_TIMEOUT = '300';
 	public const DEFAULT_SAVE_MODE = 'new';
 
 	private IConfig $config;
@@ -69,6 +70,15 @@ class Config {
 			$server = $server . '/';
 		}
 		return $server;
+	}
+
+	public function getRequestTimeout(): int {
+		$timeout = $this->config->getAppValue(self::APP_ID, 'timeout', self::DEFAULT_REQUEST_TIMEOUT);
+		if (empty($timeout)) {
+			$timeout = self::DEFAULT_REQUEST_TIMEOUT;
+		}
+
+		return (int) $timeout;
 	}
 
 	public function getAccount(): array {
