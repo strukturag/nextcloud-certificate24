@@ -39,11 +39,13 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 
-function str_to_stream(string $string) {
-	$stream = fopen('php://memory', 'r+');
-	fwrite($stream, $string);
-	rewind($stream);
-	return $stream;
+if (!function_exists(__NAMESPACE__ . '\str_to_stream')) {
+	function str_to_stream(string $string) {
+		$stream = fopen('php://memory', 'r+');
+		fwrite($stream, $string);
+		rewind($stream);
+		return $stream;
+	}
 }
 
 class DownloadController extends Controller {
