@@ -2,6 +2,84 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.1 - 2024-04-09
+
+### Added
+- Support Nextcloud 29
+  [#337](https://github.com/strukturag/nextcloud-certificate24/pull/337)
+
+### Changed
+- Bump friendsofphp/php-cs-fixer from 3.41.1 to 3.45.0 in /vendor-bin/csfixer
+  [#282](https://github.com/strukturag/nextcloud-certificate24/pull/282)
+- Bump vimeo/psalm from 5.17.0 to 5.18.0 in /vendor-bin/psalm
+  [#277](https://github.com/strukturag/nextcloud-certificate24/pull/277)
+- Bump @peculiar/x509 from 1.9.5 to 1.9.6
+  [#276](https://github.com/strukturag/nextcloud-certificate24/pull/276)
+- Bump friendsofphp/php-cs-fixer from 3.45.0 to 3.46.0 in /vendor-bin/csfixer
+  [#286](https://github.com/strukturag/nextcloud-certificate24/pull/286)
+- Bump axios from 1.4.0 to 1.6.3
+  [#285](https://github.com/strukturag/nextcloud-certificate24/pull/285)
+- Bump follow-redirects from 1.15.2 to 1.15.4
+  [#287](https://github.com/strukturag/nextcloud-certificate24/pull/287)
+- Bump vimeo/psalm from 5.18.0 to 5.19.0 in /vendor-bin/psalm
+  [#288](https://github.com/strukturag/nextcloud-certificate24/pull/288)
+- Bump @nextcloud/files from 3.0.0 to 3.1.0
+  [#290](https://github.com/strukturag/nextcloud-certificate24/pull/290)
+- Bump @nextcloud/moment from 1.2.2 to 1.3.1
+  [#289](https://github.com/strukturag/nextcloud-certificate24/pull/289)
+- Bump phpunit/phpunit from 9.6.15 to 9.6.16 in /vendor-bin/phpunit
+  [#295](https://github.com/strukturag/nextcloud-certificate24/pull/295)
+- Bump @nextcloud/dialogs from 5.0.3 to 5.1.0
+  [#293](https://github.com/strukturag/nextcloud-certificate24/pull/293)
+- Bump vimeo/psalm from 5.19.0 to 5.20.0 in /vendor-bin/psalm
+  [#292](https://github.com/strukturag/nextcloud-certificate24/pull/292)
+- Bump friendsofphp/php-cs-fixer from 3.46.0 to 3.48.0 in /vendor-bin/csfixer
+  [#291](https://github.com/strukturag/nextcloud-certificate24/pull/291)
+- Bump friendsofphp/php-cs-fixer from 3.48.0 to 3.52.1 in /vendor-bin/csfixer
+  [#332](https://github.com/strukturag/nextcloud-certificate24/pull/332)
+- Bump follow-redirects from 1.15.4 to 1.15.6
+  [#327](https://github.com/strukturag/nextcloud-certificate24/pull/327)
+- Bump express from 4.18.2 to 4.19.2
+  [#334](https://github.com/strukturag/nextcloud-certificate24/pull/334)
+- Bump phpunit/phpunit from 9.6.16 to 9.6.18 in /vendor-bin/phpunit
+  [#331](https://github.com/strukturag/nextcloud-certificate24/pull/331)
+- Bump vimeo/psalm from 5.20.0 to 5.23.1 in /vendor-bin/psalm
+  [#325](https://github.com/strukturag/nextcloud-certificate24/pull/325)
+- Bump @nextcloud/stylelint-config from 2.3.1 to 2.4.0
+  [#297](https://github.com/strukturag/nextcloud-certificate24/pull/297)
+- Bump webpack-dev-middleware from 5.3.3 to 5.3.4
+  [#333](https://github.com/strukturag/nextcloud-certificate24/pull/333)
+- Bump @babel/preset-typescript from 7.23.3 to 7.24.1
+  [#329](https://github.com/strukturag/nextcloud-certificate24/pull/329)
+- Bump vue-material-design-icons from 5.2.0 to 5.3.0
+  [#308](https://github.com/strukturag/nextcloud-certificate24/pull/308)
+- Bump @peculiar/x509 from 1.9.6 to 1.9.7
+  [#306](https://github.com/strukturag/nextcloud-certificate24/pull/306)
+- Bump @nextcloud/files from 3.1.0 to 3.1.1
+  [#328](https://github.com/strukturag/nextcloud-certificate24/pull/328)
+- Bump phpunit/phpunit from 9.6.18 to 9.6.19 in /vendor-bin/phpunit
+  [#335](https://github.com/strukturag/nextcloud-certificate24/pull/335)
+- Bump @nextcloud/webpack-vue-config from 6.0.0 to 6.0.1
+  [#304](https://github.com/strukturag/nextcloud-certificate24/pull/304)
+- Bump @nextcloud/router from 2.2.0 to 3.0.0
+  [#307](https://github.com/strukturag/nextcloud-certificate24/pull/307)
+- Bump @nextcloud/dialogs from 5.1.0 to 5.2.0
+  [#324](https://github.com/strukturag/nextcloud-certificate24/pull/324)
+- Increase request timeout to 300s and make configurable.
+  [#338](https://github.com/strukturag/nextcloud-certificate24/pull/338)
+- Bump vue from 2.7.15 to 2.7.16
+  [#341](https://github.com/strukturag/nextcloud-certificate24/pull/341)
+- Show relative timestamps on signatures overview page.
+  [#340](https://github.com/strukturag/nextcloud-certificate24/pull/340)
+
+### Fixed
+- Make sure filenames of signed files are safe for filesystems.
+  [#339](https://github.com/strukturag/nextcloud-certificate24/pull/339)
+- Only define "str_to_stream" if it doesn't exist yet.
+- Add missing cast to always return an int.
+  [#342](https://github.com/strukturag/nextcloud-certificate24/pull/342)
+
+
 ## 0.3.0 - 2023-12-11
 
 ### Added
