@@ -19,16 +19,21 @@
 -->
 
 <template>
-	<span :title="date">
-		{{ formattedDate }}
-	</span>
+	<NcDateTime v-if="timestamp"
+		:timestamp="timestamp"
+		ignore-seconds="true" />
 </template>
 
 <script>
-import { formatDate } from '../services/formatter.js'
+import { NcDateTime } from '@nextcloud/vue'
+import moment from '@nextcloud/moment'
 
 export default {
 	name: 'FormattedDate',
+
+	components: {
+		NcDateTime,
+	},
 
 	props: {
 		date: {
@@ -39,12 +44,13 @@ export default {
 	},
 
 	computed: {
-		formattedDate() {
+		timestamp() {
 			if (!this.date) {
-				return this.date
+				return 0
 			}
 
-			return formatDate(this.date)
+			const m = moment(this.date)
+			return m.valueOf()
 		},
 	},
 }
