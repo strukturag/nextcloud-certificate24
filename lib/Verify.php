@@ -144,7 +144,7 @@ class Verify {
 			return null;
 		}
 
-		return $row['count'];
+		return (int) $row['count'];
 	}
 
 	public function deleteFailed(File $file): void {
