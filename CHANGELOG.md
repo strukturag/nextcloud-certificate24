@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.2.3 - 2024-04-09
+
+### Changed
+- Bump @peculiar/x509 from 1.9.5 to 1.9.6
+  [#278](https://github.com/strukturag/nextcloud-certificate24/pull/278)
+- Bump @nextcloud/dialogs from 4.2.2 to 4.2.3
+  [#294](https://github.com/strukturag/nextcloud-certificate24/pull/294)
+- Bump @peculiar/x509 from 1.9.6 to 1.9.7
+  [#301](https://github.com/strukturag/nextcloud-certificate24/pull/301)
+- Bump @nextcloud/router from 2.2.0 to 2.2.1
+  [#296](https://github.com/strukturag/nextcloud-certificate24/pull/296)
+- Bump @nextcloud/dialogs from 4.2.3 to 4.2.6
+  [#318](https://github.com/strukturag/nextcloud-certificate24/pull/318)
+- Bump @nextcloud/webpack-vue-config from 6.0.0 to 6.0.1
+  [#303](https://github.com/strukturag/nextcloud-certificate24/pull/303)
+- Bump vue from 2.7.15 to 2.7.16
+- Increase request timeout to 300s and make configurable.
+
+### Fixed
+- Make sure filenames of signed files are safe for filesystems.
+- Only define "str_to_stream" if it doesn't exist yet.
+- Add missing cast to always return an int.
+
+
 ## 0.2.2 - 2023-12-11
 
 ### Added
