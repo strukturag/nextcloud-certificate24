@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.2.4 - 2024-05-29
+
+### Changed
+- Bump @nextcloud/browserslist-config from 3.0.0 to 3.0.1
+  [#355](https://github.com/strukturag/nextcloud-certificate24/pull/355)
+- Bump @nextcloud/dialogs from 4.2.6 to 4.2.7
+  [#347](https://github.com/strukturag/nextcloud-certificate24/pull/347)
+- Use shorter filename if too long with signer name.
+  [#374](https://github.com/strukturag/nextcloud-certificate24/pull/374)
+
+
 ## 0.2.3 - 2024-04-09
 
 ### Changed
