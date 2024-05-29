@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.2 - 2024-05-29
+
+### Changed
+- Bump friendsofphp/php-cs-fixer from 3.52.1 to 3.53.0 in /vendor-bin/csfixer
+  [#344](https://github.com/strukturag/nextcloud-certificate24/pull/344)
+- Bump @nextcloud/vue from 8.11.1 to 8.11.2
+  [#345](https://github.com/strukturag/nextcloud-certificate24/pull/345)
+- Bump @nextcloud/dialogs from 5.2.0 to 5.3.0
+  [#346](https://github.com/strukturag/nextcloud-certificate24/pull/346)
+- Bump firebase/php-jwt from 6.10.0 to 6.10.1
+  [#371](https://github.com/strukturag/nextcloud-certificate24/pull/371)
+- Bump friendsofphp/php-cs-fixer from 3.53.0 to 3.57.2 in /vendor-bin/csfixer
+  [#370](https://github.com/strukturag/nextcloud-certificate24/pull/370)
+- Bump vimeo/psalm from 5.23.1 to 5.24.0 in /vendor-bin/psalm
+  [#362](https://github.com/strukturag/nextcloud-certificate24/pull/362)
+- Bump @nextcloud/browserslist-config from 3.0.0 to 3.0.1
+  [#354](https://github.com/strukturag/nextcloud-certificate24/pull/354)
+- Bump @nextcloud/dialogs from 5.3.0 to 5.3.1
+  [#349](https://github.com/strukturag/nextcloud-certificate24/pull/349)
+- Bump @nextcloud/router from 3.0.0 to 3.0.1
+  [#352](https://github.com/strukturag/nextcloud-certificate24/pull/352)
+- Bump @nextcloud/babel-config from 1.0.0 to 1.2.0
+  [#368](https://github.com/strukturag/nextcloud-certificate24/pull/368)
+- Bump @nextcloud/stylelint-config from 2.4.0 to 3.0.1
+  [#364](https://github.com/strukturag/nextcloud-certificate24/pull/364)
+- Use shorter filename if too long with signer name.
+  [#374](https://github.com/strukturag/nextcloud-certificate24/pull/374)
+- Bump @nextcloud/l10n from 2.2.0 to 3.1.0
+  [#365](https://github.com/strukturag/nextcloud-certificate24/pull/365)
+- Bump @nextcloud/axios from 2.4.0 to 2.5.0
+  [#361](https://github.com/strukturag/nextcloud-certificate24/pull/361)
+- Bump @nextcloud/initial-state from 2.1.0 to 2.2.0
+  [#359](https://github.com/strukturag/nextcloud-certificate24/pull/359)
+- Bump @nextcloud/files from 3.1.1 to 3.3.1
+  [#372](https://github.com/strukturag/nextcloud-certificate24/pull/372)
+
+
 ## 0.3.1 - 2024-04-09
 
 ### Added
