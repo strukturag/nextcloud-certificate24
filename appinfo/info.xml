@@ -11,7 +11,7 @@ With Certificate24 you can request digital signatures of documents stored in you
 See [the website](https://www.certificate24.com) for further information.
 ]]></description>
 
-	<version>0.3.1</version>
+	<version>0.3.2</version>
 	<licence>agpl</licence>
 
 	<author>Struktur AG</author>
