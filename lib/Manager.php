@@ -39,6 +39,9 @@ use OCP\L10N\IFactory;
 use Psr\Log\LoggerInterface;
 
 class Manager {
+	// Maximum length of a filename to support saving on Windows.
+	public const MAX_FILENAME_LENGTH = 255;
+
 	private LoggerInterface $logger;
 	private IEventDispatcher $dispatcher;
 	private IConfig $systemConfig;
@@ -177,6 +180,12 @@ class Manager {
 				$signerName,
 				$this->formatter->formatDateTime($signed, 'long', 'medium', $timeZone, $l10n),
 			]) . ($info['extension'] ? ('.' . $info['extension']) : '');
+			if (strlen($filename) >= self::MAX_FILENAME_LENGTH) {
+				$filename = $l10n->t('%1$s signed on %2$s', [
+					$info['filename'],
+					$this->formatter->formatDateTime($signed, 'long', 'medium', $timeZone, $l10n),
+				]) . ($info['extension'] ? ('.' . $info['extension']) : '');
+			}
 		} else {
 			$filename = $l10n->t('%1$s signed on %2$s', [
 				$info['filename'],
