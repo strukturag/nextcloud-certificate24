@@ -43,7 +43,7 @@ class TranslatedTemplate extends TemplateBase {
 	 */
 	public function __construct(string $app, string $name, IL10N $l10n) {
 		$theme = OC_Util::getTheme();
-		list($path, $template) = $this->findTemplate($theme, $app, $name);
+		[$path, $template] = $this->findTemplate($theme, $app, $name);
 
 		$requestToken = \OC::$server->getSession() ? Util::callRegister() : '';
 
@@ -72,6 +72,6 @@ class TranslatedTemplate extends TemplateBase {
 		$locator = new TemplateFileLocator($dirs);
 		$template = $locator->find($name);
 		$path = $locator->getPath();
-		return array($path, $template);
+		return [$path, $template];
 	}
 }
