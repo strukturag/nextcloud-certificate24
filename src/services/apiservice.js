@@ -123,6 +123,10 @@ const clearVerificationCache = async () => {
 	return await axios.delete(generateOcsUrl('apps/certificate24/api/v1/verify/cache'))
 }
 
+const checkAccountSettings = async () => {
+	return axios.post(generateOcsUrl('apps/certificate24/api/v1/settings/account/check'))
+}
+
 export {
 	shareFile,
 	getRequests,
@@ -137,4 +141,5 @@ export {
 	uploadSignatureImage,
 	getMetadata,
 	clearVerificationCache,
+	checkAccountSettings,
 }

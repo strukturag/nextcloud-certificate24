@@ -25,6 +25,8 @@ declare(strict_types=1);
 namespace OCA\Certificate24;
 
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 use OCA\Certificate24\AppInfo\Application;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -63,6 +65,49 @@ class Client {
 			$headers['User-Agent'] = Application::APP_ID . '/' . $this->appVersion . ' Nextcloud/' . $this->nextcloudVersion;
 		}
 		return $headers;
+	}
+
+	public function checkAccountSettings(string $server, array $account): array {
+		$token = $this->tokens->getToken($account, $account['id'], 'get');
+
+		$client = $this->clientService->newClient();
+		$headers = $this->getHeaders([
+			'X-Vinegar-Token' => $token,
+			'X-Vinegar-API' => 'true',
+		]);
+		try {
+			$response = $client->get($server . 'api/v1/settings/accounts/' . rawurlencode($account['id']), [
+				'headers' => $headers,
+				'verify' => !$this->config->insecureSkipVerify(),
+				'timeout' => $this->config->getRequestTimeout(),
+			]);
+		} catch (ConnectException $e) {
+			return [
+				'error' => 'connect_exception',
+				'details' => $e->getMessage(),
+			];
+		} catch (BadResponseException $e) {
+			$response = $e->getResponse();
+			$body = (string) $response->getBody();
+			$body = json_decode($body, true);
+			if (isset($body['code'])) {
+				return [
+					'error' => $body['code'],
+				];
+			}
+
+			return [
+				'error' => 'bad_response',
+				'details' => $e->getMessage(),
+			];
+		} catch (RequestException $e) {
+			return [
+				'error' => 'connect_exception',
+				'details' => $e->getMessage(),
+			];
+		}
+		$body = $response->getBody();
+		return json_decode($body, true);
 	}
 
 	public function shareFile(File $file, array $recipients, ?array $metadata, array $account, string $server): array {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2023-09-06 09:13+0200\n"
+"POT-Creation-Date: 2024-07-22 16:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,10 +62,10 @@ msgid "More signature requests"
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:80
-#. TRANSLATORS src/components/SignDialogModal.vue:51
+#. TRANSLATORS src/components/SignDialogModal.vue:52
 #: lib/Mails.php:161
-#: specialVueFakeDummyForL10nScript.js:104
-#: specialVueFakeDummyForL10nScript.js:206
+#: specialVueFakeDummyForL10nScript.js:128
+#: specialVueFakeDummyForL10nScript.js:230
 msgid "Sign"
 msgstr ""
 
@@ -73,12 +73,13 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-#: lib/Manager.php:169
+#: lib/Manager.php:178
 #, php-format
 msgid "%1$s signed by %2$s on %3$s"
 msgstr ""
 
-#: lib/Manager.php:175
+#: lib/Manager.php:184
+#: lib/Manager.php:190
 #, php-format
 msgid "%1$s signed on %2$s"
 msgstr ""
@@ -143,603 +144,666 @@ msgstr ""
 msgid "Nextcloud Url: {url}"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:88
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:63
 #: specialVueFakeDummyForL10nScript.js:22
+msgid "Check account settings"
+msgstr ""
+
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:104
+#: specialVueFakeDummyForL10nScript.js:24
 msgid ""
 "If you don't have an account at Certificate24 yet, please login to <a href="
 "\"{server}\" target=\"_blank\">{server}</a> and create an account with the "
 "following data:"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:117
-#: specialVueFakeDummyForL10nScript.js:24
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:133
+#: specialVueFakeDummyForL10nScript.js:26
 msgid "Account settings saved"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:122
-#: specialVueFakeDummyForL10nScript.js:26
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:138
+#: specialVueFakeDummyForL10nScript.js:28
 msgid "Could not save account settings"
 msgstr ""
 
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:165
+#: specialVueFakeDummyForL10nScript.js:30
+msgid "The settings for account \"{name}\" are valid."
+msgstr ""
+
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:169
+#: specialVueFakeDummyForL10nScript.js:32
+msgid "The account settings are valid."
+msgstr ""
+
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:177
+#: specialVueFakeDummyForL10nScript.js:34
+msgid "No account id and/or secret configured."
+msgstr ""
+
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:180
+#: specialVueFakeDummyForL10nScript.js:36
+msgid "Invalid account id and/or secret configured."
+msgstr ""
+
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:183
+#: specialVueFakeDummyForL10nScript.js:38
+msgid "The account url doesn't match the url of your Nextcloud instance."
+msgstr ""
+
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:187
+#: specialVueFakeDummyForL10nScript.js:40
+msgid "Bad response received from backend service: {details}"
+msgstr ""
+
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:191
+#: specialVueFakeDummyForL10nScript.js:42
+msgid ""
+"Bad response received from backend service, please check your Nextcloud log "
+"for details."
+msgstr ""
+
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:196
+#: specialVueFakeDummyForL10nScript.js:44
+msgid "Error connecting to the backend service: {details}"
+msgstr ""
+
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:200
+#: specialVueFakeDummyForL10nScript.js:46
+msgid ""
+"Error connecting to the backend service, please check your Nextcloud log for "
+"details."
+msgstr ""
+
+#. TRANSLATORS src/components/AdminSettings/AccountSettings.vue:204
+#: specialVueFakeDummyForL10nScript.js:48
+msgid ""
+"Error while checking account settings, please check your Nextcloud log for "
+"details."
+msgstr ""
+
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:22
-#: specialVueFakeDummyForL10nScript.js:28
+#: specialVueFakeDummyForL10nScript.js:50
 msgid "Instance settings"
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:23
-#: specialVueFakeDummyForL10nScript.js:30
+#: specialVueFakeDummyForL10nScript.js:52
 msgid "Settings of the Nextcloud instance can be configured here."
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:28
-#: specialVueFakeDummyForL10nScript.js:32
+#: specialVueFakeDummyForL10nScript.js:54
 msgid ""
 "Skip verification of certificates when communicating with the backend "
 "service."
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:29
-#: specialVueFakeDummyForL10nScript.js:34
+#: specialVueFakeDummyForL10nScript.js:56
 msgid ""
 "This is potentially insecure and should only be enabled during development "
 "(if necessary)."
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:36
-#: specialVueFakeDummyForL10nScript.js:36
+#: specialVueFakeDummyForL10nScript.js:58
 msgid "Verify document signatures in the background."
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:39
-#: specialVueFakeDummyForL10nScript.js:38
+#: specialVueFakeDummyForL10nScript.js:60
 msgid "Last verification: {timestamp}"
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:44
-#: specialVueFakeDummyForL10nScript.js:40
+#: specialVueFakeDummyForL10nScript.js:62
 msgid "Last verification: none yet"
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:47
-#: specialVueFakeDummyForL10nScript.js:42
+#: specialVueFakeDummyForL10nScript.js:64
 msgid "Number of pending verifications: {count}"
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:53
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:139
-#: specialVueFakeDummyForL10nScript.js:44
-#: specialVueFakeDummyForL10nScript.js:56
+#: specialVueFakeDummyForL10nScript.js:66
+#: specialVueFakeDummyForL10nScript.js:78
 msgid "Clear verification cache"
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:102
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:106
-#: specialVueFakeDummyForL10nScript.js:46
-#: specialVueFakeDummyForL10nScript.js:50
-#: specialVueFakeDummyForL10nScript.js:76
-#: specialVueFakeDummyForL10nScript.js:84
+#: specialVueFakeDummyForL10nScript.js:68
+#: specialVueFakeDummyForL10nScript.js:72
+#: specialVueFakeDummyForL10nScript.js:100
+#: specialVueFakeDummyForL10nScript.js:108
 msgid "Settings saved"
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:106
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:110
-#: specialVueFakeDummyForL10nScript.js:48
-#: specialVueFakeDummyForL10nScript.js:52
-#: specialVueFakeDummyForL10nScript.js:78
-#: specialVueFakeDummyForL10nScript.js:86
+#: specialVueFakeDummyForL10nScript.js:70
+#: specialVueFakeDummyForL10nScript.js:74
+#: specialVueFakeDummyForL10nScript.js:102
+#: specialVueFakeDummyForL10nScript.js:110
 msgid "Could not save settings"
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:138
-#: specialVueFakeDummyForL10nScript.js:54
+#: specialVueFakeDummyForL10nScript.js:76
 msgid ""
 "Do you really want to delete the verification cache? This will require that "
 "all files need to be verified again."
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:153
-#: specialVueFakeDummyForL10nScript.js:58
+#: specialVueFakeDummyForL10nScript.js:80
 msgid "Verification cache cleared."
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/InstanceSettings.vue:156
-#: specialVueFakeDummyForL10nScript.js:60
+#: specialVueFakeDummyForL10nScript.js:82
 msgid "Error while clearing verification cache."
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:22
 #. TRANSLATORS src/views/SignaturesView.vue:91
-#: specialVueFakeDummyForL10nScript.js:62
-#: specialVueFakeDummyForL10nScript.js:370
+#: specialVueFakeDummyForL10nScript.js:84
+#: specialVueFakeDummyForL10nScript.js:394
 msgid "Signature properties"
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:23
-#: specialVueFakeDummyForL10nScript.js:64
+#: specialVueFakeDummyForL10nScript.js:86
 msgid "Additional properties for signature processing can be configured here."
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:25
-#: specialVueFakeDummyForL10nScript.js:66
+#: specialVueFakeDummyForL10nScript.js:88
 msgid "Default action to perform when a file was signed successfully."
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:31
-#. TRANSLATORS src/views/ShareDialogView.vue:134
-#: specialVueFakeDummyForL10nScript.js:68
-#: specialVueFakeDummyForL10nScript.js:298
+#. TRANSLATORS src/views/ShareDialogView.vue:124
+#: specialVueFakeDummyForL10nScript.js:90
+#: specialVueFakeDummyForL10nScript.js:322
 msgid "Create new signed file next to original file"
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:38
-#. TRANSLATORS src/views/ShareDialogView.vue:137
-#: specialVueFakeDummyForL10nScript.js:70
-#: specialVueFakeDummyForL10nScript.js:300
+#. TRANSLATORS src/views/ShareDialogView.vue:127
+#: specialVueFakeDummyForL10nScript.js:92
+#: specialVueFakeDummyForL10nScript.js:324
 msgid "Replace original file with signed file"
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:45
-#. TRANSLATORS src/views/ShareDialogView.vue:140
-#: specialVueFakeDummyForL10nScript.js:72
-#: specialVueFakeDummyForL10nScript.js:302
+#. TRANSLATORS src/views/ShareDialogView.vue:130
+#: specialVueFakeDummyForL10nScript.js:94
+#: specialVueFakeDummyForL10nScript.js:326
 msgid "Don't save signed file automatically"
 msgstr ""
 
-#. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:50
-#: specialVueFakeDummyForL10nScript.js:74
+#. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:49
+#. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:51
+#: specialVueFakeDummyForL10nScript.js:96
+#: specialVueFakeDummyForL10nScript.js:98
 msgid "Number of days after which fully signed signature requests are deleted."
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:124
-#: specialVueFakeDummyForL10nScript.js:80
+#: specialVueFakeDummyForL10nScript.js:104
 msgid "The value may not be empty."
 msgstr ""
 
 #. TRANSLATORS src/components/AdminSettings/SignatureProperties.vue:127
-#: specialVueFakeDummyForL10nScript.js:82
+#: specialVueFakeDummyForL10nScript.js:106
 msgid "The value may not be negative."
 msgstr ""
 
 #. TRANSLATORS src/components/CertificateDetails.vue:29
-#: specialVueFakeDummyForL10nScript.js:88
+#: specialVueFakeDummyForL10nScript.js:112
 msgid "Download certificate"
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:24
-#: specialVueFakeDummyForL10nScript.js:90
+#: specialVueFakeDummyForL10nScript.js:114
 msgid "Incoming signing requests"
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:29
 #. TRANSLATORS src/components/OwnSignRequests.vue:29
-#: specialVueFakeDummyForL10nScript.js:92
-#: specialVueFakeDummyForL10nScript.js:120
+#: specialVueFakeDummyForL10nScript.js:116
+#: specialVueFakeDummyForL10nScript.js:144
 msgid "No requests created yet"
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:36
 #. TRANSLATORS src/components/OwnSignRequests.vue:36
-#: specialVueFakeDummyForL10nScript.js:94
-#: specialVueFakeDummyForL10nScript.js:122
+#: specialVueFakeDummyForL10nScript.js:118
+#: specialVueFakeDummyForL10nScript.js:146
 msgid "File"
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:39
 #. TRANSLATORS src/components/OwnSignRequests.vue:39
-#: specialVueFakeDummyForL10nScript.js:96
-#: specialVueFakeDummyForL10nScript.js:124
+#: specialVueFakeDummyForL10nScript.js:120
+#: specialVueFakeDummyForL10nScript.js:148
 msgid "Created"
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:42
-#: specialVueFakeDummyForL10nScript.js:98
+#: specialVueFakeDummyForL10nScript.js:122
 msgid "Signed"
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:45
-#: specialVueFakeDummyForL10nScript.js:100
+#: specialVueFakeDummyForL10nScript.js:124
 msgid "Creator"
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:48
 #. TRANSLATORS src/components/OwnSignRequests.vue:48
-#: specialVueFakeDummyForL10nScript.js:102
-#: specialVueFakeDummyForL10nScript.js:130
+#: specialVueFakeDummyForL10nScript.js:126
+#: specialVueFakeDummyForL10nScript.js:154
 msgid "Actions"
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:89
 #. TRANSLATORS src/components/OwnSignRequests.vue:83
-#: specialVueFakeDummyForL10nScript.js:106
-#: specialVueFakeDummyForL10nScript.js:134
+#: specialVueFakeDummyForL10nScript.js:130
+#: specialVueFakeDummyForL10nScript.js:158
 msgid "Download signed"
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:97
 #. TRANSLATORS src/components/OwnSignRequests.vue:91
-#: specialVueFakeDummyForL10nScript.js:108
-#: specialVueFakeDummyForL10nScript.js:136
+#: specialVueFakeDummyForL10nScript.js:132
+#: specialVueFakeDummyForL10nScript.js:160
 msgid "Show details"
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:103
-#: specialVueFakeDummyForL10nScript.js:110
+#: specialVueFakeDummyForL10nScript.js:134
 msgid "Waiting for other signatures."
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:229
-#. TRANSLATORS src/views/ShareDialogView.vue:606
-#: specialVueFakeDummyForL10nScript.js:112
-#: specialVueFakeDummyForL10nScript.js:336
+#. TRANSLATORS src/views/ShareDialogView.vue:623
+#: specialVueFakeDummyForL10nScript.js:136
+#: specialVueFakeDummyForL10nScript.js:360
 msgid ""
 "The server requires a newer version of the app. Please contact your "
 "administrator."
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:232
-#. TRANSLATORS src/views/ShareDialogView.vue:609
-#: specialVueFakeDummyForL10nScript.js:114
-#: specialVueFakeDummyForL10nScript.js:338
+#. TRANSLATORS src/views/ShareDialogView.vue:626
+#: specialVueFakeDummyForL10nScript.js:138
+#: specialVueFakeDummyForL10nScript.js:362
 msgid ""
 "This app requires a newer version of the server. Please contact your "
 "administrator."
 msgstr ""
 
 #. TRANSLATORS src/components/IncomingSignRequests.vue:236
-#. TRANSLATORS src/views/ShareDialogView.vue:613
-#: specialVueFakeDummyForL10nScript.js:116
-#: specialVueFakeDummyForL10nScript.js:340
+#. TRANSLATORS src/views/ShareDialogView.vue:630
+#: specialVueFakeDummyForL10nScript.js:140
+#: specialVueFakeDummyForL10nScript.js:364
 msgid "Error loading serverside API, please try again later."
 msgstr ""
 
 #. TRANSLATORS src/components/OwnSignRequests.vue:24
-#: specialVueFakeDummyForL10nScript.js:118
+#: specialVueFakeDummyForL10nScript.js:142
 msgid "Signing requests"
 msgstr ""
 
 #. TRANSLATORS src/components/OwnSignRequests.vue:42
-#: specialVueFakeDummyForL10nScript.js:126
+#: specialVueFakeDummyForL10nScript.js:150
 msgid "Last signed"
 msgstr ""
 
 #. TRANSLATORS src/components/OwnSignRequests.vue:45
 #. TRANSLATORS src/views/ShareDialogView.vue:34
-#: specialVueFakeDummyForL10nScript.js:128
-#: specialVueFakeDummyForL10nScript.js:284
+#: specialVueFakeDummyForL10nScript.js:152
+#: specialVueFakeDummyForL10nScript.js:308
 msgid "Recipients"
 msgstr ""
 
 #. TRANSLATORS src/components/OwnSignRequests.vue:75
-#: specialVueFakeDummyForL10nScript.js:132
+#: specialVueFakeDummyForL10nScript.js:156
 msgid "Delete"
 msgstr ""
 
 #. TRANSLATORS src/components/OwnSignRequests.vue:223
-#: specialVueFakeDummyForL10nScript.js:138
+#: specialVueFakeDummyForL10nScript.js:162
 msgid "Do you really want to delete this signing request?"
 msgstr ""
 
 #. TRANSLATORS src/components/OwnSignRequests.vue:224
-#: specialVueFakeDummyForL10nScript.js:140
+#: specialVueFakeDummyForL10nScript.js:164
 msgid "Delete request"
 msgstr ""
 
 #. TRANSLATORS src/components/OwnSignRequests.vue:234
-#: specialVueFakeDummyForL10nScript.js:142
+#: specialVueFakeDummyForL10nScript.js:166
 msgid "Request deleted."
 msgstr ""
 
 #. TRANSLATORS src/components/OwnSignRequests.vue:237
-#: specialVueFakeDummyForL10nScript.js:144
+#: specialVueFakeDummyForL10nScript.js:168
 msgid "Error while deleting request."
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:23
-#: specialVueFakeDummyForL10nScript.js:146
+#: specialVueFakeDummyForL10nScript.js:170
 msgid "Signature Image"
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:36
-#: specialVueFakeDummyForL10nScript.js:148
+#: specialVueFakeDummyForL10nScript.js:172
 msgid "Reset"
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:42
-#: specialVueFakeDummyForL10nScript.js:150
+#: specialVueFakeDummyForL10nScript.js:174
 msgid "Upload signature image"
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:47
-#: specialVueFakeDummyForL10nScript.js:152
+#: specialVueFakeDummyForL10nScript.js:176
 msgid "Signature image"
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:57
-#: specialVueFakeDummyForL10nScript.js:154
+#: specialVueFakeDummyForL10nScript.js:178
 msgid "Upload"
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:61
-#: specialVueFakeDummyForL10nScript.js:156
+#: specialVueFakeDummyForL10nScript.js:180
 msgid "Draw written signature"
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:76
 #. TRANSLATORS src/components/SelectorDialogModal.vue:42
-#: specialVueFakeDummyForL10nScript.js:158
-#: specialVueFakeDummyForL10nScript.js:196
+#: specialVueFakeDummyForL10nScript.js:182
+#: specialVueFakeDummyForL10nScript.js:220
 msgid "Save"
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:84
-#: specialVueFakeDummyForL10nScript.js:160
+#: specialVueFakeDummyForL10nScript.js:184
 msgid "Clear"
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:159
-#: specialVueFakeDummyForL10nScript.js:162
+#: specialVueFakeDummyForL10nScript.js:186
 msgid "Please select a file first."
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:168
-#: specialVueFakeDummyForL10nScript.js:164
+#: specialVueFakeDummyForL10nScript.js:188
 msgid "Could not open file."
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:175
-#: specialVueFakeDummyForL10nScript.js:166
-#: specialVueFakeDummyForL10nScript.js:172
+#: specialVueFakeDummyForL10nScript.js:190
+#: specialVueFakeDummyForL10nScript.js:196
 msgid "Signature image uploaded."
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:185
-#: specialVueFakeDummyForL10nScript.js:168
-#: specialVueFakeDummyForL10nScript.js:174
+#: specialVueFakeDummyForL10nScript.js:192
+#: specialVueFakeDummyForL10nScript.js:198
 msgid "The uploaded image is too large."
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:188
-#: specialVueFakeDummyForL10nScript.js:170
-#: specialVueFakeDummyForL10nScript.js:176
+#: specialVueFakeDummyForL10nScript.js:194
+#: specialVueFakeDummyForL10nScript.js:200
 msgid "Error while uploading signature image."
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:229
-#: specialVueFakeDummyForL10nScript.js:178
+#: specialVueFakeDummyForL10nScript.js:202
 msgid "Do you really want to reset the signature image?"
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:230
-#: specialVueFakeDummyForL10nScript.js:180
+#: specialVueFakeDummyForL10nScript.js:204
 msgid "Reset signature image"
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:239
-#: specialVueFakeDummyForL10nScript.js:182
+#: specialVueFakeDummyForL10nScript.js:206
 msgid "Signature image reset."
 msgstr ""
 
 #. TRANSLATORS src/components/PersonalSettings/SignatureImage.vue:243
-#: specialVueFakeDummyForL10nScript.js:184
+#: specialVueFakeDummyForL10nScript.js:208
 msgid "Error while resetting signature image."
 msgstr ""
 
 #. TRANSLATORS src/components/SearchResults.vue:44
-#: specialVueFakeDummyForL10nScript.js:186
+#: specialVueFakeDummyForL10nScript.js:210
 msgid "Searching …"
 msgstr ""
 
 #. TRANSLATORS src/components/SearchResults.vue:45
-#: specialVueFakeDummyForL10nScript.js:188
+#: specialVueFakeDummyForL10nScript.js:212
 msgid "No search results"
 msgstr ""
 
 #. TRANSLATORS src/components/SelectorDialogModal.vue:22
 #. TRANSLATORS src/components/SelectorDialogModal.vue:27
-#. TRANSLATORS src/views/ShareDialogView.vue:152
-#. TRANSLATORS src/views/ShareDialogView.vue:158
-#: specialVueFakeDummyForL10nScript.js:190
-#: specialVueFakeDummyForL10nScript.js:192
-#: specialVueFakeDummyForL10nScript.js:194
-#: specialVueFakeDummyForL10nScript.js:304
-#: specialVueFakeDummyForL10nScript.js:306
+#. TRANSLATORS src/views/ShareDialogView.vue:142
+#. TRANSLATORS src/views/ShareDialogView.vue:148
+#: specialVueFakeDummyForL10nScript.js:214
+#: specialVueFakeDummyForL10nScript.js:216
+#: specialVueFakeDummyForL10nScript.js:218
+#: specialVueFakeDummyForL10nScript.js:328
+#: specialVueFakeDummyForL10nScript.js:330
 msgid "Select signature position"
 msgstr ""
 
 #. TRANSLATORS src/components/SignDialogModal.vue:23
 #. TRANSLATORS src/components/SignDialogModal.vue:28
-#: specialVueFakeDummyForL10nScript.js:198
-#: specialVueFakeDummyForL10nScript.js:200
-#: specialVueFakeDummyForL10nScript.js:202
+#: specialVueFakeDummyForL10nScript.js:222
+#: specialVueFakeDummyForL10nScript.js:224
+#: specialVueFakeDummyForL10nScript.js:226
 msgid "Sign {filename}"
 msgstr ""
 
 #. TRANSLATORS src/components/SignDialogModal.vue:44
-#: specialVueFakeDummyForL10nScript.js:204
+#: specialVueFakeDummyForL10nScript.js:228
 msgid "Embed personal signature in fields"
 msgstr ""
 
-#. TRANSLATORS src/components/SignDialogModal.vue:126
-#: specialVueFakeDummyForL10nScript.js:208
+#. TRANSLATORS src/components/SignDialogModal.vue:127
+#: specialVueFakeDummyForL10nScript.js:232
 msgid ""
 "Please upload a signature image in the <a href=\"{link}\">personal settings</"
 "a> to sign this file."
 msgstr ""
 
-#. TRANSLATORS src/components/SignDialogModal.vue:148
-#: specialVueFakeDummyForL10nScript.js:210
+#. TRANSLATORS src/components/SignDialogModal.vue:149
+#: specialVueFakeDummyForL10nScript.js:234
 msgid "Could not load document, please download and review manually."
 msgstr ""
 
-#. TRANSLATORS src/components/SignDialogModal.vue:153
-#: specialVueFakeDummyForL10nScript.js:212
+#. TRANSLATORS src/components/SignDialogModal.vue:154
+#: specialVueFakeDummyForL10nScript.js:236
 msgid "Could not render page {page}."
 msgstr ""
 
-#. TRANSLATORS src/components/SignDialogModal.vue:158
-#: specialVueFakeDummyForL10nScript.js:214
+#. TRANSLATORS src/components/SignDialogModal.vue:159
+#: specialVueFakeDummyForL10nScript.js:238
 msgid "Do you really want to sign this request?"
 msgstr ""
 
-#. TRANSLATORS src/components/SignDialogModal.vue:159
-#: specialVueFakeDummyForL10nScript.js:216
+#. TRANSLATORS src/components/SignDialogModal.vue:160
+#: specialVueFakeDummyForL10nScript.js:240
 msgid "Sign request"
 msgstr ""
 
-#. TRANSLATORS src/components/SignDialogModal.vue:177
-#: specialVueFakeDummyForL10nScript.js:218
+#. TRANSLATORS src/components/SignDialogModal.vue:178
+#: specialVueFakeDummyForL10nScript.js:242
 msgid "Request signed."
 msgstr ""
 
-#. TRANSLATORS src/components/SignDialogModal.vue:181
-#: specialVueFakeDummyForL10nScript.js:220
+#. TRANSLATORS src/components/SignDialogModal.vue:182
+#: specialVueFakeDummyForL10nScript.js:244
 msgid "Error while signing request."
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureProperties.vue:24
-#: specialVueFakeDummyForL10nScript.js:222
+#: specialVueFakeDummyForL10nScript.js:246
 msgid "Reason: {reason}"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureProperties.vue:29
-#: specialVueFakeDummyForL10nScript.js:224
+#: specialVueFakeDummyForL10nScript.js:248
 msgid "Location:"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureProperties.vue:34
-#: specialVueFakeDummyForL10nScript.js:226
+#: specialVueFakeDummyForL10nScript.js:250
 msgid "Contact:"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureProperties.vue:39
-#: specialVueFakeDummyForL10nScript.js:228
+#: specialVueFakeDummyForL10nScript.js:252
 msgid "Nextcloud URL:"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureStatus.vue:24
-#: specialVueFakeDummyForL10nScript.js:230
+#: specialVueFakeDummyForL10nScript.js:254
 msgid "Signature status: {status}"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureStatus.vue:46
-#: specialVueFakeDummyForL10nScript.js:232
+#: specialVueFakeDummyForL10nScript.js:256
 msgid "Valid"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureStatus.vue:48
-#: specialVueFakeDummyForL10nScript.js:234
+#: specialVueFakeDummyForL10nScript.js:258
 msgid "The format is not valid"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureStatus.vue:50
-#: specialVueFakeDummyForL10nScript.js:236
+#: specialVueFakeDummyForL10nScript.js:260
 msgid "Error while validating"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureStatus.vue:52
-#: specialVueFakeDummyForL10nScript.js:238
+#: specialVueFakeDummyForL10nScript.js:262
 msgid "The certificate is not valid yet"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureStatus.vue:54
-#: specialVueFakeDummyForL10nScript.js:240
+#: specialVueFakeDummyForL10nScript.js:264
 msgid "The certificate is expired"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureStatus.vue:56
-#: specialVueFakeDummyForL10nScript.js:242
+#: specialVueFakeDummyForL10nScript.js:266
 msgid "No signature date found"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureStatus.vue:58
-#: specialVueFakeDummyForL10nScript.js:244
+#: specialVueFakeDummyForL10nScript.js:268
 msgid "The signature date is invalid"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureStatus.vue:60
-#: specialVueFakeDummyForL10nScript.js:246
+#: specialVueFakeDummyForL10nScript.js:270
 msgid "Signed by unknown CA"
 msgstr ""
 
 #. TRANSLATORS src/components/SignatureStatus.vue:62
-#: specialVueFakeDummyForL10nScript.js:248
+#: specialVueFakeDummyForL10nScript.js:272
 msgid "The signature is invalid"
 msgstr ""
 
 #. TRANSLATORS src/views/Dashboard.vue:25
-#: specialVueFakeDummyForL10nScript.js:250
+#: specialVueFakeDummyForL10nScript.js:274
 msgid "More signature requests…"
 msgstr ""
 
 #. TRANSLATORS src/views/Dashboard.vue:35
-#: specialVueFakeDummyForL10nScript.js:252
+#: specialVueFakeDummyForL10nScript.js:276
 msgid "No signature requests"
 msgstr ""
 
-#. TRANSLATORS src/views/Dashboard.vue:87
-#: specialVueFakeDummyForL10nScript.js:254
+#. TRANSLATORS src/views/Dashboard.vue:88
+#: specialVueFakeDummyForL10nScript.js:278
 msgid "Requested by {display_name} on {date}"
 msgstr ""
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:28
 #. TRANSLATORS src/views/SignaturesView.vue:29
-#: specialVueFakeDummyForL10nScript.js:256
-#: specialVueFakeDummyForL10nScript.js:264
-#: specialVueFakeDummyForL10nScript.js:344
-#: specialVueFakeDummyForL10nScript.js:354
+#: specialVueFakeDummyForL10nScript.js:280
+#: specialVueFakeDummyForL10nScript.js:288
+#: specialVueFakeDummyForL10nScript.js:368
+#: specialVueFakeDummyForL10nScript.js:378
 #: src/mainFilesSidebarLoader.js:39
 msgid "Signatures"
 msgstr ""
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:30
-#: specialVueFakeDummyForL10nScript.js:258
+#: specialVueFakeDummyForL10nScript.js:282
 msgid "Signatures are not supported for this file."
 msgstr ""
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:33
-#: specialVueFakeDummyForL10nScript.js:260
+#: specialVueFakeDummyForL10nScript.js:284
 msgid "Signature status is pending for this file."
 msgstr ""
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:37
-#: specialVueFakeDummyForL10nScript.js:262
+#: specialVueFakeDummyForL10nScript.js:286
 msgid "Check manually"
 msgstr ""
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:44
 #. TRANSLATORS src/views/SignaturesView.vue:31
-#: specialVueFakeDummyForL10nScript.js:266
-#: specialVueFakeDummyForL10nScript.js:346
+#: specialVueFakeDummyForL10nScript.js:290
+#: specialVueFakeDummyForL10nScript.js:370
 msgid "The file is not signed."
 msgstr ""
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:47
 #. TRANSLATORS src/views/SignaturesView.vue:34
-#: specialVueFakeDummyForL10nScript.js:268
-#: specialVueFakeDummyForL10nScript.js:348
+#: specialVueFakeDummyForL10nScript.js:292
+#: specialVueFakeDummyForL10nScript.js:372
 msgid "The file is encrypted and can not be checked."
 msgstr ""
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:50
 #. TRANSLATORS src/views/SignaturesView.vue:37
-#: specialVueFakeDummyForL10nScript.js:270
-#: specialVueFakeDummyForL10nScript.js:350
+#: specialVueFakeDummyForL10nScript.js:294
+#: specialVueFakeDummyForL10nScript.js:374
 msgid "The file could not be parsed and can not be checked."
 msgstr ""
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:53
 #. TRANSLATORS src/views/FilesSidebarTab.vue:236
 #. TRANSLATORS src/views/SignaturesView.vue:40
-#: specialVueFakeDummyForL10nScript.js:272
-#: specialVueFakeDummyForL10nScript.js:276
-#: specialVueFakeDummyForL10nScript.js:352
+#: specialVueFakeDummyForL10nScript.js:296
+#: specialVueFakeDummyForL10nScript.js:300
+#: specialVueFakeDummyForL10nScript.js:376
 msgid "Error fetching signature details."
 msgstr ""
 
 #. TRANSLATORS src/views/FilesSidebarTab.vue:56
 #. TRANSLATORS src/views/SignaturesView.vue:123
-#: specialVueFakeDummyForL10nScript.js:274
-#: specialVueFakeDummyForL10nScript.js:376
+#: specialVueFakeDummyForL10nScript.js:298
+#: specialVueFakeDummyForL10nScript.js:400
 msgid "Force recheck"
 msgstr ""
 
@@ -747,161 +811,161 @@ msgstr ""
 #. TRANSLATORS src/views/ShareDialogView.vue:28
 #. TRANSLATORS src/views/ShareDialogView.vue:24
 #. TRANSLATORS src/views/ShareDialogView.vue:28
-#: specialVueFakeDummyForL10nScript.js:278
-#: specialVueFakeDummyForL10nScript.js:280
-#: specialVueFakeDummyForL10nScript.js:282
-#: specialVueFakeDummyForL10nScript.js:308
-#: specialVueFakeDummyForL10nScript.js:310
-#: src/mainLoader.js:73
+#: specialVueFakeDummyForL10nScript.js:302
+#: specialVueFakeDummyForL10nScript.js:304
+#: specialVueFakeDummyForL10nScript.js:306
+#: specialVueFakeDummyForL10nScript.js:332
+#: specialVueFakeDummyForL10nScript.js:334
+#: src/mainLoader.js:63
 msgid "Request signature"
 msgstr ""
 
 #. TRANSLATORS src/views/ShareDialogView.vue:49
-#: specialVueFakeDummyForL10nScript.js:286
+#: specialVueFakeDummyForL10nScript.js:310
 msgid "Delete recipient"
 msgstr ""
 
 #. TRANSLATORS src/views/ShareDialogView.vue:61
-#: specialVueFakeDummyForL10nScript.js:288
+#: specialVueFakeDummyForL10nScript.js:312
 msgid "Add user"
 msgstr ""
 
 #. TRANSLATORS src/views/ShareDialogView.vue:69
-#: specialVueFakeDummyForL10nScript.js:290
+#: specialVueFakeDummyForL10nScript.js:314
 msgid "Search users"
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:98
-#: specialVueFakeDummyForL10nScript.js:292
+#. TRANSLATORS src/views/ShareDialogView.vue:93
+#: specialVueFakeDummyForL10nScript.js:316
 msgid "Add email address"
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:106
-#: specialVueFakeDummyForL10nScript.js:294
+#. TRANSLATORS src/views/ShareDialogView.vue:101
+#: specialVueFakeDummyForL10nScript.js:318
 msgid "E-mail address"
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:131
-#: specialVueFakeDummyForL10nScript.js:296
+#. TRANSLATORS src/views/ShareDialogView.vue:121
+#: specialVueFakeDummyForL10nScript.js:320
 msgid "Action to perform when the file was signed successfully:"
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:262
-#: specialVueFakeDummyForL10nScript.js:312
+#. TRANSLATORS src/views/ShareDialogView.vue:252
+#: specialVueFakeDummyForL10nScript.js:336
 msgid "Cancel search"
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:345
-#: specialVueFakeDummyForL10nScript.js:314
+#. TRANSLATORS src/views/ShareDialogView.vue:362
+#: specialVueFakeDummyForL10nScript.js:338
 msgid "An error occurred while performing the search"
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:500
-#: specialVueFakeDummyForL10nScript.js:316
+#. TRANSLATORS src/views/ShareDialogView.vue:517
+#: specialVueFakeDummyForL10nScript.js:340
 msgid "No file selected."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:505
-#: specialVueFakeDummyForL10nScript.js:318
+#. TRANSLATORS src/views/ShareDialogView.vue:522
+#: specialVueFakeDummyForL10nScript.js:342
 msgid "Please add at least one recipient first."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:525
-#: specialVueFakeDummyForL10nScript.js:320
+#. TRANSLATORS src/views/ShareDialogView.vue:542
+#: specialVueFakeDummyForL10nScript.js:344
 msgid "Please create signature fields first."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:554
-#: specialVueFakeDummyForL10nScript.js:322
+#. TRANSLATORS src/views/ShareDialogView.vue:571
+#: specialVueFakeDummyForL10nScript.js:346
 msgid "At least one field has no recipient assigned."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:557
-#: specialVueFakeDummyForL10nScript.js:324
+#. TRANSLATORS src/views/ShareDialogView.vue:574
+#: specialVueFakeDummyForL10nScript.js:348
 msgid "At least one recipient has no field assigned."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:570
-#: specialVueFakeDummyForL10nScript.js:326
+#. TRANSLATORS src/views/ShareDialogView.vue:587
+#: specialVueFakeDummyForL10nScript.js:350
 msgid "Requested signature."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:579
-#: specialVueFakeDummyForL10nScript.js:328
+#. TRANSLATORS src/views/ShareDialogView.vue:596
+#: specialVueFakeDummyForL10nScript.js:352
 msgid "Unknown user."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:582
-#: specialVueFakeDummyForL10nScript.js:330
+#. TRANSLATORS src/views/ShareDialogView.vue:599
+#: specialVueFakeDummyForL10nScript.js:354
 msgid "Invalid email address."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:585
-#: specialVueFakeDummyForL10nScript.js:332
+#. TRANSLATORS src/views/ShareDialogView.vue:602
+#: specialVueFakeDummyForL10nScript.js:356
 msgid "Error connecting to Certificate24 service."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:588
-#: specialVueFakeDummyForL10nScript.js:334
+#. TRANSLATORS src/views/ShareDialogView.vue:605
+#: specialVueFakeDummyForL10nScript.js:358
 msgid "Error while requesting signature."
 msgstr ""
 
-#. TRANSLATORS src/views/ShareDialogView.vue:146
-#: specialVueFakeDummyForL10nScript.js:342
+#. TRANSLATORS src/views/ShareDialogView.vue:136
+#: specialVueFakeDummyForL10nScript.js:366
 msgid "%n signature field positioned"
 msgid_plural "%n signature fields positioned"
 msgstr[0] ""
 msgstr[1] ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:47
-#: specialVueFakeDummyForL10nScript.js:356
+#: specialVueFakeDummyForL10nScript.js:380
 msgid "Checked on: {date}"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:58
-#: specialVueFakeDummyForL10nScript.js:358
+#: specialVueFakeDummyForL10nScript.js:382
 msgid "Signature {index}"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:64
-#: specialVueFakeDummyForL10nScript.js:360
+#: specialVueFakeDummyForL10nScript.js:384
 msgid "Signed by: {signer}"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:69
-#: specialVueFakeDummyForL10nScript.js:362
+#: specialVueFakeDummyForL10nScript.js:386
 msgid "Signed on: {date}"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:75
-#: specialVueFakeDummyForL10nScript.js:364
+#: specialVueFakeDummyForL10nScript.js:388
 msgid ""
 "The signature timestamp was generated on the signers machine and is "
 "untrusted."
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:83
-#: specialVueFakeDummyForL10nScript.js:366
+#: specialVueFakeDummyForL10nScript.js:390
 msgid "The file was not modified since it was signed."
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:86
-#: specialVueFakeDummyForL10nScript.js:368
+#: specialVueFakeDummyForL10nScript.js:392
 msgid "The file was modified since it was signed."
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:98
-#: specialVueFakeDummyForL10nScript.js:372
+#: specialVueFakeDummyForL10nScript.js:396
 msgid "Signature timestamp"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:111
-#: specialVueFakeDummyForL10nScript.js:374
+#: specialVueFakeDummyForL10nScript.js:398
 msgid "Certificate chain"
 msgstr ""
 
 #. TRANSLATORS src/views/SignaturesView.vue:214
-#: specialVueFakeDummyForL10nScript.js:378
+#: specialVueFakeDummyForL10nScript.js:402
 msgid "Unknown"
 msgstr ""
 

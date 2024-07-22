@@ -144,5 +144,11 @@ return [
 			'verb' => 'POST',
 			'requirements' => $requirements,
 		],
+		[
+			'name' => 'Api#checkAccountSettings',
+			'url' => '/api/{apiVersion}/settings/account/check',
+			'verb' => 'POST',
+			'requirements' => $requirements,
+		],
 	],
 ];

@@ -54,19 +54,34 @@
 		<div v-html="accountDescription" />
 		<div>{{ t('certificate24', 'Name: {theme}', {'theme': theme.name}) }}</div>
 		<div>{{ t('certificate24', 'Nextcloud Url: {url}', {'url': nextcloud.url}) }}</div>
+		<div>
+			<NcButton :disabled="checking || !account_id || !account_secret"
+				@click="checkAccountSettings()">
+				<template v-if="checking" #icon>
+					<NcLoadingIcon />
+				</template>
+				{{ t('certificate24', 'Check account settings') }}
+			</NcButton>
+		</div>
 	</NcSettingsSection>
 </template>
 
 <script>
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcSettingsSection from '@nextcloud/vue/dist/Components/NcSettingsSection.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
 
+import { checkAccountSettings } from '../../services/apiservice.js'
+
 export default {
 	name: 'AccountSettings',
 
 	components: {
+		NcButton,
+		NcLoadingIcon,
 		NcSettingsSection,
 	},
 
@@ -78,6 +93,7 @@ export default {
 			web_server: '',
 			loading: false,
 			saved: false,
+			checking: false,
 			nextcloud: {},
 			theme: OC.theme,
 		}
@@ -131,6 +147,68 @@ export default {
 			setTimeout(() => {
 				this.saved = false
 			}, 3000)
+		},
+
+		async checkAccountSettings() {
+			if (OC.PasswordConfirmation.requiresPasswordConfirmation()) {
+				OC.PasswordConfirmation.requirePasswordConfirmation(() => {
+					this.checkAccountSettings()
+				})
+				return
+			}
+
+			this.checking = true
+			try {
+				const result = await checkAccountSettings()
+				const name = result.data.ocs?.data?.name || null
+				if (name) {
+					showSuccess(t('certificate24', 'The settings for account "{name}" are valid.', {
+						name,
+					}))
+				} else {
+					showSuccess(t('certificate24', 'The account settings are valid.'))
+				}
+			} catch (error) {
+				console.error('Could not check account settings', error)
+				let message = error.response.data.ocs?.data?.error || ''
+				const details = error.response.data.ocs?.data?.details || ''
+				switch (message) {
+				case 'unconfigured':
+					message = t('certificate24', 'No account id and/or secret configured.')
+					break
+				case 'not_authenticated':
+					message = t('certificate24', 'Invalid account id and/or secret configured.')
+					break
+				case 'invalid_url':
+					message = t('certificate24', 'The account url doesn\'t match the url of your Nextcloud instance.')
+					break
+				case 'bad_response':
+					if (details) {
+						message = t('certificate24', 'Bad response received from backend service: {details}', {
+							details,
+						})
+					} else {
+						message = t('certificate24', 'Bad response received from backend service, please check your Nextcloud log for details.')
+					}
+					break
+				case 'connect_exception':
+					if (details) {
+						message = t('certificate24', 'Error connecting to the backend service: {details}', {
+							details,
+						})
+					} else {
+						message = t('certificate24', 'Error connecting to the backend service, please check your Nextcloud log for details.')
+					}
+					break
+				default:
+					message = t('certificate24', 'Error while checking account settings, please check your Nextcloud log for details.')
+				}
+				showError(message)
+			} finally {
+				setTimeout(() => {
+					this.checking = false
+				}, 250)
+			}
 		},
 	},
 }
