@@ -87,8 +87,9 @@ class FilesLoader implements IEventListener {
 			return;
 		}
 
+		$account = $this->config->getAccount();
 		$server = $this->config->getApiServer();
-		if (empty($server)) {
+		if (!$account['id'] || !$account['secret'] || empty($server)) {
 			return;
 		}
 
@@ -98,8 +99,9 @@ class FilesLoader implements IEventListener {
 	}
 
 	private function handleSidebar(LoadSidebar $event): void {
+		$account = $this->config->getAccount();
 		$server = $this->config->getApiServer();
-		if (empty($server)) {
+		if (!$account['id'] || !$account['secret'] || empty($server)) {
 			return;
 		}
 
