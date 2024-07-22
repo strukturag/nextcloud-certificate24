@@ -45,6 +45,9 @@
     </MissingDependency>
   </file>
   <file src="lib/Client.php">
+    <UndefinedClass occurrences="3">
+      <code>BadResponseException</code>
+    </UndefinedClass>
     <UndefinedDocblockClass occurrences="2">
       <code>BadResponseException</code>
     </UndefinedDocblockClass>

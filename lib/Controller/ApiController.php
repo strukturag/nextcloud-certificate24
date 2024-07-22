@@ -46,6 +46,7 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\Image;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
@@ -81,6 +82,7 @@ class ApiController extends OCSController {
 	private IFactory $l10nFactory;
 	private IL10N $l10n;
 	private IConfig $systemConfig;
+	private IURLGenerator $urlGenerator;
 	private Client $client;
 	private Config $config;
 	private Requests $requests;
@@ -103,6 +105,7 @@ class ApiController extends OCSController {
 		IFactory $l10nFactory,
 		IL10N $l10n,
 		IConfig $systemConfig,
+		IURLGenerator $urlGenerator,
 		Client $client,
 		Config $config,
 		Requests $requests,
@@ -123,6 +126,7 @@ class ApiController extends OCSController {
 		$this->l10nFactory = $l10nFactory;
 		$this->l10n = $l10n;
 		$this->systemConfig = $systemConfig;
+		$this->urlGenerator = $urlGenerator;
 		$this->client = $client;
 		$this->config = $config;
 		$this->requests = $requests;
@@ -1264,5 +1268,38 @@ class ApiController extends OCSController {
 
 		$this->manager->processSignatureDetails($request, $account, $recipient['type'], $recipient['value'], $details);
 		return new DataResponse([], Http::STATUS_OK);
+	}
+
+	/**
+	 * @BruteForceProtection(action=certificate24_account)
+	 *
+	 * @return DataResponse
+	 */
+	public function checkAccountSettings() {
+		$account = $this->config->getAccount();
+		if (!$account['id'] || !$account['secret']) {
+			return new DataResponse([
+				'error' => 'unconfigured',
+			], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		$server = $this->config->getApiServer();
+		$response = $this->client->checkAccountSettings($server, $account);
+		$error = $response['error'] ?? null;
+		if (empty($response) || $error) {
+			$response = new DataResponse($response, Http::STATUS_PRECONDITION_FAILED);
+			if ($error === 'not_authenticated') {
+				$response->throttle();
+			}
+			return $response;
+		}
+
+		if ($response['url'] !== $this->urlGenerator->getAbsoluteURL('')) {
+			return new DataResponse([
+				'error' => 'invalid_url',
+			], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		return new DataResponse($response, Http::STATUS_OK);
 	}
 }
