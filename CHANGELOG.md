@@ -2,6 +2,57 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.3 - 2024-07-23
+
+### Added
+- Add button to check account settings on admin page.
+  [#404](https://github.com/strukturag/nextcloud-certificate24/pull/404)
+- Add background job to send out daily reminders for missing email signatures.
+  [#408](https://github.com/strukturag/nextcloud-certificate24/pull/408)
+- Support upcoming Nextcloud 30
+  [#409](https://github.com/strukturag/nextcloud-certificate24/pull/409)
+
+### Changed
+- Bump vimeo/psalm from 5.24.0 to 5.25.0 in /vendor-bin/psalm
+  [#392](https://github.com/strukturag/nextcloud-certificate24/pull/392)
+- Bump friendsofphp/php-cs-fixer from 3.57.2 to 3.59.3 in /vendor-bin/csfixer
+  [#391](https://github.com/strukturag/nextcloud-certificate24/pull/391)
+- Bump braces from 3.0.2 to 3.0.3
+  [#389](https://github.com/strukturag/nextcloud-certificate24/pull/389)
+- Bump ws from 8.13.0 to 8.17.1
+  [#388](https://github.com/strukturag/nextcloud-certificate24/pull/388)
+- Bump @babel/preset-typescript from 7.24.1 to 7.24.7
+  [#385](https://github.com/strukturag/nextcloud-certificate24/pull/385)
+- Bump @nextcloud/eslint-config from 8.3.0 to 8.4.1
+  [#382](https://github.com/strukturag/nextcloud-certificate24/pull/382)
+- Bump debounce from 2.0.0 to 2.1.0
+  [#379](https://github.com/strukturag/nextcloud-certificate24/pull/379)
+- Bump @nextcloud/dialogs from 5.3.1 to 5.3.5
+  [#399](https://github.com/strukturag/nextcloud-certificate24/pull/399)
+- Bump @nextcloud/files from 3.3.1 to 3.6.0
+  [#401](https://github.com/strukturag/nextcloud-certificate24/pull/401)
+- Bump @peculiar/x509 from 1.9.7 to 1.11.0
+  [#384](https://github.com/strukturag/nextcloud-certificate24/pull/384)
+- Bump @nextcloud/vue from 8.11.2 to 8.14.0
+  [#398](https://github.com/strukturag/nextcloud-certificate24/pull/398)
+- Bump nextcloud/coding-standard from 1.1.0 to 1.2.1 in /vendor-bin/csfixer
+  [#390](https://github.com/strukturag/nextcloud-certificate24/pull/390)
+- Disable files menu / sidebar if not configured.
+  [#405](https://github.com/strukturag/nextcloud-certificate24/pull/405)
+- Updates for file translationfiles/templates/certificate24.pot in de
+  [#407](https://github.com/strukturag/nextcloud-certificate24/pull/407)
+- Updates for file translationfiles/templates/certificate24.pot in de_DE
+  [#406](https://github.com/strukturag/nextcloud-certificate24/pull/406)
+- Updates for file translationfiles/templates/certificate24.pot in de
+  [#410](https://github.com/strukturag/nextcloud-certificate24/pull/410)
+- Updates for file translationfiles/templates/certificate24.pot in de_DE
+  [#411](https://github.com/strukturag/nextcloud-certificate24/pull/411)
+
+### Fixed
+- Fix path in require_once for csfixer.
+  [#403](https://github.com/strukturag/nextcloud-certificate24/pull/403)
+
+
 ## 0.3.2 - 2024-05-29
 
 ### Changed
