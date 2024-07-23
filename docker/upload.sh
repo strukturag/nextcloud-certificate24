@@ -9,7 +9,7 @@ fi
 
 docker tag \
 	nextcloud-certificate24:$TAG \
-	registry.cluster.caprino.struktur.de/nextcloud-certificate24:$TAG
+	registry.struktur.de/nextcloud-certificate24:$TAG
 
 docker push \
-	registry.cluster.caprino.struktur.de/nextcloud-certificate24:$TAG
+	registry.struktur.de/nextcloud-certificate24:$TAG
