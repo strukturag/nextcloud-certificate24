@@ -648,6 +648,61 @@ class Requests {
 		return $pending;
 	}
 
+	public function getReminderEmails(int $maxAgeHours) {
+		$maxDate = new \DateTime();
+		$maxDate = $maxDate->sub(new \DateInterval('PT' . $maxAgeHours . 'H'));
+		$maxDate->setTimezone(new \DateTimeZone('UTC'));
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('c24_requests')
+			->where($query->expr()->eq('recipient_type', $query->createNamedParameter('email')))
+			->andWhere($query->expr()->isNull('signed'))
+			->andWhere($query->expr()->lte('email_sent', $query->createNamedParameter($maxDate, 'datetimetz')));
+		$result = $query->executeQuery();
+
+		$pending = [];
+		$recipients = [];
+		while ($row = $result->fetch()) {
+			if ($row['metadata']) {
+				$row['metadata'] = json_decode($row['metadata'], true);
+			}
+
+			$row['recipients'] = $this->getRecipients($row);
+			$recipients[] = $row;
+		}
+		$result->closeCursor();
+		$pending['single'] = $recipients;
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('c24_recipients')
+			->where($query->expr()->eq('type', $query->createNamedParameter('email')))
+			->andWhere($query->expr()->isNull('signed'))
+			->andWhere($query->expr()->lte('email_sent', $query->createNamedParameter($maxDate, 'datetimetz')));
+		$result = $query->executeQuery();
+		$recipients = [];
+		$requests = [];
+		while ($row = $result->fetch()) {
+			if (!isset($requests[$row['request_id']])) {
+				$requests[$row['request_id']] = $this->getRequestById($row['request_id']);
+				if (!$requests[$row['request_id']]) {
+					$this->logger->warning('Request ' . $row['request_id'] . ' no longer exists for pending email of ' . $row['type'] . ' ' . $row['value']);
+					continue;
+				}
+			}
+			$signed = $row['signed'];
+			if (is_string($signed)) {
+				$row['signed'] = $this->parseDateTime($signed);
+			}
+			$row['request'] = $requests[$row['request_id']];
+			$recipients[] = $row;
+		}
+		$result->closeCursor();
+		$pending['multi'] = $recipients;
+		return $pending;
+	}
+
 	public function getPendingDownloads() {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')

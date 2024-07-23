@@ -15,6 +15,11 @@
       <code>IRootFolder</code>
     </MissingDependency>
   </file>
+  <file src="lib/BackgroundJob/SendReminders.php">
+    <MissingDependency occurrences="4">
+      <code>IRootFolder</code>
+    </MissingDependency>
+  </file>
   <file src="lib/Controller/ApiController.php">
     <EmptyArrayAccess occurrences="1">
       <code>$userCache[$userId]</code>

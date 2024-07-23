@@ -35,23 +35,32 @@
 				@update:checked="debounceUpdateBackgroundVerify">
 				{{ t('certificate24', 'Verify document signatures in the background.') }}
 			</NcCheckboxRadioSwitch>
-			<div v-if="settings.last_verified">
-				{{ t('certificate24', 'Last verification: {timestamp}', {
-					timestamp: formatDate(settings.last_verified),
-				}) }}
+			<div class="radioswitch-details">
+				<div v-if="settings.last_verified">
+					{{ t('certificate24', 'Last verification: {timestamp}', {
+						timestamp: formatDate(settings.last_verified),
+					}) }}
+				</div>
+				<div v-else>
+					{{ t('certificate24', 'Last verification: none yet') }}
+				</div>
+				<div v-if="settings.unverified_count !== null">
+					{{ t('certificate24', 'Number of pending verifications: {count}', {
+						count: settings.unverified_count,
+					}) }}
+				</div>
+				<NcButton :disabled="clearing"
+					@click="clearVerification">
+					{{ t('certificate24', 'Clear verification cache') }}
+				</NcButton>
 			</div>
-			<div v-else>
-				{{ t('certificate24', 'Last verification: none yet') }}
-			</div>
-			<div v-if="settings.unverified_count !== null">
-				{{ t('certificate24', 'Number of pending verifications: {count}', {
-					count: settings.unverified_count,
-				}) }}
-			</div>
-			<NcButton :disabled="clearing"
-				@click="clearVerification">
-				{{ t('certificate24', 'Clear verification cache') }}
-			</NcButton>
+		</div>
+		<div>
+			<NcCheckboxRadioSwitch :checked.sync="settings.send_reminder_mails"
+				type="switch"
+				@update:checked="debounceUpdateSendReminderMails">
+				{{ t('certificate24', 'Send reminder mails to email recipients that have not signed their request.') }}
+			</NcCheckboxRadioSwitch>
 		</div>
 	</NcSettingsSection>
 </template>
@@ -160,6 +169,36 @@ export default {
 				}.bind(this),
 			)
 		},
+
+		debounceUpdateSendReminderMails: debounce(function() {
+			this.updateSendReminderMails()
+		}, 500),
+
+		updateSendReminderMails() {
+			this.loading = true
+
+			const self = this
+			OCP.AppConfig.setValue('certificate24', 'send_reminder_mails', this.settings.send_reminder_mails, {
+				success() {
+					showSuccess(t('certificate24', 'Settings saved'))
+					self.loading = false
+				},
+				error() {
+					showError(t('certificate24', 'Could not save settings'))
+					self.loading = false
+				},
+			})
+		},
+
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.radioswitch-details {
+	--icon-width: 36px;
+	--icon-height: 16px;
+	margin-left: calc(4px + var(--icon-width));
+	padding-left: calc((var(--default-clickable-area) - var(--icon-height)) / 2);
+}
+</style>

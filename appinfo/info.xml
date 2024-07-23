@@ -49,6 +49,7 @@ See [the website](https://www.certificate24.com) for further information.
 		<job>OCA\Certificate24\BackgroundJob\FetchSigned</job>
 		<job>OCA\Certificate24\BackgroundJob\ResendMails</job>
 		<job>OCA\Certificate24\BackgroundJob\RetryDownloads</job>
+		<job>OCA\Certificate24\BackgroundJob\SendReminders</job>
 	</background-jobs>
 
 	<settings>
