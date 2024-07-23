@@ -24,6 +24,7 @@ declare(strict_types=1);
  */
 namespace OCA\Certificate24\BackgroundJob;
 
+use OCA\Certificate24\Config;
 use OCA\Certificate24\Mails;
 use OCA\Certificate24\Requests;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -41,12 +42,14 @@ class SendReminders extends TimedJob {
 
 	private IUserManager $userManager;
 	private IRootFolder $root;
+	private Config $config;
 	private Requests $requests;
 	private Mails $mails;
 
 	public function __construct(ITimeFactory $timeFactory,
 		IUserManager $userManager,
 		IRootFolder $root,
+		Config $config,
 		Requests $requests,
 		Mails $mails) {
 		parent::__construct($timeFactory);
@@ -57,11 +60,16 @@ class SendReminders extends TimedJob {
 
 		$this->userManager = $userManager;
 		$this->root = $root;
+		$this->config = $config;
 		$this->requests = $requests;
 		$this->mails = $mails;
 	}
 
 	protected function run($argument): void {
+		if (!$this->config->sendReminderMails()) {
+			return;
+		}
+
 		$pending = $this->requests->getReminderEmails(self::REMINDER_MAX_AGE_HOURS);
 		foreach ($pending['single'] as $entry) {
 			$user = $this->userManager->get($entry['user_id']);

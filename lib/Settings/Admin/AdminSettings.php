@@ -79,6 +79,7 @@ class AdminSettings implements ISettings {
 			'signed_save_mode' => $this->config->getSignedSaveMode(),
 			'insecure_skip_verify' => $this->config->insecureSkipVerify(),
 			'background_verify' => $this->config->isBackgroundVerifyEnabled(),
+			'send_reminder_mails' => $this->config->sendReminderMails(),
 			'delete_max_age' => $this->config->getDeleteMaxAge(),
 			'last_verified' => $last ? $last->format(\DateTime::ATOM) : null,
 			'unverified_count' => $this->verify->getUnverifiedCount(),

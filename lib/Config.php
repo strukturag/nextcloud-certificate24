@@ -106,6 +106,10 @@ class Config {
 		return $this->config->getAppValue(self::APP_ID, 'background_verify', 'true') === 'true';
 	}
 
+	public function sendReminderMails(): bool {
+		return $this->config->getAppValue(self::APP_ID, 'send_reminder_mails', 'true') === 'true';
+	}
+
 	public function getSignatureImage(IUser $user): ?ISimpleFile {
 		try {
 			$folder = $this->appData->getFolder($user->getUID());
