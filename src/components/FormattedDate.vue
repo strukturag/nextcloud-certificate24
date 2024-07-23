@@ -21,7 +21,7 @@
 <template>
 	<NcDateTime v-if="timestamp"
 		:timestamp="timestamp"
-		ignore-seconds="true" />
+		:ignore-seconds="true" />
 </template>
 
 <script>
