@@ -36,7 +36,7 @@ See [the website](https://www.certificate24.com) for further information.
 	<category>tools</category>
 
 	<dependencies>
-		<nextcloud min-version="28" max-version="29" />
+		<nextcloud min-version="28" max-version="30" />
 	</dependencies>
 
 	<types>
