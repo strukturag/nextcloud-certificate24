@@ -28,7 +28,6 @@ use GuzzleHttp\Exception\ConnectException;
 use OCA\Certificate24\AppInfo\Application;
 use OCA\Certificate24\Client;
 use OCA\Certificate24\Config;
-use OCA\Certificate24\Events\SignEvent;
 use OCA\Certificate24\Mails;
 use OCA\Certificate24\Manager;
 use OCA\Certificate24\Metadata;
@@ -40,7 +39,6 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Collaboration\Collaborators\ISearch;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -78,7 +76,6 @@ class ApiController extends OCSController {
 	private IRootFolder $root;
 	private ISearch $search;
 	private IMailer $mailer;
-	private IEventDispatcher $dispatcher;
 	private IFactory $l10nFactory;
 	private IL10N $l10n;
 	private IConfig $systemConfig;
@@ -101,7 +98,6 @@ class ApiController extends OCSController {
 		IRootFolder $root,
 		ISearch $search,
 		IMailer $mailer,
-		IEventDispatcher $dispatcher,
 		IFactory $l10nFactory,
 		IL10N $l10n,
 		IConfig $systemConfig,
@@ -122,7 +118,6 @@ class ApiController extends OCSController {
 		$this->root = $root;
 		$this->search = $search;
 		$this->mailer = $mailer;
-		$this->dispatcher = $dispatcher;
 		$this->l10nFactory = $l10nFactory;
 		$this->l10n = $l10n;
 		$this->systemConfig = $systemConfig;
@@ -1092,10 +1087,7 @@ class ApiController extends OCSController {
 			$signed = new \DateTime();
 		}
 
-		$isLast = $this->requests->markRequestSignedById($id, $type, $value, $signed);
-
-		$event = new SignEvent($id, $row, $type, $value, $signed, $user, $isLast);
-		$this->dispatcher->dispatchTyped($event);
+		$isLast = $this->requests->markRequestSigned($row, $type, $value, $signed, $user);
 
 		if ($isLast) {
 			$this->manager->saveSignedResult($row, $signed, $user, $account);

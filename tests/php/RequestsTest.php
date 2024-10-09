@@ -23,8 +23,12 @@
 namespace OCA\Certificate24\Tests\php;
 
 use OCA\Certificate24\Config;
+use OCA\Certificate24\Events\BaseEvent;
+use OCA\Certificate24\Events\ShareEvent;
+use OCA\Certificate24\Events\SignEvent;
 use OCA\Certificate24\Requests;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\EventDispatcher\IWebhookCompatibleEvent;
 use OCP\Files\File;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
@@ -36,6 +40,8 @@ use Test\TestCase;
  * @group DB
  */
 class RequestsTest extends TestCase {
+	/** @var MockObject|IEventDispatcher $dispatcher */
+	protected IEventDispatcher $dispatcher;
 	protected Requests $requests;
 	protected array $requestIds;
 
@@ -45,10 +51,10 @@ class RequestsTest extends TestCase {
 		$logger = $this->createMock(LoggerInterface::class);
 		$secureRandom = \OC::$server->query(ISecureRandom::class);
 		$db = \OC::$server->getDatabaseConnection();
-		$dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$config = $this->createMock(Config::class);
 
-		$this->requests = new Requests($logger, $secureRandom, $db, $dispatcher, $config);
+		$this->requests = new Requests($logger, $secureRandom, $db, $this->dispatcher, $config);
 		$this->requestIds = [];
 	}
 
@@ -186,6 +192,16 @@ class RequestsTest extends TestCase {
 		}
 	}
 
+	public function checkEventSerializable(BaseEvent $event) {
+		if (interface_exists(\OCP\EventDispatcher\IWebhookCompatibleEvent::class)) {
+			$this->assertTrue($event instanceof IWebhookCompatibleEvent);
+		}
+		$data = $event->getWebhookSerializable();
+		$encoded = json_encode($data);
+		$this->assertNotFalse($encoded, 'Error encoding ' . print_r($data, true));
+		$this->assertEquals($data, json_decode($encoded, true));
+	}
+
 	public function testStoreRequestSingleUser() {
 		/** @var MockObject|File $file */
 		$file = $this->createMock(File::class);
@@ -216,6 +232,17 @@ class RequestsTest extends TestCase {
 		$response_file_id = 'the-file';
 		$response_signature_result_id = 'the-signature-result';
 
+		$this->dispatcher->expects($this->exactly(2))
+			->method('dispatchTyped')
+			->withConsecutive([$this->callback(function (ShareEvent $event): bool {
+				$this->checkEventSerializable($event);
+				return true;
+			})], [$this->callback(function (SignEvent $event): bool {
+				$this->checkEventSerializable($event);
+				$this->assertTrue($event->isLastSignature());
+				return true;
+			})]);
+
 		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
 		$this->assertNotNull($id);
 		$this->requestIds[] = $id;
@@ -237,7 +264,7 @@ class RequestsTest extends TestCase {
 		$signed = $signed->setTimezone(new \DateTimeZone('Europe/Berlin'));
 		// Round to seconds, required as some databases don't store with sub-second precision.
 		$signed->setTimestamp($signed->getTimestamp());
-		$isLast = $this->requests->markRequestSignedById($id, $recipients[0]['type'], $recipients[0]['value'], $signed);
+		$isLast = $this->requests->markRequestSigned($request, $recipients[0]['type'], $recipients[0]['value'], $signed, $user);
 		$this->assertTrue($isLast);
 
 		$recipients2[0]['signed'] = $signed;
@@ -288,6 +315,17 @@ class RequestsTest extends TestCase {
 		$response_file_id = 'the-file';
 		$response_signature_result_id = 'the-signature-result';
 
+		$this->dispatcher->expects($this->exactly(2))
+			->method('dispatchTyped')
+			->withConsecutive([$this->callback(function (ShareEvent $event): bool {
+				$this->checkEventSerializable($event);
+				return true;
+			})], [$this->callback(function (SignEvent $event): bool {
+				$this->checkEventSerializable($event);
+				$this->assertTrue($event->isLastSignature());
+				return true;
+			})]);
+
 		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
 		$this->assertNotNull($id);
 		$this->requestIds[] = $id;
@@ -307,7 +345,7 @@ class RequestsTest extends TestCase {
 		$signed = new \DateTime();
 		// Round to seconds, required as some databases don't store with sub-second precision.
 		$signed->setTimestamp($signed->getTimestamp());
-		$isLast = $this->requests->markRequestSignedById($id, $recipients[0]['type'], $recipients[0]['value'], $signed);
+		$isLast = $this->requests->markRequestSigned($request, $recipients[0]['type'], $recipients[0]['value'], $signed, null);
 		$this->assertTrue($isLast);
 
 		$recipients2[0]['signed'] = $signed;
@@ -379,6 +417,21 @@ class RequestsTest extends TestCase {
 		$response_file_id = 'the-file';
 		$response_signature_result_id = 'the-signature-result';
 
+		$this->dispatcher->expects($this->exactly(3))
+			->method('dispatchTyped')
+			->withConsecutive([$this->callback(function (ShareEvent $event): bool {
+				$this->checkEventSerializable($event);
+				return true;
+			})], [$this->callback(function (SignEvent $event): bool {
+				$this->checkEventSerializable($event);
+				$this->assertFalse($event->isLastSignature());
+				return true;
+			})], [$this->callback(function (SignEvent $event): bool {
+				$this->checkEventSerializable($event);
+				$this->assertTrue($event->isLastSignature());
+				return true;
+			})]);
+
 		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
 		$this->assertNotNull($id);
 		$this->requestIds[] = $id;
@@ -415,7 +468,7 @@ class RequestsTest extends TestCase {
 		$signed1 = new \DateTime();
 		// Round to seconds, required as some databases don't store with sub-second precision.
 		$signed1->setTimestamp($signed1->getTimestamp());
-		$isLast = $this->requests->markRequestSignedById($id, $recipients[0]['type'], $recipients[0]['value'], $signed1);
+		$isLast = $this->requests->markRequestSigned($request, $recipients[0]['type'], $recipients[0]['value'], $signed1, $user);
 		$this->assertFalse($isLast);
 
 		$recipients2[0]['signed'] = $signed1;
@@ -442,7 +495,7 @@ class RequestsTest extends TestCase {
 		$signed2 = $signed2->add(new \DateInterval('PT1H'));
 		// Round to seconds, required as some databases don't store with sub-second precision.
 		$signed2->setTimestamp($signed2->getTimestamp());
-		$isLast = $this->requests->markRequestSignedById($id, $recipients[1]['type'], $recipients[1]['value'], $signed2);
+		$isLast = $this->requests->markRequestSigned($request, $recipients[1]['type'], $recipients[1]['value'], $signed2, null);
 		$this->assertTrue($isLast);
 
 		$recipients2[1]['signed'] = $signed2;
@@ -520,6 +573,17 @@ class RequestsTest extends TestCase {
 		$response_file_id = 'the-file';
 		$response_signature_result_id = 'the-signature-result';
 
+		$this->dispatcher->expects($this->exactly(2))
+			->method('dispatchTyped')
+			->withConsecutive([$this->callback(function (ShareEvent $event): bool {
+				$this->checkEventSerializable($event);
+				return true;
+			})], [$this->callback(function (SignEvent $event): bool {
+				$this->checkEventSerializable($event);
+				$this->assertTrue($event->isLastSignature());
+				return true;
+			})]);
+
 		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
 		$this->assertNotNull($id);
 		$this->requestIds[] = $id;
@@ -529,7 +593,7 @@ class RequestsTest extends TestCase {
 		unset($recipients2[0]['public_id']);
 		$recipients2[0]['signed'] = null;
 
-		$this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$completed = $this->requests->getCompletedRequests(new \DateTime());
 		$this->assertEmpty($completed);
@@ -538,7 +602,7 @@ class RequestsTest extends TestCase {
 		$signed = $signed->sub(new \DateInterval('PT1H'));
 		// Round to seconds, required as some databases don't store with sub-second precision.
 		$signed->setTimestamp($signed->getTimestamp());
-		$isLast = $this->requests->markRequestSignedById($id, $recipients[0]['type'], $recipients[0]['value'], $signed);
+		$isLast = $this->requests->markRequestSigned($request, $recipients[0]['type'], $recipients[0]['value'], $signed, null);
 		$this->assertTrue($isLast);
 
 		$recipients2[0]['signed'] = $signed;
@@ -589,6 +653,21 @@ class RequestsTest extends TestCase {
 		$response_file_id = 'the-file';
 		$response_signature_result_id = 'the-signature-result';
 
+		$this->dispatcher->expects($this->exactly(3))
+			->method('dispatchTyped')
+			->withConsecutive([$this->callback(function (ShareEvent $event): bool {
+				$this->checkEventSerializable($event);
+				return true;
+			})], [$this->callback(function (SignEvent $event): bool {
+				$this->checkEventSerializable($event);
+				$this->assertFalse($event->isLastSignature());
+				return true;
+			})], [$this->callback(function (SignEvent $event): bool {
+				$this->checkEventSerializable($event);
+				$this->assertTrue($event->isLastSignature());
+				return true;
+			})]);
+
 		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
 		$this->assertNotNull($id);
 		$this->requestIds[] = $id;
@@ -603,7 +682,7 @@ class RequestsTest extends TestCase {
 			}
 		}
 
-		$this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$completed = $this->requests->getCompletedRequests(new \DateTime());
 		$this->assertEmpty($completed);
@@ -612,11 +691,11 @@ class RequestsTest extends TestCase {
 		$signed = $signed->sub(new \DateInterval('PT1H'));
 		// Round to seconds, required as some databases don't store with sub-second precision.
 		$signed->setTimestamp($signed->getTimestamp());
-		$isLast = $this->requests->markRequestSignedById($id, $recipients[0]['type'], $recipients[0]['value'], $signed);
+		$isLast = $this->requests->markRequestSigned($request, $recipients[0]['type'], $recipients[0]['value'], $signed, $user);
 		$this->assertFalse($isLast);
 
 		$recipients2[0]['signed'] = $signed;
-		$this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$completed = $this->requests->getCompletedRequests(new \DateTime());
 		$this->assertEmpty($completed);
@@ -625,7 +704,7 @@ class RequestsTest extends TestCase {
 		$signed2 = $signed2->sub(new \DateInterval('PT2H'));
 		// Round to seconds, required as some databases don't store with sub-second precision.
 		$signed2->setTimestamp($signed2->getTimestamp());
-		$isLast = $this->requests->markRequestSignedById($id, $recipients[1]['type'], $recipients[1]['value'], $signed2);
+		$isLast = $this->requests->markRequestSigned($request, $recipients[1]['type'], $recipients[1]['value'], $signed2, null);
 		$this->assertTrue($isLast);
 
 		$recipients2[1]['signed'] = $signed2;

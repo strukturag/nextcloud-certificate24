@@ -253,11 +253,8 @@ class Manager {
 			return;
 		}
 
-		$isLast = $this->requests->markRequestSignedById($request['id'], $type, $value, $signed);
+		$isLast = $this->requests->markRequestSigned($request, $type, $value, $signed, null);
 		$this->logger->info('Request ' . $request['id'] . ' was signed by ' . $type . ' ' . $value . ' on ' . $signed->format(Requests::ISO8601_EXTENDED));
-
-		$event = new SignEvent($request['id'], $request, $type, $value, $signed, null, $isLast);
-		$this->dispatcher->dispatchTyped($event);
 
 		if ($isLast) {
 			$this->saveSignedResult($request, $signed, null, $account);
