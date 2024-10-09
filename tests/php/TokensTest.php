@@ -55,41 +55,41 @@ class TokensTest extends TestCase {
 		$this->timeFactory
 			->method('getTime')
 			->willReturn(time());
-		$token = $this->tokens->getToken($this->account, "subject", "action");
+		$token = $this->tokens->getToken($this->account, 'subject', 'action');
 		$this->assertNotNull($token);
 
-		$this->assertTrue($this->tokens->validateToken($token, $this->account, "subject", "action"));
-		$this->assertFalse($this->tokens->validateToken($token, $this->account, "another-subject", "action"));
-		$this->assertFalse($this->tokens->validateToken($token, $this->account, "subject", "another-action"));
+		$this->assertTrue($this->tokens->validateToken($token, $this->account, 'subject', 'action'));
+		$this->assertFalse($this->tokens->validateToken($token, $this->account, 'another-subject', 'action'));
+		$this->assertFalse($this->tokens->validateToken($token, $this->account, 'subject', 'another-action'));
 	}
 
 	public function testTokenInvalidAccount() {
 		$this->timeFactory
 			->method('getTime')
 			->willReturn(time());
-		$token = $this->tokens->getToken($this->account, "subject", "action");
+		$token = $this->tokens->getToken($this->account, 'subject', 'action');
 		$this->assertNotNull($token);
 
 		$invalidAccount = [
 			'secret' => base64_encode(sodium_crypto_sign_secretkey(sodium_crypto_sign_keypair())),
 		];
-		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, "subject", "action"));
-		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, "another-subject", "action"));
-		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, "subject", "another-action"));
+		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, 'subject', 'action'));
+		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, 'another-subject', 'action'));
+		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, 'subject', 'another-action'));
 	}
 
 	public function testTokenExpired() {
 		$this->timeFactory
 			->method('getTime')
 			->willReturn(time() - 10 * 60);
-		$token = $this->tokens->getToken($this->account, "subject", "action");
+		$token = $this->tokens->getToken($this->account, 'subject', 'action');
 		$this->assertNotNull($token);
 
 		$invalidAccount = [
 			'secret' => base64_encode(sodium_crypto_sign_secretkey(sodium_crypto_sign_keypair())),
 		];
-		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, "subject", "action"));
-		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, "another-subject", "action"));
-		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, "subject", "another-action"));
+		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, 'subject', 'action'));
+		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, 'another-subject', 'action'));
+		$this->assertFalse($this->tokens->validateToken($token, $invalidAccount, 'subject', 'another-action'));
 	}
 }

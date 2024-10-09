@@ -87,9 +87,9 @@ class Mails {
 		$template->addHeader();
 		$blocks = explode("\n\n", $body);
 		foreach ($blocks as $block) {
-			$posStart = strpos($block, "http://");
+			$posStart = strpos($block, 'http://');
 			if ($posStart === false) {
-				$posStart = strpos($block, "https://");
+				$posStart = strpos($block, 'https://');
 			}
 			if ($posStart !== false) {
 				// The paragraph contains a line with an URL.
