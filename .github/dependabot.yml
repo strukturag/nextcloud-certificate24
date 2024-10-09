@@ -40,6 +40,13 @@ updates:
     time: "03:00"
     timezone: Europe/Berlin
   open-pull-requests-limit: 10
+- package-ecosystem: "docker"
+  directory: "/docker"
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Berlin
 - package-ecosystem: npm
   directory: "/"
   schedule:
