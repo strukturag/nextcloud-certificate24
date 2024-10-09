@@ -46,10 +46,11 @@ class TranslatedTemplate extends TemplateBase {
 		[$path, $template] = $this->findTemplate($theme, $app, $name);
 
 		$requestToken = \OC::$server->getSession() ? Util::callRegister() : '';
+		$cspNonce = \OCP\Server::get(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)->getNonce();
 
 		/** @var Defaults $themeDefaults */
 		$themeDefaults = \OC::$server->query(Defaults::class);
-		parent::__construct($template, $requestToken, $l10n, $themeDefaults);
+		parent::__construct($template, $requestToken, $l10n, $themeDefaults, $cspNonce);
 	}
 
 	/**
