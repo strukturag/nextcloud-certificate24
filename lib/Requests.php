@@ -26,6 +26,7 @@ namespace OCA\Certificate24;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCA\Certificate24\Events\ShareEvent;
+use OCA\Certificate24\Events\SignEvent;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
@@ -458,28 +459,33 @@ class Requests {
 		return $requests;
 	}
 
-	public function markRequestSignedById(string $id, string $type, string $value, \DateTime $now): bool {
+	public function markRequestSigned(array $request, string $type, string $value, \DateTime $now, ?IUser $user): bool {
 		$now = clone $now;
 		$now->setTimezone(new \DateTimeZone('UTC'));
 
+		$committed = false;
 		$this->db->beginTransaction();
 		try {
 			$query = $this->db->getQueryBuilder();
 			$query->update('c24_requests')
 				->set('signed', $query->createNamedParameter($now, 'datetimetz'))
-				->where($query->expr()->eq('id', $query->createNamedParameter($id)))
+				->where($query->expr()->eq('id', $query->createNamedParameter($request['id'])))
 				->andWhere($query->expr()->eq('recipient_type', $query->createNamedParameter($type)))
 				->andWhere($query->expr()->eq('recipient', $query->createNamedParameter($value)));
 			if ($query->executeStatement() === 1) {
 				// Single recipient for this request.
 				$this->db->commit();
+				$committed = true;
+
+				$event = new SignEvent($request['id'], $request, $type, $value, $now, $user, true);
+				$this->dispatcher->dispatchTyped($event);
 				return true;
 			}
 
 			$query = $this->db->getQueryBuilder();
 			$query->update('c24_recipients')
 				->set('signed', $query->createNamedParameter($now, 'datetimetz'))
-				->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
+				->where($query->expr()->eq('request_id', $query->createNamedParameter($request['id'])))
 				->andWhere($query->expr()->eq('type', $query->createNamedParameter($type)))
 				->andWhere($query->expr()->eq('value', $query->createNamedParameter($value)));
 			$query->executeStatement();
@@ -487,16 +493,23 @@ class Requests {
 			$query = $this->db->getQueryBuilder();
 			$query->select($query->func()->count('*', 'count'))
 				->from('c24_recipients')
-				->where($query->expr()->eq('request_id', $query->createNamedParameter($id)))
+				->where($query->expr()->eq('request_id', $query->createNamedParameter($request['id'])))
 				->andWhere($query->expr()->isNull('signed'));
 			$result = $query->executeQuery();
 			$row = $result->fetch();
 			$result->closeCursor();
 			$this->db->commit();
+			$committed = true;
 
-			return ((int)$row['count']) === 0;
+			$isLast = ((int)$row['count']) === 0;
+			$event = new SignEvent($request['id'], $request, $type, $value, $now, $user, $isLast);
+			$this->dispatcher->dispatchTyped($event);
+
+			return $isLast;
 		} catch (Throwable $e) {
-			$this->db->rollBack();
+			if (!$committed) {
+				$this->db->rollBack();
+			}
 			throw $e;
 		}
 	}

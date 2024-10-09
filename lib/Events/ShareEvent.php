@@ -24,11 +24,10 @@ declare(strict_types=1);
  */
 namespace OCA\Certificate24\Events;
 
-use OCP\EventDispatcher\Event;
 use OCP\Files\File;
 use OCP\IUser;
 
-class ShareEvent extends Event {
+class ShareEvent extends BaseEvent {
 	private File $file;
 	private IUser $user;
 	private array $recipients;
@@ -68,5 +67,25 @@ class ShareEvent extends Event {
 	 */
 	public function getRequestId(): string {
 		return $this->request_id;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getWebhookSerializable(): array {
+		$file = $this->getFile();
+		$user = $this->getUser();
+		return [
+			'file' => [
+				'id' => $file->getId(),
+				'path' => $file->getPath(),
+			],
+			'user' => [
+				'uid' => $user->getUID(),
+				'displayName' => $user->getDisplayName(),
+			],
+			'recipients' => $this->getRecipients(),
+			'request_id' => $this->getRequestId(),
+		];
 	}
 }

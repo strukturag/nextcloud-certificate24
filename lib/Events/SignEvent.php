@@ -24,10 +24,10 @@ declare(strict_types=1);
  */
 namespace OCA\Certificate24\Events;
 
-use OCP\EventDispatcher\Event;
+use OCA\Certificate24\Requests;
 use OCP\IUser;
 
-class SignEvent extends Event {
+class SignEvent extends BaseEvent {
 	private string $request_id;
 	private array $request;
 	private string $type;
@@ -96,5 +96,27 @@ class SignEvent extends Event {
 	 */
 	public function isLastSignature(): bool {
 		return $this->lastSignature;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getWebhookSerializable(): array {
+		$request = $this->getRequest();
+		$user = $this->getUser();
+		return [
+			'request_id' => $this->getRequestId(),
+			'file' => [
+				'id' => $request['file_id'],
+			],
+			'recipient_type' => $this->getRecipientType(),
+			'recipient' => $this->getRecipient(),
+			'signed' => $this->getSigned()->format(Requests::ISO8601_EXTENDED),
+			'user' => $user ? [
+				'uid' => $user->getUID(),
+				'displayName' => $user->getDisplayName(),
+			] : null,
+			'last_signature' => $this->isLastSignature(),
+		];
 	}
 }
