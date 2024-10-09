@@ -146,7 +146,7 @@ class Notifier implements INotifier {
 
 		$placeholders = $replacements = [];
 		foreach ($rosParameters as $placeholder => $parameter) {
-			$placeholders[] = '{' . $placeholder .'}';
+			$placeholders[] = '{' . $placeholder . '}';
 			if ($parameter['type'] === 'user') {
 				$replacements[] = '@' . $parameter['name'];
 			} else {
@@ -199,7 +199,7 @@ class Notifier implements INotifier {
 
 		$placeholders = $replacements = [];
 		foreach ($rosParameters as $placeholder => $parameter) {
-			$placeholders[] = '{' . $placeholder .'}';
+			$placeholders[] = '{' . $placeholder . '}';
 			if ($parameter['type'] === 'user') {
 				$replacements[] = '@' . $parameter['name'];
 			} else {
@@ -238,7 +238,7 @@ class Notifier implements INotifier {
 
 		$placeholders = $replacements = [];
 		foreach ($rosParameters as $placeholder => $parameter) {
-			$placeholders[] = '{' . $placeholder .'}';
+			$placeholders[] = '{' . $placeholder . '}';
 			if ($parameter['type'] === 'user') {
 				$replacements[] = '@' . $parameter['name'];
 			} else {

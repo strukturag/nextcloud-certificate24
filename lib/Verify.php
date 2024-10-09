@@ -144,7 +144,7 @@ class Verify {
 			return null;
 		}
 
-		return (int) $row['count'];
+		return (int)$row['count'];
 	}
 
 	public function deleteFailed(File $file): void {
@@ -166,7 +166,7 @@ class Verify {
 			return 0;
 		}
 
-		return (int) $row['count'];
+		return (int)$row['count'];
 	}
 
 	public function storeFailed(File $file): void {

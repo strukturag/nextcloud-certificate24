@@ -88,7 +88,7 @@ class Client {
 			];
 		} catch (BadResponseException $e) {
 			$response = $e->getResponse();
-			$body = (string) $response->getBody();
+			$body = (string)$response->getBody();
 			$body = json_decode($body, true);
 			if (isset($body['code'])) {
 				return [
@@ -291,7 +291,7 @@ class Client {
 				case Http::STATUS_NOT_FOUND:
 					/** @var BadResponseException $e */
 					$response = $e->getResponse();
-					$body = (string) $response->getBody();
+					$body = (string)$response->getBody();
 					$signatures = json_decode($body, true);
 					if ($signatures) {
 						return $signatures;

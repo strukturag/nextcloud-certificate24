@@ -494,7 +494,7 @@ class Requests {
 			$result->closeCursor();
 			$this->db->commit();
 
-			return ((int) $row['count']) === 0;
+			return ((int)$row['count']) === 0;
 		} catch (Throwable $e) {
 			$this->db->rollBack();
 			throw $e;

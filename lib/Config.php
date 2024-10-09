@@ -34,8 +34,8 @@ use OCP\IUser;
 class Config {
 	public const APP_ID = 'certificate24';
 
-	public const DEFAULT_API_SERVER = "https://api.certificate24.com/";
-	public const DEFAULT_WEB_SERVER = "https://www.certificate24.com/";
+	public const DEFAULT_API_SERVER = 'https://api.certificate24.com/';
+	public const DEFAULT_WEB_SERVER = 'https://www.certificate24.com/';
 	public const DEFAULT_REQUEST_TIMEOUT = '300';
 	public const DEFAULT_SAVE_MODE = 'new';
 
@@ -78,7 +78,7 @@ class Config {
 			$timeout = self::DEFAULT_REQUEST_TIMEOUT;
 		}
 
-		return (int) $timeout;
+		return (int)$timeout;
 	}
 
 	public function getAccount(): array {
@@ -164,7 +164,7 @@ class Config {
 			$value = '30';
 		}
 
-		return (int) $value;
+		return (int)$value;
 	}
 
 }

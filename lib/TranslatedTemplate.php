@@ -33,7 +33,7 @@ use OCP\IL10N;
 use OCP\Util;
 
 // Expose functions "p", "print_unescaped", etc. in email templates.
-require_once \OC::$SERVERROOT.'/lib/private/legacy/template/functions.php';
+require_once \OC::$SERVERROOT . '/lib/private/legacy/template/functions.php';
 
 class TranslatedTemplate extends TemplateBase {
 	/**
