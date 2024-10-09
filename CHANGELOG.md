@@ -2,6 +2,67 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.4 - 2024-10-09
+
+### Added
+- Implement "IWebhookCompatibleEvent" on Nextcloud 30.
+  [#454](https://github.com/strukturag/nextcloud-certificate24/pull/454)
+
+### Changed
+- Updates for file translationfiles/templates/certificate24.pot in fr_FR
+  [#440](https://github.com/strukturag/nextcloud-certificate24/pull/440)
+- CI: Test against Nextcloud 30.
+  [#446](https://github.com/strukturag/nextcloud-certificate24/pull/446)
+- Increase test coverage
+  [#447](https://github.com/strukturag/nextcloud-certificate24/pull/447)
+
+### Fixed
+- Fixed error in "TranslatedTemplate" on Nextcloud 30
+  [#441](https://github.com/strukturag/nextcloud-certificate24/issues/441)
+
+### Dependencies
+- Bump @peculiar/x509 from 1.11.0 to 1.12.3
+  [#439](https://github.com/strukturag/nextcloud-certificate24/pull/439)
+- Bump body-parser and express
+  [#438](https://github.com/strukturag/nextcloud-certificate24/pull/438)
+- Bump send and express
+  [#434](https://github.com/strukturag/nextcloud-certificate24/pull/434)
+- Bump vimeo/psalm from 5.25.0 to 5.26.1 in /vendor-bin/psalm
+  [#430](https://github.com/strukturag/nextcloud-certificate24/pull/430)
+- Bump micromatch from 4.0.5 to 4.0.8
+  [#428](https://github.com/strukturag/nextcloud-certificate24/pull/428)
+- Bump fast-xml-parser from 4.2.7 to 4.4.1
+  [#414](https://github.com/strukturag/nextcloud-certificate24/pull/414)
+- Bump @nextcloud/auth from 2.3.0 to 2.4.0
+  [#421](https://github.com/strukturag/nextcloud-certificate24/pull/421)
+- Bump axios from 1.7.2 to 1.7.7
+  [#442](https://github.com/strukturag/nextcloud-certificate24/pull/442)
+- Bump cookie and express
+  [#443](https://github.com/strukturag/nextcloud-certificate24/pull/443)
+- Bump webpack from 5.88.2 to 5.95.0
+  [#444](https://github.com/strukturag/nextcloud-certificate24/pull/444)
+- Bump elliptic from 6.5.4 to 6.5.7
+  [#445](https://github.com/strukturag/nextcloud-certificate24/pull/445)
+- Bump debounce from 2.1.0 to 2.1.1
+  [#432](https://github.com/strukturag/nextcloud-certificate24/pull/432)
+- Bump nextcloud/coding-standard from 1.2.1 to 1.3.1 in /vendor-bin/csfixer
+  [#435](https://github.com/strukturag/nextcloud-certificate24/pull/435)
+- Bump @nextcloud/files from 3.6.0 to 3.9.0
+  [#429](https://github.com/strukturag/nextcloud-certificate24/pull/429)
+- Bump @nextcloud/vue from 8.14.0 to 8.19.0
+  [#436](https://github.com/strukturag/nextcloud-certificate24/pull/436)
+- Bump @nextcloud/dialogs from 5.3.5 to 5.3.7
+  [#422](https://github.com/strukturag/nextcloud-certificate24/pull/422)
+- Bump @nextcloud/webpack-vue-config from 6.0.1 to 6.1.1
+  [#450](https://github.com/strukturag/nextcloud-certificate24/pull/450)
+- Bump @nextcloud/axios from 2.5.0 to 2.5.1
+  [#451](https://github.com/strukturag/nextcloud-certificate24/pull/451)
+- Bump @babel/preset-typescript from 7.24.7 to 7.25.7
+  [#452](https://github.com/strukturag/nextcloud-certificate24/pull/452)
+- Bump vue-material-design-icons from 5.3.0 to 5.3.1
+  [#453](https://github.com/strukturag/nextcloud-certificate24/pull/453)
+
+
 ## 0.3.3 - 2024-07-23
 
 ### Added
