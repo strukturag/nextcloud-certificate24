@@ -48,6 +48,7 @@ class Capabilities implements IPublicCapability {
 		$account = $this->config->getAccount();
 		$capabilities = [
 			'features' => [
+				'field-types',
 				'multiple-recipients',
 				'sign-anonymous',
 				'verify-signatures',

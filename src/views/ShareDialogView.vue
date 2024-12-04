@@ -512,6 +512,10 @@ export default {
 			this.$refs.content.parentNode.scrollTo(0, 0)
 		},
 
+		isSignatureField(field) {
+			return !field.type || field.type === 'signature'
+		},
+
 		async requestSignature() {
 			if (!this.fileModel) {
 				showError(t('certificate24', 'No file selected.'))
@@ -544,10 +548,21 @@ export default {
 				}
 
 				if (recipients.length === 1) {
+					let missingSignatures = true
 					signaturePositions = signaturePositions.map((e) => {
+						if (this.isSignatureField(e)) {
+							missingSignatures = false
+						}
+						if (!e.type) {
+							delete e.type
+						}
 						delete e.recipient_idx
 						return e
 					})
+					if (missingSignatures) {
+						this.renderError(t('certificate24', 'Please create signature fields first.'))
+						return
+					}
 				} else {
 					let missingIndexes = false
 					const required = []
@@ -562,9 +577,11 @@ export default {
 							return
 						}
 
-						const pos = required.indexOf(e.recipient_idx)
-						if (pos >= 0) {
-							required.splice(pos, 1)
+						if (this.isSignatureField(e)) {
+							const pos = required.indexOf(e.recipient_idx)
+							if (pos >= 0) {
+								required.splice(pos, 1)
+							}
 						}
 					})
 					if (missingIndexes) {

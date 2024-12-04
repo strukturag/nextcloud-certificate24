@@ -69,6 +69,13 @@ If signatures are requested from multiple recipients, each signature field must
 contain a `recipient_idx` field with the (0-based) index of the recipient that
 should sign the field.
 
+Different field types are supported through the `type` property of fields
+(requires capability feature `field-types`).
+
+Possible values for `type` are:
+- `signature`: field should get a signature (default if `type` is omitted)
+- `date`: field will be populated with the date of the signature
+
 
 ## Get metadata of file.
 
