@@ -25,6 +25,7 @@ let api
 
 const features = [
 	'token-actions',
+	'field-types',
 ]
 
 // eslint-disable-next-line jsdoc/require-jsdoc

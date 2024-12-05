@@ -262,15 +262,24 @@ class ApiController extends OCSController {
 					], Http::STATUS_BAD_REQUEST);
 				}
 
-				unset($required[$idx]);
+				if ($this->isSignatureField($field)) {
+					unset($required[$idx]);
+				}
 			}
+		} else {
+			foreach ($fields as &$field) {
+				unset($field['recipient_idx']);
+				if ($this->isSignatureField($field)) {
+					unset($required[0]);
+				}
+			}
+		}
 
-			if (!empty($required)) {
-				return new DataResponse([
-					'error' => 'invalid_metadata',
-					'details' => ['recipient has no field assigned'],
-				], Http::STATUS_BAD_REQUEST);
-			}
+		if (!empty($required)) {
+			return new DataResponse([
+				'error' => 'invalid_metadata',
+				'details' => ['recipient has no field assigned'],
+			], Http::STATUS_BAD_REQUEST);
 		}
 
 		$user = $this->userSession->getUser();
@@ -463,6 +472,14 @@ class ApiController extends OCSController {
 	}
 
 	/**
+	 * @returns bool
+	 */
+	private function isSignatureField(array $field) {
+		$type = $field['type'] ?? null;
+		return empty($type) || $type === 'signature';
+	}
+
+	/**
 	 * @returns array|null
 	 */
 	private function filterMetadata(array $request, string $type, string $value) {
@@ -472,27 +489,25 @@ class ApiController extends OCSController {
 		}
 
 		$recipients = $request['recipients'];
-		if (count($recipients) <= 1) {
-			return $metadata;
-		}
-
-		$idx = -1;
 		$found = -1;
-		foreach ($recipients as $recipient) {
-			$idx++;
-			if ($recipient['type'] === $type && $recipient['value'] === $value) {
-				$found = $idx;
-				break;
+		if (count($recipients) > 1) {
+			$idx = -1;
+			foreach ($recipients as $recipient) {
+				$idx++;
+				if ($recipient['type'] === $type && $recipient['value'] === $value) {
+					$found = $idx;
+					break;
+				}
 			}
-		}
-
-		if ($found === -1) {
-			return $metadata;
 		}
 
 		$fields = [];
 		foreach ($metadata['signature_fields'] as $field) {
-			if (!isset($field['recipient_idx']) || $field['recipient_idx'] !== $found) {
+			if (!$this->isSignatureField($field)) {
+				continue;
+			}
+
+			if ($found !== -1 && (!isset($field['recipient_idx']) || $field['recipient_idx'] !== $found)) {
 				continue;
 			}
 
