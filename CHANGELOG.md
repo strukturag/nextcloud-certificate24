@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.5 - 2024-12-05
+
+### Added
+- Support date fields.
+  [#469](https://github.com/strukturag/nextcloud-certificate24/pull/469)
+
+### Dependencies
+- Bump firebase/php-jwt from 6.10.1 to 6.10.2
+  [#468](https://github.com/strukturag/nextcloud-certificate24/pull/468)
+- Bump cross-spawn from 7.0.3 to 7.0.6
+  [#466](https://github.com/strukturag/nextcloud-certificate24/pull/466)
+- Bump @nextcloud/files from 3.9.0 to 3.10.0
+  [#464](https://github.com/strukturag/nextcloud-certificate24/pull/464)
+- Bump elliptic from 6.5.7 to 6.6.0
+  [#462](https://github.com/strukturag/nextcloud-certificate24/pull/462)
+- Bump @babel/preset-typescript from 7.25.7 to 7.26.0
+  [#461](https://github.com/strukturag/nextcloud-certificate24/pull/461)
+- Bump debounce from 2.1.1 to 2.2.0
+  [#458](https://github.com/strukturag/nextcloud-certificate24/pull/458)
+- Bump nextcloud/coding-standard from 1.3.1 to 1.3.2 in /vendor-bin/csfixer
+  [#456](https://github.com/strukturag/nextcloud-certificate24/pull/456)
+- Bump @nextcloud/webpack-vue-config from 6.1.1 to 6.2.0
+  [#455](https://github.com/strukturag/nextcloud-certificate24/pull/455)
+- Bump nextcloud from 29-apache to 30-apache in /docker
+  [#449](https://github.com/strukturag/nextcloud-certificate24/pull/449)
+- docker: Update to node 22.
+  [#470](https://github.com/strukturag/nextcloud-certificate24/pull/470)
+- Bump @nextcloud/vue from 8.19.0 to 8.21.0
+  [#467](https://github.com/strukturag/nextcloud-certificate24/pull/467)
+- Update @nextcloud/dialogs to 5.3.8
+
+
 ## 0.3.4 - 2024-10-09
 
 ### Added
