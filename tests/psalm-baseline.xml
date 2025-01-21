@@ -30,6 +30,9 @@
     <MissingDependency occurrences="14">
       <code>IRootFolder</code>
     </MissingDependency>
+    <UndefinedClass occurrences="4">
+      <code>BadResponseException</code>
+    </UndefinedClass>
     <UndefinedMethod occurrences="3">
       <code>loadFromData</code>
       <code>mimeType</code>
