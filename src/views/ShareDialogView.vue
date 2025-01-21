@@ -618,8 +618,20 @@ export default {
 				case 'error_connecting':
 					errorMessage = t('certificate24', 'Error connecting to Certificate24 service.')
 					break
+				case 'error_encrypted_file':
+					errorMessage = t('certificate24', 'The file is encrypted and can not be signed.')
+					break
+				case 'error_signed_file':
+					errorMessage = t('certificate24', 'The file is already signed and can not be signed again.')
+					break
 				default:
-					errorMessage = t('certificate24', 'Error while requesting signature.')
+					if (data.error) {
+						errorMessage = t('certificate24', 'Error while requesting signature ({error}).', {
+							error: data.error,
+						})
+					} else {
+						errorMessage = t('certificate24', 'Error while requesting signature.')
+					}
 				}
 				this.renderError(errorMessage)
 			} finally {

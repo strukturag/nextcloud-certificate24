@@ -24,6 +24,7 @@ declare(strict_types=1);
  */
 namespace OCA\Certificate24\Controller;
 
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ConnectException;
 use OCA\Certificate24\AppInfo\Application;
 use OCA\Certificate24\Client;
@@ -344,6 +345,19 @@ class ApiController extends OCSController {
 				'exception' => $e,
 			]);
 			return new DataResponse(['error' => 'error_connecting'], Http::STATUS_BAD_GATEWAY);
+		} catch (BadResponseException $e) {
+			$this->logger->error('Error sending request to ' . $server, [
+				'exception' => $e,
+			]);
+			$response = $e->getResponse();
+			$body = (string)$response->getBody();
+			$body = json_decode($body, true);
+			if (isset($body['code'])) {
+				return new DataResponse([
+					'error' => $body['code'],
+				], $e->getCode());
+			}
+			return new DataResponse(['error' => $e->getCode()], Http::STATUS_BAD_GATEWAY);
 		} catch (\Exception $e) {
 			$this->logger->error('Error sending request to ' . $server, [
 				'exception' => $e,
