@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.6 - 2025-01-21
+
+### Changed
+- Improve error message for encrypted / signed files.
+  [#476](https://github.com/strukturag/nextcloud-certificate24/pull/476)
+- Updates for file translationfiles/templates/certificate24.pot in de_DE
+  [#477](https://github.com/strukturag/nextcloud-certificate24/pull/477)
+- Updates for file translationfiles/templates/certificate24.pot in de
+  [#478](https://github.com/strukturag/nextcloud-certificate24/pull/478)
+
+### Dependencies
+- Bump opis/json-schema from 2.3.0 to 2.4.1
+  [#475](https://github.com/strukturag/nextcloud-certificate24/pull/475)
+- Bump nanoid from 3.3.7 to 3.3.8
+  [#473](https://github.com/strukturag/nextcloud-certificate24/pull/473)
+- Bump @nextcloud/files from 3.10.0 to 3.10.1
+  [#472](https://github.com/strukturag/nextcloud-certificate24/pull/472)
+- Bump @nextcloud/moment from 1.3.1 to 1.3.2
+  [#471](https://github.com/strukturag/nextcloud-certificate24/pull/471)
+- Bump @nextcloud/vue from 8.21.0 to 8.22.0
+  [#474](https://github.com/strukturag/nextcloud-certificate24/pull/474)
+
+
 ## 0.3.5 - 2024-12-05
 
 ### Added
