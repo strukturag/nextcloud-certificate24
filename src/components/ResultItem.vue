@@ -56,8 +56,8 @@
 </template>
 
 <script>
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
-import NcHighlight from '@nextcloud/vue/dist/Components/NcHighlight.js'
+import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import NcHighlight from '@nextcloud/vue/components/NcHighlight'
 
 export default {
 	name: 'ResultItem',
