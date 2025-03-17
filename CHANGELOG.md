@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.7 - 2025-03-17
+
+### Added
+- Add support for Nextcloud 31
+  [#493](https://github.com/strukturag/nextcloud-certificate24/pull/493)
+
+### Dependencies
+- Bump @nextcloud/eslint-config from 8.4.1 to 8.4.2
+  [#488](https://github.com/strukturag/nextcloud-certificate24/pull/488)
+- Bump elliptic from 6.6.0 to 6.6.1
+  [#487](https://github.com/strukturag/nextcloud-certificate24/pull/487)
+- Bump dompurify from 3.1.4 to 3.2.4
+  [#489](https://github.com/strukturag/nextcloud-certificate24/pull/489)
+- Bump firebase/php-jwt from 6.10.2 to 6.11.0
+  [#479](https://github.com/strukturag/nextcloud-certificate24/pull/479)
+- Bump @nextcloud/vue from 8.22.0 to 8.23.1
+  [#486](https://github.com/strukturag/nextcloud-certificate24/pull/486)
+- Bump @nextcloud/files from 3.10.1 to 3.10.2
+  [#485](https://github.com/strukturag/nextcloud-certificate24/pull/485)
+- Bump @nextcloud/l10n from 3.1.0 to 3.2.0
+  [#484](https://github.com/strukturag/nextcloud-certificate24/pull/484)
+- Bump axios from 1.7.7 to 1.8.3
+  [#494](https://github.com/strukturag/nextcloud-certificate24/pull/494)
+- Bump nextcloud from 30-apache to 31-apache in /docker
+  [#490](https://github.com/strukturag/nextcloud-certificate24/pull/490)
+
+
 ## 0.3.6 - 2025-01-21
 
 ### Changed
