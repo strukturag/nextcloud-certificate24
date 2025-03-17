@@ -72,7 +72,9 @@
 							:show-trailing-button="isSearchingUser"
 							@trailing-button-click="abortUserSearch"
 							@input="handleUserInput">
-							<Magnify :size="16" />
+							<template #icon>
+								<Magnify :size="16" />
+							</template>
 						</NcTextField>
 						<SearchResults v-if="user !== ''"
 							:search-text="user"
@@ -104,7 +106,9 @@
 							:show-trailing-button="isSearchingEmail"
 							@trailing-button-click="abortEmailSearch"
 							@input="handleEmailInput">
-							<Magnify :size="16" />
+							<template #icon>
+								<Magnify :size="16" />
+							</template>
 						</NcTextField>
 						<SearchResults v-if="email !== ''"
 							:search-text="email"
