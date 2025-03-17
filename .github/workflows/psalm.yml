@@ -36,7 +36,13 @@ jobs:
   static-analysis:
     runs-on: ubuntu-latest
 
-    name: Nextcloud
+    strategy:
+      # do not stop on another job's failure
+      fail-fast: false
+      matrix:
+        server-versions: ['stable28', 'stable29', 'stable30', 'stable31']
+
+    name: Nextcloud ${{ matrix.server-versions }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -47,8 +53,11 @@ jobs:
           php-version: "8.2"
           coverage: none
 
-      - name: Install dependencies
-        run: composer i
+      - name: Install dependencies for Nextcloud ${{ matrix.server-versions }}
+        run: |
+          sed -i "s|dev-stable28|dev-${{ matrix.server-versions }}|" composer.json
+          composer update "nextcloud/ocp" --with-all-dependencies
+          composer i
 
       - name: Run coding standards check
         run: composer run psalm
