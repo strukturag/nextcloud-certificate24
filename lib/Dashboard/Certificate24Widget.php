@@ -81,7 +81,7 @@ class Certificate24Widget implements IAPIWidget, IIconWidget, IButtonWidget, IOp
 	}
 
 	/**
-	 * @return \OCP\Dashboard\Model\WidgetButton[]
+	 * @return list<\OCP\Dashboard\Model\WidgetButton>
 	 */
 	public function getWidgetButtons(string $userId): array {
 		$buttons = [];
