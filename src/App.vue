@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
-import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
+import NcAppContent from '@nextcloud/vue/components/NcAppContent'
+import NcContent from '@nextcloud/vue/components/NcContent'
 
 import OwnSignRequests from './components/OwnSignRequests.vue'
 import IncomingSignRequests from './components/IncomingSignRequests.vue'

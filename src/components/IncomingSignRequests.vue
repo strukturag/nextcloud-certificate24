@@ -115,9 +115,9 @@
 </template>
 
 <script>
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import Download from 'vue-material-design-icons/Download.vue'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
 import OpenInNew from 'vue-material-design-icons/OpenInNew.vue'

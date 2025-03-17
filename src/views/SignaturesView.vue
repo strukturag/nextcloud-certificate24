@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import CertificateDetails from '../components/CertificateDetails.vue'
 import SignatureProperties from '../components/SignatureProperties.vue'
 import SignatureStatus from '../components/SignatureStatus.vue'
