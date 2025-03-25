@@ -62,6 +62,7 @@ class CSPSetter implements IEventListener {
 		$csp->addAllowedScriptDomain("'self'");
 		$csp->addAllowedWorkerSrcDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain("'self'");
+		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");
 
 		$apiServer = $this->config->getApiServer();
 		if (!empty($apiServer)) {
