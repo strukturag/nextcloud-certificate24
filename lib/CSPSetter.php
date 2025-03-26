@@ -62,11 +62,13 @@ class CSPSetter implements IEventListener {
 		$csp->addAllowedScriptDomain("'self'");
 		$csp->addAllowedWorkerSrcDomain('blob:');
 		$csp->addAllowedWorkerSrcDomain("'self'");
+		$csp->addAllowedScriptDomain("'wasm-unsafe-eval'");
 
 		$apiServer = $this->config->getApiServer();
 		if (!empty($apiServer)) {
 			$csp->addAllowedChildSrcDomain($apiServer);
 			$csp->addAllowedConnectDomain($apiServer);
+			$csp->addAllowedFontDomain($apiServer);
 			$csp->addAllowedScriptDomain($apiServer);
 			$csp->addAllowedWorkerSrcDomain($apiServer);
 		}
@@ -75,6 +77,7 @@ class CSPSetter implements IEventListener {
 		if (!empty($webServer) && $apiServer !== $webServer) {
 			$csp->addAllowedChildSrcDomain($webServer);
 			$csp->addAllowedConnectDomain($webServer);
+			$csp->addAllowedFontDomain($webServer);
 			$csp->addAllowedScriptDomain($webServer);
 			$csp->addAllowedWorkerSrcDomain($webServer);
 		}
