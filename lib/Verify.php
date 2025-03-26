@@ -35,15 +35,18 @@ class Verify {
 	private LoggerInterface $logger;
 	private IDBConnection $db;
 	private IMimeTypeLoader $mimeTypeLoader;
+	private Config $config;
 	private Requests $requests;
 
 	public function __construct(LoggerInterface $logger,
 		IDBConnection $db,
 		IMimeTypeLoader $mimeTypeLoader,
+		Config $config,
 		Requests $requests) {
 		$this->logger = $logger;
 		$this->db = $db;
 		$this->mimeTypeLoader = $mimeTypeLoader;
+		$this->config = $config;
 		$this->requests = $requests;
 	}
 
@@ -129,6 +132,7 @@ class Verify {
 
 	public function getUnverifiedCount(): ?int {
 		$pdfMimeTypeId = $this->mimeTypeLoader->getId('application/pdf');
+		$maxSize = $this->config->getMaxBackgroundVerifySize();
 
 		$query = $this->db->getQueryBuilder();
 		$query->selectAlias($query->func()->count('*'), 'count')
@@ -136,7 +140,8 @@ class Verify {
 			->leftJoin('fc', 'c24_file_signatures', 'fs', $query->expr()->eq('fc.fileid', 'fs.file_id'))
 			->where($query->expr()->isNull('fs.file_id'))
 			->andWhere($query->expr()->eq('mimetype', $query->expr()->literal($pdfMimeTypeId)))
-			->andWhere($query->expr()->like('path', $query->expr()->literal('files/%')));
+			->andWhere($query->expr()->like('path', $query->expr()->literal('files/%')))
+			->andWhere($query->expr()->lte('size', $query->createNamedParameter($maxSize)));
 		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
