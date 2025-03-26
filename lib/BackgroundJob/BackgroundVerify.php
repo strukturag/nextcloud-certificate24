@@ -168,6 +168,8 @@ class BackgroundVerify extends TimedJob {
 		$since->setTimezone(new \DateTimeZone('UTC'));
 		$since = $since->sub(new \DateInterval('PT' . self::VERIFY_ERROR_DELAY_MINUTES . 'M'));
 
+		$maxSize = $this->config->getMaxBackgroundVerifySize();
+
 		$query = $this->db->getQueryBuilder();
 		$query->select('fc.fileid', 'storage')
 			->from('filecache', 'fc')
@@ -176,6 +178,7 @@ class BackgroundVerify extends TimedJob {
 			->where($query->expr()->isNull('fs.file_id'))
 			->andWhere($query->expr()->eq('mimetype', $query->expr()->literal($pdfMimeTypeId)))
 			->andWhere($query->expr()->like('path', $query->expr()->literal('files/%')))
+			->andWhere($query->expr()->lte('size', $query->createNamedParameter($maxSize)))
 			->andWhere(
 				$query->expr()->orX(
 					$query->expr()->isNull('vf.updated'),

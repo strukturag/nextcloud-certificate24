@@ -38,6 +38,7 @@ class Config {
 	public const DEFAULT_WEB_SERVER = 'https://www.certificate24.com/';
 	public const DEFAULT_REQUEST_TIMEOUT = '300';
 	public const DEFAULT_SAVE_MODE = 'new';
+	public const DEFAULT_MAX_BACKGROUND_VERIFY_SIZE = '268435456';  // 256 MBytes
 
 	private IConfig $config;
 	protected IAppData $appData;
@@ -162,6 +163,15 @@ class Config {
 		$value = $this->config->getAppValue(self::APP_ID, 'delete_max_age', '30');
 		if ($value === null || $value === '') {
 			$value = '30';
+		}
+
+		return (int)$value;
+	}
+
+	public function getMaxBackgroundVerifySize(): int {
+		$value = $this->config->getAppValue(self::APP_ID, 'max_background_verify_size', self::DEFAULT_MAX_BACKGROUND_VERIFY_SIZE);
+		if ($value === null || $value === '') {
+			$value = self::DEFAULT_MAX_BACKGROUND_VERIFY_SIZE;
 		}
 
 		return (int)$value;

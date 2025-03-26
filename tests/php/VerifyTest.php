@@ -22,6 +22,7 @@
  */
 namespace OCA\Certificate24\Tests\php;
 
+use OCA\Certificate24\Config;
 use OCA\Certificate24\Requests;
 use OCA\Certificate24\Verify;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -47,9 +48,10 @@ class VerifyTest extends TestCase {
 		$db = \OC::$server->query(IDBConnection::class);
 		$mimeTypeLoader = \OC::$server->query(IMimeTypeLoader::class);
 		$logger = $this->createMock(LoggerInterface::class);
+		$config = $this->createMock(Config::class);
 		$requests = $this->createMock(Requests::class);
 
-		$this->verify = new Verify($logger, $db, $mimeTypeLoader, $requests);
+		$this->verify = new Verify($logger, $db, $mimeTypeLoader, $config, $requests);
 		$this->verify->deleteAllFileSignatures();
 		$this->verify->deleteAllFailed();
 	}
