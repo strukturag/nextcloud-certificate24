@@ -10,7 +10,7 @@
 		"stylelint": "stylelint --formatter=verbose \"css/*.css\" \"css/*.scss\" \"src/**/*.vue\""
 	},
 	"dependencies": {
-		"@nextcloud/auth": "^2.4.0",
+		"@nextcloud/auth": "^2.5.2",
 		"@nextcloud/axios": "^2.5.1",
 		"@nextcloud/dialogs": "^5.3.8",
 		"@nextcloud/files": "^3.10.2",
