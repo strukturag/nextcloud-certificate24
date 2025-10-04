@@ -29,7 +29,7 @@ RUN make npm-init && \
 		tar -C build/output -xf build/artifacts/certificate24.tar.gz
 
 
-FROM nextcloud:31-apache
+FROM nextcloud:32-apache
 
 RUN apt-get update && apt-get install -y \
 			supervisor \
