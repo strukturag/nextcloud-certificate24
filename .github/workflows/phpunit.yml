@@ -9,6 +9,7 @@ on:
       - 'templates/**'
       - 'tests/**'
       - '.php-cs-fixer.dist.php'
+      - '.codecov.yml'
       - 'composer.json'
       - 'composer.lock'
       - '**/composer.json'
@@ -67,7 +68,6 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, sqlite, pdo_sqlite
-          coverage: none
 
       - name: Set up PHPUnit
         working-directory: apps/${{ env.APP_NAME }}
@@ -85,11 +85,21 @@ jobs:
 
       - name: PHPUnit
         working-directory: apps/${{ env.APP_NAME }}
-        run: composer run test
+        run: composer run coverage
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
 #        run: phpunit -c phpunit.integration.xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          working-directory: apps/${{ env.APP_NAME }}
+          disable_search: true
+          files: tests/php/coverage.xml
+          fail_ci_if_error: true
+          flags: unit
 
   mysql:
     runs-on: ubuntu-latest
@@ -142,7 +152,6 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, mysql, pdo_mysql, gd, zip
-          coverage: none
 
       - name: Set up PHPUnit
         working-directory: apps/${{ env.APP_NAME }}
@@ -160,11 +169,21 @@ jobs:
 
       - name: PHPUnit
         working-directory: apps/${{ env.APP_NAME }}
-        run: composer run test
+        run: composer run coverage
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
 #        run: phpunit -c phpunit.integration.xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          working-directory: apps/${{ env.APP_NAME }}
+          disable_search: true
+          files: tests/php/coverage.xml
+          fail_ci_if_error: true
+          flags: unit
 
   pgsql:
     runs-on: ubuntu-latest
@@ -214,7 +233,6 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, pgsql, pdo_pgsql
-          coverage: none
 
       - name: Set up PHPUnit
         working-directory: apps/${{ env.APP_NAME }}
@@ -232,8 +250,18 @@ jobs:
 
       - name: PHPUnit
         working-directory: apps/${{ env.APP_NAME }}
-        run: composer run test
+        run: composer run coverage
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
 #        run: phpunit -c phpunit.integration.xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          working-directory: apps/${{ env.APP_NAME }}
+          disable_search: true
+          files: tests/php/coverage.xml
+          fail_ci_if_error: true
+          flags: unit
