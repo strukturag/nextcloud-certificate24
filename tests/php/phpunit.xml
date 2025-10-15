@@ -10,8 +10,8 @@
   <coverage>
 	  <!-- filters for code coverage -->
     <include>
-      <directory suffix=".php">../../../nextcloud-certificate24/appinfo</directory>
-      <directory suffix=".php">../../../nextcloud-certificate24/lib</directory>
+      <directory suffix=".php">../../appinfo</directory>
+      <directory suffix=".php">../../lib</directory>
     </include>
     <report>
       <!-- and this is where your report will be written -->

@@ -39,7 +39,8 @@
 			"\"vendor/bin/mozart\" compose",
 			"composer dump-autoload"
 		],
-		"test": "cd tests/php/ && phpunit -c phpunit.xml"
+		"test": "cd tests/php/ && phpunit -c phpunit.xml",
+		"coverage": "cd tests/php/ && phpunit -c phpunit.xml --coverage-clover coverage.xml"
 	},
 	"require-dev": {
 		"nextcloud/ocp": "dev-stable28",
