@@ -38,6 +38,7 @@ use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\INavigationManager;
 use OCP\IUser;
 
 class Application extends App implements IBootstrap {
@@ -55,7 +56,7 @@ class Application extends App implements IBootstrap {
 	public function boot(IBootContext $context): void {
 		$server = $context->getServerContainer();
 
-		$server->getNavigationManager()->add(function () use ($server) {
+		$server->get(INavigationManager::class)->add(function () use ($server) {
 			/** @var IUser $user */
 			$user = $server->getUserSession()->getUser();
 			return [

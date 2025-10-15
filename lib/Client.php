@@ -211,7 +211,7 @@ class Client {
 	}
 
 	/**
-	 * @return string|resource
+	 * @return string|resource|null
 	 */
 	public function downloadSignedFile(string $id, array $account, string $server) {
 		$url = $this->getSignedUrl($id, $account, $server);
@@ -227,7 +227,7 @@ class Client {
 	}
 
 	/**
-	 * @return string|resource
+	 * @return string|resource|null
 	 */
 	public function getSignatureDetails(string $id, array $account, string $server, string $signature_id) {
 		$url = $server . 'api/v1/files/' . rawurlencode($account['id']) . '/' . rawurlencode($id) . '/' . rawurlencode($signature_id) . '/details';

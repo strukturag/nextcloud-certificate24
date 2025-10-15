@@ -26,11 +26,16 @@ use OCA\Certificate24\Config;
 use OCA\Certificate24\Events\BaseEvent;
 use OCA\Certificate24\Events\ShareEvent;
 use OCA\Certificate24\Events\SignEvent;
+use OCA\Certificate24\Mails;
+use OCA\Certificate24\Manager;
 use OCA\Certificate24\Requests;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IWebhookCompatibleEvent;
 use OCP\Files\File;
+use OCP\Files\Folder;
+use OCP\Files\IRootFolder;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -42,7 +47,10 @@ use Test\TestCase;
 class RequestsTest extends TestCase {
 	/** @var MockObject|IEventDispatcher $dispatcher */
 	protected IEventDispatcher $dispatcher;
+	protected Manager $manager;
 	protected Requests $requests;
+	protected Mails $mails;
+	protected IRootFolder $root;
 	protected array $requestIds;
 
 	public function setUp(): void {
@@ -53,6 +61,15 @@ class RequestsTest extends TestCase {
 		$db = \OC::$server->getDatabaseConnection();
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$config = $this->createMock(Config::class);
+
+		if (strpos($this->getName(), 'LastSignature') !== false) {
+			$this->dispatcher = \OC::$server->query(IEventDispatcher::class);
+			$this->manager = \OC::$server->query(Manager::class);
+			$this->mails = $this->createMock(Mails::class);
+			$this->manager->setMails($this->mails);
+			$this->root = $this->createMock(IRootFolder::class);
+			$this->manager->setRoot($this->root);
+		}
 
 		$this->requests = new Requests($logger, $secureRandom, $db, $this->dispatcher, $config);
 		$this->requestIds = [];
@@ -708,6 +725,86 @@ class RequestsTest extends TestCase {
 		$this->assertTrue($isLast);
 
 		$recipients2[1]['signed'] = $signed2;
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
+
+		$completed = $this->requests->getCompletedRequests(new \DateTime());
+		$this->assertEquals(1, count($completed));
+		$this->assertEquals($request, $completed[0]);
+
+		$this->requests->markRequestDeletedById($id);
+		$completed = $this->requests->getCompletedRequests(new \DateTime());
+		$this->assertEmpty($completed);
+	}
+
+	public function testLastSignatureSingle() {
+		/** @var MockObject|File $file */
+		$file = $this->createMock(File::class);
+		$file
+			->method('getId')
+			->willReturn(1234);
+		/** @var MockObject|IUser $user */
+		$user = $this->createMock(IUser::class);
+		$user
+			->method('getUID')
+			->willReturn('admin');
+		$recipients = [
+			[
+				'type' => 'email',
+				'value' => 'user@domain.invalid',
+				'display_name' => 'Email User',
+				'public_id' => 'user-signature-id',
+			],
+		];
+		$options = null;
+		$metadata = [
+			'foo' => 'bar',
+			'baz' => 123,
+		];
+		$account = [
+			'id' => 'the-account',
+		];
+		$server = 'https://domain.invalid';
+		$response_file_id = 'the-file';
+		$response_signature_result_id = 'the-signature-result';
+
+		$id = $this->requests->storeRequest($file, $user, $recipients, $options, $metadata, $account, $server, $response_file_id, $response_signature_result_id);
+		$this->assertNotNull($id);
+		$this->requestIds[] = $id;
+
+		$recipients2 = $recipients;
+		$recipients2[0]['c24_signature_id'] = $recipients[0]['public_id'];
+		unset($recipients2[0]['public_id']);
+		$recipients2[0]['signed'] = null;
+
+		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
+
+		$completed = $this->requests->getCompletedRequests(new \DateTime());
+		$this->assertEmpty($completed);
+
+		$userFolder = $this->createMock(Folder::class);
+		$userFolder
+			->method('getById')
+			->with(1234)
+			->willReturn([$file]);
+		$this->root
+			->method('getUserFolder')
+			->with('admin')
+			->willReturn($userFolder);
+
+		$owner = \OC::$server->get(IUserManager::class)->get('admin');
+		$this->assertNotNull($owner);
+		$this->mails->expects($this->once())
+			->method('sendLastSignatureMail')
+			->with($id, $request, $owner, $file, $recipients2[0]);
+
+		$signed = new \DateTime();
+		$signed = $signed->sub(new \DateInterval('PT1H'));
+		// Round to seconds, required as some databases don't store with sub-second precision.
+		$signed->setTimestamp($signed->getTimestamp());
+		$isLast = $this->requests->markRequestSigned($request, $recipients[0]['type'], $recipients[0]['value'], $signed, null);
+		$this->assertTrue($isLast);
+
+		$recipients2[0]['signed'] = $signed;
 		$request = $this->checkRequest($id, $recipients2, $metadata, $response_file_id, $file, $user);
 
 		$completed = $this->requests->getCompletedRequests(new \DateTime());

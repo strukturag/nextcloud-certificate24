@@ -93,7 +93,7 @@
     <InvalidArgument occurrences="1">
       <code>self::class</code>
     </InvalidArgument>
-    <MissingDependency occurrences="5">
+    <MissingDependency occurrences="6">
       <code>IRootFolder</code>
     </MissingDependency>
   </file>

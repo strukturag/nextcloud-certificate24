@@ -40,7 +40,7 @@ jobs:
       # do not stop on another job's failure
       fail-fast: false
       matrix:
-        server-versions: ['stable28', 'stable29', 'stable30', 'stable31']
+        server-versions: ['stable28', 'stable29', 'stable30', 'stable31', 'stable32']
 
     name: Nextcloud ${{ matrix.server-versions }}
     steps:

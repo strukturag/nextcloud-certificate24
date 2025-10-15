@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
@@ -19,6 +22,9 @@
  *
  */
 
+use OCP\App\IAppManager;
+use OCP\Server;
+
 if (!defined('PHPUNIT_RUN')) {
 	define('PHPUNIT_RUN', 1);
 }
@@ -27,9 +33,17 @@ if (file_exists(__DIR__ . '/../../../nextcloud/lib/base.php')) {
 } else {
 	require_once __DIR__ . '/../../../../lib/base.php';
 }
-\OC::$loader->addValidRoot(\OC::$SERVERROOT . '/tests');
-\OC_App::loadApp('certificate24');
-if (!class_exists('\PHPUnit\Framework\TestCase')) {
-	require_once('PHPUnit/Autoload.php');
+
+if (file_exists(__DIR__ . '/../../../nextcloud/tests/autoload.php')) {
+	require_once __DIR__ . '/../../../nextcloud/tests/autoload.php';
+} elseif (file_exists(__DIR__ . '/../../../../tests/autoload.php')) {
+	require_once __DIR__ . '/../../../../tests/autoload.php';
+} else {
+	\OC::$loader->addValidRoot(\OC::$SERVERROOT . '/tests');
+	if (!class_exists('\PHPUnit\Framework\TestCase')) {
+		require_once('PHPUnit/Autoload.php');
+	}
 }
+
+Server::get(IAppManager::class)->loadApp('spreed');
 OC_Hook::clear();
