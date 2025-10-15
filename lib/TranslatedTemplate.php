@@ -33,7 +33,12 @@ use OCP\IL10N;
 use OCP\Util;
 
 // Expose functions "p", "print_unescaped", etc. in email templates.
-require_once \OC::$SERVERROOT . '/lib/private/legacy/template/functions.php';
+if (file_exists(\OC::$SERVERROOT . '/lib/private/legacy/template/functions.php')) {
+	require_once \OC::$SERVERROOT . '/lib/private/legacy/template/functions.php';
+} else {
+	// Nextcloud 32+
+	require_once \OC::$SERVERROOT . '/lib/private/Template/functions.php';
+}
 
 class TranslatedTemplate extends TemplateBase {
 	/**
