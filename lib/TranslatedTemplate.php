@@ -77,6 +77,11 @@ class TranslatedTemplate extends TemplateBase {
 		}
 		$locator = new TemplateFileLocator($dirs);
 		$template = $locator->find($name);
+		if (is_array($template)) {
+			// Nextcloud 32+ returns [$path, $template] directly.
+			return $template;
+		}
+
 		$path = $locator->getPath();
 		return [$path, $template];
 	}
