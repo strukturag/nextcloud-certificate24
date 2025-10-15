@@ -1,3 +1,6 @@
+![Build Status](https://github.com/strukturag/nextcloud-certificate24/actions/workflows/phpunit.yml/badge.svg)
+[![Coverage Status](https://codecov.io/gh/strukturag/nextcloud-certificate24/graph/badge.svg?token=XJS5ZGTZPW)](https://codecov.io/gh/strukturag/nextcloud-certificate24)
+
 # nextcloud-certificate24
 
 This repository contains the Nextcloud app for Certificate24.
