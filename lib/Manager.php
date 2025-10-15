@@ -28,6 +28,7 @@ use OCA\Certificate24\AppInfo\Application;
 use OCA\Certificate24\Events\SignEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\EventDispatcher\IEventListener;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\IConfig;
@@ -38,7 +39,10 @@ use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use Psr\Log\LoggerInterface;
 
-class Manager {
+/**
+ * @template-implements IEventListener<Event>
+ */
+class Manager implements IEventListener {
 	// Maximum length of a filename to support saving on Windows.
 	public const MAX_FILENAME_LENGTH = 255;
 
@@ -79,6 +83,14 @@ class Manager {
 		$this->config = $config;
 		$this->requests = $requests;
 		$this->mails = $mails;
+	}
+
+	public function setMails(Mails $mails) {
+		$this->mails = $mails;
+	}
+
+	public function setRoot(IRootFolder $root) {
+		$this->root = $root;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
