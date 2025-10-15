@@ -132,17 +132,20 @@ class Manager {
 		return $filename;
 	}
 
+	/**
+	 * @return File|null
+	 */
 	private function storeSignedResult(?IUser $user, array $row, \DateTime $signed, array $account) {
 		$owner = $this->userManager->get($row['user_id']);
 		if (!$owner) {
 			// Should not happen, owned requests are deleted when users are.
-			return;
+			return null;
 		}
 
 		$files = $this->root->getUserFolder($owner->getUID())->getById($row['file_id']);
 		if (empty($files)) {
 			// Should not happen, requests are deleted when files are.
-			return;
+			return null;
 		}
 
 		$lang = $this->l10nFactory->getUserLanguage($owner);
@@ -194,28 +197,41 @@ class Manager {
 		}
 
 		$data = $this->client->downloadSignedFile($row['c24_file_id'], $account, $row['c24_server']);
+		if (!$data) {
+			$this->logger->error('Signed file could not be downloaded for request ' . $row['id']);
+			return null;
+		}
+
 		$filename = $this->safeFilename($filename);
 		$created = $folder->newFile($filename, $data);
 		return $created;
 	}
 
+	/**
+	 * @return File|null
+	 */
 	private function replaceSignedResult(?IUser $user, array $row, \DateTime $signed, array $account) {
 		$owner = $this->userManager->get($row['user_id']);
 		if (!$owner) {
 			// Should not happen, owned requests are deleted when users are.
-			return;
+			return null;
 		}
 
 		$files = $this->root->getUserFolder($owner->getUID())->getById($row['file_id']);
 		if (empty($files)) {
 			// Should not happen, requests are deleted when files are.
-			return;
+			return null;
 		}
 
 		/** @var File $file */
 		$file = $files[0];
 
 		$data = $this->client->downloadSignedFile($row['c24_file_id'], $account, $row['c24_server']);
+		if (!$data) {
+			$this->logger->error('Signed file could not be downloaded for request ' . $row['id']);
+			return null;
+		}
+
 		$file->putContent($data);
 		return $file;
 	}
@@ -229,10 +245,14 @@ class Manager {
 		try {
 			switch ($signed_save_mode) {
 				case Requests::MODE_SIGNED_NEW:
-					$this->storeSignedResult($user, $request, $signed, $account);
+					if (!$this->storeSignedResult($user, $request, $signed, $account)) {
+						return;
+					}
 					break;
 				case Requests::MODE_SIGNED_REPLACE:
-					$this->replaceSignedResult($user, $request, $signed, $account);
+					if (!$this->replaceSignedResult($user, $request, $signed, $account)) {
+						return;
+					}
 					break;
 				case Requests::MODE_SIGNED_NONE:
 					break;
