@@ -2,6 +2,65 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.3.8 - 2025-10-15
+
+### Added
+- Allow wasm execution through CSP.
+  [#496](https://github.com/strukturag/nextcloud-certificate24/pull/496)
+- CI: Test against stable32 branch.
+  [#548](https://github.com/strukturag/nextcloud-certificate24/pull/548)
+- Add support for Nextcloud 31
+  [#550](https://github.com/strukturag/nextcloud-certificate24/pull/550)
+- CI: Add coverage support through Codecov.
+  [#449](https://github.com/strukturag/nextcloud-certificate24/pull/449)
+
+### Changed:
+- Stop using deprecated functionality from @nextcloud/vue v8.23.0
+  [#495](https://github.com/strukturag/nextcloud-certificate24/pull/495)
+- Don't try to verify files in the background that are too large.
+  [#497](https://github.com/strukturag/nextcloud-certificate24/pull/497)
+
+### Dependencies
+- Bump http-proxy-middleware from 2.0.7 to 2.0.9
+  [#505](https://github.com/strukturag/nextcloud-certificate24/pull/505)
+- Bump firebase/php-jwt from 6.11.0 to 6.11.1
+  [#501](https://github.com/strukturag/nextcloud-certificate24/pull/501)
+- Bump @babel/preset-typescript from 7.26.0 to 7.27.0
+  [#498](https://github.com/strukturag/nextcloud-certificate24/pull/498)
+- Bump @babel/runtime from 7.19.0 to 7.27.0
+  [#506](https://github.com/strukturag/nextcloud-certificate24/pull/506)
+- Bump @nextcloud/webpack-vue-config from 6.2.0 to 6.3.0
+  [#500](https://github.com/strukturag/nextcloud-certificate24/pull/500)
+- Bump on-headers and compression
+  [#523](https://github.com/strukturag/nextcloud-certificate24/pull/523)
+- Bump sha.js from 2.4.11 to 2.4.12
+  [#528](https://github.com/strukturag/nextcloud-certificate24/pull/528)
+- Bump linkifyjs from 4.0.2 to 4.3.2
+  [#526](https://github.com/strukturag/nextcloud-certificate24/pull/526)
+- Bump cipher-base from 1.0.4 to 1.0.6
+  [#527](https://github.com/strukturag/nextcloud-certificate24/pull/527)
+- Bump pbkdf2 from 3.1.2 to 3.1.3
+  [#521](https://github.com/strukturag/nextcloud-certificate24/pull/521)
+- Bump webpack-dev-server from 5.1.0 to 5.2.2
+  [#518](https://github.com/strukturag/nextcloud-certificate24/pull/518)
+- Bump @nextcloud/moment from 1.3.2 to 1.3.5
+  [#525](https://github.com/strukturag/nextcloud-certificate24/pull/525)
+- Bump @babel/preset-typescript from 7.27.0 to 7.27.1
+  [#507](https://github.com/strukturag/nextcloud-certificate24/pull/507)
+- Bump brace-expansion
+  [#531](https://github.com/strukturag/nextcloud-certificate24/pull/531)
+- Bump postcss and vue-loader
+  [#532](https://github.com/strukturag/nextcloud-certificate24/pull/532)
+- Bump form-data from 4.0.0 to 4.0.4
+  [#533](https://github.com/strukturag/nextcloud-certificate24/pull/533)
+- Bump @nextcloud/stylelint-config from 3.0.1 to 3.1.0
+  [#536](https://github.com/strukturag/nextcloud-certificate24/pull/536)
+- Bump @peculiar/x509 from 1.12.3 to 1.13.0
+  [#534](https://github.com/strukturag/nextcloud-certificate24/pull/534)
+- Bump @nextcloud/auth from 2.4.0 to 2.5.2
+  [#522](https://github.com/strukturag/nextcloud-certificate24/pull/522)
+
+
 ## 0.3.7 - 2025-03-17
 
 ### Added
