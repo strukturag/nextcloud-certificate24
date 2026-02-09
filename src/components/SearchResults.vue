@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 import Hint from './Hint.vue'
 import ResultItem from './ResultItem.vue'
 
@@ -103,6 +105,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		async handleClickItem(item) {
 			this.$emit('click', item)
 		},

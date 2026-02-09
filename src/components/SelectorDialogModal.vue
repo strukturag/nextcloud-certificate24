@@ -52,6 +52,7 @@
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import Check from 'vue-material-design-icons/Check.vue'
+import { t } from '@nextcloud/l10n'
 
 import externalComponent from '../services/externalComponent.js'
 
@@ -96,6 +97,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		savePositions() {
 			this.closeModal()
 		},

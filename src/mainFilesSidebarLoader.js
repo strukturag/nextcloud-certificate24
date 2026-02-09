@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License, version 3,
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  */
+import { t } from '@nextcloud/l10n'
 
 const isEnabled = function(fileInfo) {
 	if (!fileInfo || fileInfo.isDirectory()) {

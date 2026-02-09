@@ -66,6 +66,7 @@
 <script>
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import { getFileSignatures } from '../services/filesIntegrationServices.js'
 import SignaturesView from './SignaturesView.vue'
@@ -126,6 +127,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		/**
 		 * @param {OCA.Files.FileInfo} fileInfo the FileInfo to check
 		 * @param {boolean} force force fetching signatures

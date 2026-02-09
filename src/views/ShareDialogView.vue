@@ -187,6 +187,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import debounce from 'debounce'
 import { loadState } from '@nextcloud/initial-state'
 import { showSuccess, showError } from '@nextcloud/dialogs'
+import { t, n } from '@nextcloud/l10n'
 
 import { shareFile, search, getMetadata } from '../services/apiservice.js'
 import getVinegarApi from '../services/vinegarapi.js'
@@ -301,6 +302,9 @@ export default {
 	},
 
 	methods: {
+		t,
+		n,
+
 		canDownload(fileModel) {
 			if (!fileModel) {
 				return false

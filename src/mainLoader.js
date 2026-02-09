@@ -22,6 +22,7 @@ import Vue from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
 import { Tooltip } from '@nextcloud/vue'
 import { FileAction, Permission, registerFileAction } from '@nextcloud/files'
+import { t } from '@nextcloud/l10n'
 
 import '@nextcloud/dialogs/style.css'
 
@@ -29,8 +30,6 @@ import ShareDialogView from './views/ShareDialogView.vue'
 import Logo from '../img/app.svg?raw'
 import './styles/loader.scss'
 
-Vue.prototype.t = t
-Vue.prototype.n = n
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP

@@ -127,6 +127,8 @@
 
 <script>
 import NcButton from '@nextcloud/vue/components/NcButton'
+import { t } from '@nextcloud/l10n'
+
 import CertificateDetails from '../components/CertificateDetails.vue'
 import SignatureProperties from '../components/SignatureProperties.vue'
 import SignatureStatus from '../components/SignatureStatus.vue'
@@ -176,6 +178,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		async fetchSignatures(fileId) {
 			this.signatures = undefined
 			if (!fileId) {

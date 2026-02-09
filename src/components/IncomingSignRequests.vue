@@ -122,6 +122,7 @@ import Download from 'vue-material-design-icons/Download.vue'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
 import OpenInNew from 'vue-material-design-icons/OpenInNew.vue'
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 
 import FormattedDate from './FormattedDate.vue'
 import SignDialogModal from './SignDialogModal.vue'
@@ -180,6 +181,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		onHashChange() {
 			this.hash = location.hash
 			this.$nextTick(() => {

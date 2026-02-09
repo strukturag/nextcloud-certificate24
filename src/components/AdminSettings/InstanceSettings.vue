@@ -71,6 +71,7 @@ import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 
 import { formatDate } from '../../services/formatter.js'
@@ -98,6 +99,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		debounceUpdateInsecureVerify: debounce(function() {
 			this.updateInsecureSkipVerify()
 		}, 500),

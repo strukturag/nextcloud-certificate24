@@ -47,6 +47,8 @@ import NcDashboardWidgetItem from '@nextcloud/vue/components/NcDashboardWidgetIt
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
+import { t } from '@nextcloud/l10n'
+
 import { formatDate } from '../services/formatter.js'
 
 const REQUEST_POLLING_INTERVAL = 30
@@ -113,6 +115,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		loadRequests() {
 			if (!this.windowVisibility) {
 				// Dashboard is not visible, so don't update the list
