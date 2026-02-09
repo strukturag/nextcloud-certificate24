@@ -21,7 +21,7 @@
 <template>
 	<li class="row"
 		@click="handleClick">
-		<NcAvatar v-if="item.value.shareType === OC.Share.SHARE_TYPE_USER"
+		<NcAvatar v-if="item.value.shareType === ShareType.User"
 			:user="item.value.shareWith"
 			:display-name="itemName(item)"
 			:size="44"
@@ -29,7 +29,7 @@
 			:show-user-status="false"
 			:show-user-status-compact="false" />
 
-		<NcAvatar v-if="item.value.shareType === OC.Share.SHARE_TYPE_EMAIL"
+		<NcAvatar v-if="item.value.shareType === ShareType.Email"
 			:display-name="itemName(item)"
 			:size="44"
 			:is-no-user="true"
@@ -58,6 +58,7 @@
 <script>
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcHighlight from '@nextcloud/vue/components/NcHighlight'
+import { ShareType } from '@nextcloud/sharing'
 
 export default {
 	name: 'ResultItem',
@@ -78,6 +79,12 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			ShareType,
+		}
+	},
+
 	computed: {
 	},
 
@@ -93,9 +100,9 @@ export default {
 
 			const shareType = item.value?.shareType || null
 			switch (shareType) {
-			case OC.Share.SHARE_TYPE_USER:
+			case ShareType.User:
 				return 'icon-user'
-			case OC.Share.SHARE_TYPE_EMAIL:
+			case ShareType.Email:
 				return 'icon-mail'
 			}
 			return ''
@@ -109,7 +116,7 @@ export default {
 			const shareType = item.value?.shareType || null
 			const shareWith = item.value?.shareWith || ''
 			switch (shareType) {
-			case OC.Share.SHARE_TYPE_EMAIL:
+			case ShareType.Email:
 				return shareWith
 			}
 			return ''

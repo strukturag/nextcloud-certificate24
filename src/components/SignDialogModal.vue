@@ -71,6 +71,7 @@ import { generateUrl } from '@nextcloud/router'
 import { t } from '@nextcloud/l10n'
 
 import { signRequest, getSourceUrl } from '../services/apiservice.js'
+import confirmDialog from '../services/confirm.js'
 
 import externalComponent from '../services/externalComponent.js'
 
@@ -158,37 +159,36 @@ export default {
 		},
 
 		sign(request) {
-			OC.dialogs.confirm(
+			confirmDialog(
 				t('certificate24', 'Do you really want to sign this request?'),
 				t('certificate24', 'Sign request'),
-				async function(decision) {
-					if (!decision) {
-						return
-					}
+			).then(async (decision) => {
+				if (!decision) {
+					return
+				}
 
-					this.loading++
-					this.signLoading = true
-					try {
-						const response = await signRequest(request.request_id, {
-							embed_user_signature: this.embedSignature,
-						})
-						const data = response.data.ocs?.data || {}
-						request.own_signed = data.signed
-						if (data.details_url) {
-							request.signed = data.signed
-							request.details_url = data.details_url
-						}
-						showSuccess(t('certificate24', 'Request signed.'))
-						this.$emit('close', arguments)
-					} catch (error) {
-						console.error('Could not sign request', request, error)
-						showError(t('certificate24', 'Error while signing request.'))
-					} finally {
-						this.loading--
-						this.signLoading = false
+				this.loading++
+				this.signLoading = true
+				try {
+					const response = await signRequest(request.request_id, {
+						embed_user_signature: this.embedSignature,
+					})
+					const data = response.data.ocs?.data || {}
+					request.own_signed = data.signed
+					if (data.details_url) {
+						request.signed = data.signed
+						request.details_url = data.details_url
 					}
-				}.bind(this),
-			)
+					showSuccess(t('certificate24', 'Request signed.'))
+					this.$emit('close')
+				} catch (error) {
+					console.error('Could not sign request', request, error)
+					showError(t('certificate24', 'Error while signing request.'))
+				} finally {
+					this.loading--
+					this.signLoading = false
+				}
+			})
 		},
 	},
 }

@@ -36,7 +36,6 @@ __webpack_nonce__ = btoa(getRequestToken())
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath('certificate24', '', 'js/')
 
-Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
 const newTab = () => new Vue({

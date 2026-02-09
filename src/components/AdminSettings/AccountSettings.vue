@@ -52,7 +52,7 @@
 		</div>
 
 		<div v-html="accountDescription" />
-		<div>{{ t('certificate24', 'Name: {theme}', {'theme': theme.name}) }}</div>
+		<div>{{ t('certificate24', 'Name: {theme}', {'theme': theming.name}) }}</div>
 		<div>{{ t('certificate24', 'Nextcloud Url: {url}', {'url': nextcloud.url}) }}</div>
 		<div>
 			<NcButton :disabled="checking || !account_id || !account_secret"
@@ -73,6 +73,7 @@ import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
+import { getCapabilities } from '@nextcloud/capabilities'
 import debounce from 'debounce'
 
 import { checkAccountSettings } from '../../services/apiservice.js'
@@ -87,6 +88,7 @@ export default {
 	},
 
 	data() {
+		const capabilities = getCapabilities()
 		return {
 			account_id: '',
 			account_secret: '',
@@ -96,7 +98,7 @@ export default {
 			saved: false,
 			checking: false,
 			nextcloud: {},
-			theme: OC.theme,
+			theming: capabilities.theming,
 		}
 	},
 
@@ -153,13 +155,6 @@ export default {
 		},
 
 		async checkAccountSettings() {
-			if (OC.PasswordConfirmation.requiresPasswordConfirmation()) {
-				OC.PasswordConfirmation.requirePasswordConfirmation(() => {
-					this.checkAccountSettings()
-				})
-				return
-			}
-
 			this.checking = true
 			try {
 				const result = await checkAccountSettings()

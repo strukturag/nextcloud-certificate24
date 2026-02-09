@@ -95,6 +95,7 @@ import ContentSave from 'vue-material-design-icons/ContentSave.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
+import confirmDialog from '../../services/confirm.js'
 
 import { resetSignatureImage, uploadSignatureImage } from '../../services/apiservice.js'
 import externalComponent from '../../services/externalComponent.js'
@@ -228,27 +229,26 @@ export default {
 		},
 
 		resetImage() {
-			OC.dialogs.confirm(
+			confirmDialog(
 				t('certificate24', 'Do you really want to reset the signature image?'),
 				t('certificate24', 'Reset signature image'),
-				async (decision) => {
-					if (!decision) {
-						return
-					}
+			).then(async (decision) => {
+				if (!decision) {
+					return
+				}
 
-					this.loading = true
-					try {
-						await resetSignatureImage()
-						showSuccess(t('certificate24', 'Signature image reset.'))
-						this.settings['has-signature-image'] = false
-					} catch (error) {
-						console.error('Could not reset signature image', error)
-						showError(t('certificate24', 'Error while resetting signature image.'))
-					} finally {
-						this.loading = false
-					}
-				},
-			)
+				this.loading = true
+				try {
+					await resetSignatureImage()
+					showSuccess(t('certificate24', 'Signature image reset.'))
+					this.settings['has-signature-image'] = false
+				} catch (error) {
+					console.error('Could not reset signature image', error)
+					showError(t('certificate24', 'Error while resetting signature image.'))
+				} finally {
+					this.loading = false
+				}
+			})
 		},
 	},
 }
