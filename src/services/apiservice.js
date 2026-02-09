@@ -21,6 +21,10 @@
 
 import axios from '@nextcloud/axios'
 import { generateUrl, generateOcsUrl } from '@nextcloud/router'
+import { addPasswordConfirmationInterceptors, PwdConfirmationMode } from '@nextcloud/password-confirmation'
+import '@nextcloud/password-confirmation/style.css'
+
+addPasswordConfirmationInterceptors(axios)
 
 const metadataCache = {}
 
@@ -124,7 +128,11 @@ const clearVerificationCache = async () => {
 }
 
 const checkAccountSettings = async () => {
-	return axios.post(generateOcsUrl('apps/certificate24/api/v1/settings/account/check'))
+	return axios.request({
+		confirmPassword: PwdConfirmationMode.Lax,
+		method: 'POST',
+		url: generateOcsUrl('apps/certificate24/api/v1/settings/account/check'),
+	})
 }
 
 export {

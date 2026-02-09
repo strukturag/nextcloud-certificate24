@@ -153,13 +153,6 @@ export default {
 		},
 
 		async checkAccountSettings() {
-			if (OC.PasswordConfirmation.requiresPasswordConfirmation()) {
-				OC.PasswordConfirmation.requirePasswordConfirmation(() => {
-					this.checkAccountSettings()
-				})
-				return
-			}
-
 			this.checking = true
 			try {
 				const result = await checkAccountSettings()

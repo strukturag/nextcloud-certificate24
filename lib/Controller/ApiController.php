@@ -37,6 +37,7 @@ use OCA\Certificate24\Tokens;
 use OCA\Certificate24\Validator;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Collaboration\Collaborators\ISearch;
@@ -1296,6 +1297,7 @@ class ApiController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
+	#[PasswordConfirmationRequired]
 	public function checkAccountSettings() {
 		$account = $this->config->getAccount();
 		if (!$account['id'] || !$account['secret']) {
