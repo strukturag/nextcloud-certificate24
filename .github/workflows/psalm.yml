@@ -54,10 +54,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies for Nextcloud ${{ matrix.server-versions }}
-        run: |
-          sed -i "s|dev-stable28|dev-${{ matrix.server-versions }}|" composer.json
-          composer update "nextcloud/ocp" --with-all-dependencies
-          composer i
+        run: composer require --dev --with-all-dependencies nextcloud/ocp:dev-${{ matrix.server-versions }}
 
       - name: Run coding standards check
         run: composer run psalm
