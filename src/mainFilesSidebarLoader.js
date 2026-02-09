@@ -59,3 +59,47 @@ registerSidebarTab({
 		window.customElements.define(tagName, webComponent)
 	},
 })
+
+window.addEventListener('DOMContentLoaded', () => {
+	// Nextcloud < 33.
+	if (OCA.Files && OCA.Files.Sidebar && OCA.Files.Sidebar.Tab) {
+		let tabInstance = null
+
+		const isEnabled = function(fileInfo) {
+			if (!fileInfo || fileInfo.isDirectory()) {
+				return false
+			}
+
+			return fileInfo.mimetype === 'application/pdf'
+		}
+
+		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab({
+			id: 'signatures',
+			name: t('certificate24', 'Signatures'),
+			icon: 'icon-certificate24',
+			enabled: isEnabled,
+
+			async mount(el, fileInfo, context) {
+				if (tabInstance) {
+					tabInstance.$destroy()
+				}
+
+				// Dirty hack to force the style on parent component
+				const tabChat = document.querySelector('#tab-signatures')
+				tabChat.style.height = '100%'
+
+				OCA.Certificate24.fileInfo = this.fileInfo
+				tabInstance = OCA.Certificate24.newTab()
+				tabInstance.$mount(el)
+			},
+			update(fileInfo) {
+				OCA.Certificate24.fileInfo = fileInfo
+			},
+			destroy() {
+				OCA.Certificate24.fileInfo = null
+				tabInstance.$destroy()
+				tabInstance = null
+			},
+		}))
+	}
+})

@@ -57,7 +57,7 @@
 			</NcButton>
 		</div>
 		<template v-else>
-			<SignaturesView :file-id="node?.fileid"
+			<SignaturesView :file-id="fileid"
 				@recheck="forceCheck" />
 		</template>
 	</div>
@@ -102,6 +102,9 @@ export default {
 
 	data() {
 		return {
+			Certificate24: OCA.Certificate24,
+			sidebarState: OCA.Files?.Sidebar?.state,
+			lastChecked: null,
 			signaturesPending: false,
 			notSigned: false,
 			errorValidating: null,
@@ -112,11 +115,45 @@ export default {
 		}
 	},
 
+	computed: {
+		file() {
+			return this.node || this.Certificate24.fileInfo
+		},
+		fileid() {
+			return this.file?.fileid || this.file?.id
+		},
+		isTheActiveTab() {
+			if (!this.sidebarState) {
+				return null
+			}
+
+			// FIXME check for empty active tab is currently needed because the
+			// activeTab is not set when opening the sidebar from the "Details"
+			// action (which opens the first tab, which is the Chat tab).
+			return !this.sidebarState.activeTab || this.sidebarState.activeTab === 'signatures'
+		},
+	},
+
 	watch: {
 		node: {
 			immediate: true,
-			handler(node) {
-				this.setSidebarSupportedForFile(node)
+			handler() {
+				this.setSidebarSupportedForFile(this.file)
+			},
+		},
+		file: {
+			immediate: true,
+			handler() {
+				this.setSidebarSupportedForFile(this.file)
+			},
+		},
+		isTheActiveTab: {
+			immediate: true,
+			handler(value) {
+				if (value === null) {
+					return
+				}
+				this.setSidebarSupportedForFile(this.file)
 			},
 		},
 	},
@@ -129,6 +166,12 @@ export default {
 		 * @param {boolean} force force fetching signatures
 		 */
 		async setSidebarSupportedForFile(node, force) {
+			const fileid = node?.fileid || node?.id || null
+			if (fileid === this.lastChecked && !force) {
+				return
+			}
+
+			this.lastChecked = fileid
 			this.prevIsSidebarSupportedForFile = this.isSidebarSupportedForFile
 			this.prevSignaturesPending = this.signaturesPending
 			this.prevNotSigned = this.notSigned
@@ -147,7 +190,8 @@ export default {
 				return
 			}
 
-			if (node.mime !== 'application/pdf') {
+			const mimetype = node.mime || node.mimetype
+			if (mimetype !== 'application/pdf') {
 				this.isSidebarSupportedForFile = false
 				return
 			}
@@ -166,7 +210,7 @@ export default {
 				// INode it is necessary to query the server.
 				this.errorValidating = null
 				try {
-					this.isSidebarSupportedForFile = (await getFileSignatures({ fileId: node.fileid }, { force })) || false
+					this.isSidebarSupportedForFile = (await getFileSignatures({ fileId: fileid }, { force })) || false
 				} catch (error) {
 					this.isSidebarSupportedForFile = false
 					this.handleGetSignaturesError(error)
@@ -194,7 +238,7 @@ export default {
 				// INode it is necessary to query the server.
 				this.errorValidating = null
 				try {
-					this.isSidebarSupportedForFile = (await getFileSignatures({ fileId: node.fileid }, { force })) || false
+					this.isSidebarSupportedForFile = (await getFileSignatures({ fileId: fileid }, { force })) || false
 				} catch (error) {
 					this.isSidebarSupportedForFile = false
 					this.handleGetSignaturesError(error)
@@ -233,7 +277,7 @@ export default {
 		},
 
 		forceCheck() {
-			this.setSidebarSupportedForFile(this.node, true)
+			this.setSidebarSupportedForFile(this.file, true)
 		},
 	},
 }
