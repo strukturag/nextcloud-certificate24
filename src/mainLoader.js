@@ -30,7 +30,6 @@ import ShareDialogView from './views/ShareDialogView.vue'
 import Logo from '../img/app.svg?raw'
 import './styles/loader.scss'
 
-Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
 

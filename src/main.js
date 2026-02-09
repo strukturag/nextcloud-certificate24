@@ -27,7 +27,6 @@ import store from './store.js'
 // Styles
 import '@nextcloud/dialogs/style.css'
 
-Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
 

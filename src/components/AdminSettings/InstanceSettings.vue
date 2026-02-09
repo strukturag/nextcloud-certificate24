@@ -76,6 +76,7 @@ import debounce from 'debounce'
 
 import { formatDate } from '../../services/formatter.js'
 import { clearVerificationCache } from '../../services/apiservice.js'
+import confirmDialog from '../../services/confirm.js'
 
 export default {
 	name: 'InstanceSettings',
@@ -146,31 +147,30 @@ export default {
 		},
 
 		clearVerification() {
-			OC.dialogs.confirm(
-				t('certificate24', 'Do you really want to delete the verification cache? This will require that all files need to be verified again.'),
+			confirmDialog(
 				t('certificate24', 'Clear verification cache'),
-				async function(decision) {
-					if (!decision) {
-						return
-					}
+				t('certificate24', 'Do you really want to delete the verification cache? This will require that all files need to be verified again.'),
+			).then(async (decision) => {
+				if (!decision) {
+					return
+				}
 
-					this.clearing = true
-					try {
-						const response = await clearVerificationCache()
-						this.settings.last_verified = null
-						const unverifiedCount = response.data.ocs?.data?.unverified_count || null
-						if (unverifiedCount !== null) {
-							this.settings.unverified_count = unverifiedCount
-						}
-						showSuccess(t('certificate24', 'Verification cache cleared.'))
-					} catch (error) {
-						console.error('Could not clear verification cache', error)
-						showError(t('certificate24', 'Error while clearing verification cache.'))
-					} finally {
-						this.clearing = false
+				this.clearing = true
+				try {
+					const response = await clearVerificationCache()
+					this.settings.last_verified = null
+					const unverifiedCount = response.data.ocs?.data?.unverified_count || null
+					if (unverifiedCount !== null) {
+						this.settings.unverified_count = unverifiedCount
 					}
-				}.bind(this),
-			)
+					showSuccess(t('certificate24', 'Verification cache cleared.'))
+				} catch (error) {
+					console.error('Could not clear verification cache', error)
+					showError(t('certificate24', 'Error while clearing verification cache.'))
+				} finally {
+					this.clearing = false
+				}
+			})
 		},
 
 		debounceUpdateSendReminderMails: debounce(function() {

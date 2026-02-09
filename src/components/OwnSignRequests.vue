@@ -115,6 +115,7 @@ import { t } from '@nextcloud/l10n'
 import FormattedDate from './FormattedDate.vue'
 import Recipient from './Recipient.vue'
 import { getRequests, deleteRequest, getSignedUrl } from '../services/apiservice.js'
+import confirmDialog from '../services/confirm.js'
 
 export default {
 	name: 'OwnSignRequests',
@@ -222,27 +223,26 @@ export default {
 		},
 
 		async deleteRequest(request) {
-			OC.dialogs.confirm(
+			confirmDialog(
 				t('certificate24', 'Do you really want to delete this signing request?'),
 				t('certificate24', 'Delete request'),
-				async function(decision) {
-					if (!decision) {
-						return
-					}
+			).then(async (decision) => {
+				if (!decision) {
+					return
+				}
 
-					this.loading = true
-					try {
-						await deleteRequest(request.request_id)
-						this.$store.dispatch('deleteOwnRequest', request)
-						showSuccess(t('certificate24', 'Request deleted.'))
-					} catch (error) {
-						console.error('Could not delete request', request, error)
-						showError(t('certificate24', 'Error while deleting request.'))
-					} finally {
-						this.loading = false
-					}
-				}.bind(this),
-			)
+				this.loading = true
+				try {
+					await deleteRequest(request.request_id)
+					this.$store.dispatch('deleteOwnRequest', request)
+					showSuccess(t('certificate24', 'Request deleted.'))
+				} catch (error) {
+					console.error('Could not delete request', request, error)
+					showError(t('certificate24', 'Error while deleting request.'))
+				} finally {
+					this.loading = false
+				}
+			})
 		},
 
 		downloadSignedUrl(request) {
