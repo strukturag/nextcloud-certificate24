@@ -1163,8 +1163,12 @@ class ApiController extends OCSController {
 		$lookup = false;  // Don't use lookup server.
 		[$result, $hasMoreResults] = $this->search->search($search, $shareTypes, $lookup, $limit, $offset);
 		if ($type === 'user') {
+			$user = $this->userSession->getUser();
 			// Filter out users not allowed to use the app.
 			$userCache = [];
+			if ($user) {
+				$userCache[$user->getUID()] = $user;
+			}
 			$filterFunc = function ($elem) use ($userCache) {
 				$userId = $elem['value']['shareWith'];
 				$user = $userCache[$userId] ?? null;
@@ -1203,6 +1207,39 @@ class ApiController extends OCSController {
 				$result['exact']['users'] = array_merge($result['exact']['users'], $additional['exact']['users']);
 				$result['users'] = array_merge($result['users'], $additional['users']);
 				$total = count($result['exact']['users'] ?? []) + count($result['users'] ?? []);
+			}
+
+			if ($user && $user->getUID() === $search) {
+				// Users may search for themselves.
+				$found = false;
+				if (isset($result['exact']['users'])) {
+					foreach ($result['exact']['users'] as $entry) {
+						if ($entry['value']['shareType'] === IShare::TYPE_USER && $entry['value']['shareWith'] === $user->getUID()) {
+							$found = true;
+							break;
+						}
+					}
+				}
+				if (!$found && isset($result['users'])) {
+					foreach ($result['users'] as $entry) {
+						if ($entry['value']['shareType'] === IShare::TYPE_USER && $entry['value']['shareWith'] === $user->getUID()) {
+							$found = true;
+							break;
+						}
+					}
+				}
+
+				if (!$found) {
+					$result['exact']['users'][] = [
+						'icon' => 'icon-user',
+						'label' => $user->getDisplayName(),
+						'shareWithDisplayNameUnique' => $user->getSystemEMailAddress() ?: $user->getUID(),
+						'value' => [
+							'shareType' => IShare::TYPE_USER,
+							'shareWith' => $user->getUID(),
+						],
+					];
+				}
 			}
 		}
 		$response = new DataResponse($result);
