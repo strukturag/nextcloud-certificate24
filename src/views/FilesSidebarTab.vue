@@ -67,6 +67,7 @@
 import NcButton from '@nextcloud/vue/components/NcButton'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
+import { ShareType } from '@nextcloud/sharing'
 
 import { getFileSignatures } from '../services/filesIntegrationServices.js'
 import SignaturesView from './SignaturesView.vue'
@@ -189,12 +190,12 @@ export default {
 				// could be an integer or a string depending on whether the
 				// Sharing tab was opened or not).
 				shareType = parseInt(shareType)
-				return shareType === OC.Share.SHARE_TYPE_USER
-						|| shareType === OC.Share.SHARE_TYPE_GROUP
-						|| shareType === OC.Share.SHARE_TYPE_CIRCLE
-						|| shareType === OC.Share.SHARE_TYPE_ROOM
-						|| shareType === OC.Share.SHARE_TYPE_LINK
-						|| shareType === OC.Share.SHARE_TYPE_EMAIL
+				return shareType === ShareType.User
+						|| shareType === ShareType.Group
+						|| shareType === ShareType.Team
+						|| shareType === ShareType.Room
+						|| shareType === ShareType.Link
+						|| shareType === ShareType.Email
 			})
 
 			if (shareTypes.length === 0) {

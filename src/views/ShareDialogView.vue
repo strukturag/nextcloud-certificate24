@@ -188,6 +188,7 @@ import debounce from 'debounce'
 import { loadState } from '@nextcloud/initial-state'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { t, n } from '@nextcloud/l10n'
+import { ShareType } from '@nextcloud/sharing'
 
 import { shareFile, search, getMetadata } from '../services/apiservice.js'
 import getVinegarApi from '../services/vinegarapi.js'
@@ -435,7 +436,7 @@ export default {
 				emails.push({
 					name: this.email,
 					value: {
-						shareType: OC.Share.SHARE_TYPE_EMAIL,
+						shareType: ShareType.Email,
 						shareWith: this.email,
 					},
 				})
@@ -493,7 +494,7 @@ export default {
 		},
 
 		addEmail(item) {
-			if (item.value && item.value.shareType === OC.Share.SHARE_TYPE_USER) {
+			if (item.value && item.value.shareType === ShareType.User) {
 				this.recipient_type = 'user'
 				this.addUser(item)
 				return
