@@ -57,7 +57,7 @@
 			</NcButton>
 		</div>
 		<template v-else>
-			<SignaturesView :file-id="fileId"
+			<SignaturesView :file-id="node?.fileid"
 				@recheck="forceCheck" />
 		</template>
 	</div>
@@ -68,6 +68,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import { showError } from '@nextcloud/dialogs'
 import { t } from '@nextcloud/l10n'
 import { ShareType } from '@nextcloud/sharing'
+import { FileType } from '@nextcloud/files'
 
 import { getFileSignatures } from '../services/filesIntegrationServices.js'
 import SignaturesView from './SignaturesView.vue'
@@ -80,11 +81,27 @@ export default {
 		SignaturesView,
 	},
 
+	props: {
+		active: {
+			type: Boolean,
+			default: false,
+		},
+		node: {
+			type: Object,
+			default: null,
+		},
+		folder: {
+			type: Object,
+			default: null,
+		},
+		view: {
+			type: Object,
+			default: null,
+		},
+	},
+
 	data() {
 		return {
-			// needed for reactivity
-			Certificate24: OCA.Certificate24,
-			sidebarState: OCA.Files.Sidebar.state,
 			signaturesPending: false,
 			notSigned: false,
 			errorValidating: null,
@@ -95,34 +112,11 @@ export default {
 		}
 	},
 
-	computed: {
-		fileInfo() {
-			return this.Certificate24.fileInfo || {}
-		},
-		fileId() {
-			return this.fileInfo.id
-		},
-		isTheActiveTab() {
-			// FIXME check for empty active tab is currently needed because the
-			// activeTab is not set when opening the sidebar from the "Details"
-			// action (which opens the first tab, which is the Chat tab).
-			return !this.sidebarState.activeTab || this.sidebarState.activeTab === 'signatures'
-		},
-	},
-
 	watch: {
-		fileInfo: {
+		node: {
 			immediate: true,
-			handler(fileInfo) {
-				this.setSidebarSupportedForFile(fileInfo)
-			},
-		},
-
-		isTheActiveTab: {
-			immediate: true,
-			handler(isTheActiveTab) {
-				// recheck the file info in case the sharing info was changed
-				this.setSidebarSupportedForFile(this.fileInfo)
+			handler(node) {
+				this.setSidebarSupportedForFile(node)
 			},
 		},
 	},
@@ -131,10 +125,10 @@ export default {
 		t,
 
 		/**
-		 * @param {OCA.Files.FileInfo} fileInfo the FileInfo to check
+		 * @param {INode} node the node to check
 		 * @param {boolean} force force fetching signatures
 		 */
-		async setSidebarSupportedForFile(fileInfo, force) {
+		async setSidebarSupportedForFile(node, force) {
 			this.prevIsSidebarSupportedForFile = this.isSidebarSupportedForFile
 			this.prevSignaturesPending = this.signaturesPending
 			this.prevNotSigned = this.notSigned
@@ -143,40 +137,36 @@ export default {
 			this.signaturesPending = false
 			this.notSigned = false
 
-			if (!fileInfo) {
+			if (!node) {
 				this.isSidebarSupportedForFile = false
-
 				return
 			}
 
-			if (fileInfo.get('type') === 'dir') {
+			if (node.type !== FileType.File) {
 				this.isSidebarSupportedForFile = false
-
 				return
 			}
 
-			if (fileInfo.get('mimetype') !== 'application/pdf') {
+			if (node.mime !== 'application/pdf') {
 				this.isSidebarSupportedForFile = false
-
 				return
 			}
 
-			if (fileInfo.get('shareOwnerId')) {
+			if (node.attributes?.['mount-type'] === 'shared') {
 				// Shared with me
 				// TODO How to check that it is not a remote share? At least for
 				// local shares "shareTypes" is not defined when shared with me.
 				this.isSidebarSupportedForFile = true
-
 				return
 			}
 
-			if (!fileInfo.get('shareTypes')) {
+			if (!node.attributes?.['share-types']) {
 				// When it is not possible to know whether the sidebar is
 				// supported for a file or not only from the data in the
-				// FileInfo it is necessary to query the server.
+				// INode it is necessary to query the server.
 				this.errorValidating = null
 				try {
-					this.isSidebarSupportedForFile = (await getFileSignatures({ fileId: fileInfo.id }, { force })) || false
+					this.isSidebarSupportedForFile = (await getFileSignatures({ fileId: node.fileid }, { force })) || false
 				} catch (error) {
 					this.isSidebarSupportedForFile = false
 					this.handleGetSignaturesError(error)
@@ -185,7 +175,7 @@ export default {
 				return
 			}
 
-			const shareTypes = fileInfo.get('shareTypes').filter(function(shareType) {
+			const shareTypes = node.attributes['share-types'].filter(function(shareType) {
 				// Ensure that shareType is an integer (as in the past shareType
 				// could be an integer or a string depending on whether the
 				// Sharing tab was opened or not).
@@ -201,10 +191,10 @@ export default {
 			if (shareTypes.length === 0) {
 				// When it is not possible to know whether the sidebar is
 				// supported for a file or not only from the data in the
-				// FileInfo it is necessary to query the server.
+				// INode it is necessary to query the server.
 				this.errorValidating = null
 				try {
-					this.isSidebarSupportedForFile = (await getFileSignatures({ fileId: fileInfo.id }, { force })) || false
+					this.isSidebarSupportedForFile = (await getFileSignatures({ fileId: node.fileid }, { force })) || false
 				} catch (error) {
 					this.isSidebarSupportedForFile = false
 					this.handleGetSignaturesError(error)
@@ -243,7 +233,7 @@ export default {
 		},
 
 		forceCheck() {
-			this.setSidebarSupportedForFile(this.fileInfo, true)
+			this.setSidebarSupportedForFile(this.node, true)
 		},
 	},
 }
