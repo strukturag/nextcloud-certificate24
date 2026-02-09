@@ -26,7 +26,6 @@ namespace OCA\Certificate24;
 
 use OC\Template\Base as TemplateBase;
 use OC\Template\TemplateFileLocator;
-use OC_App;
 use OC_Util;
 use OCP\Defaults;
 use OCP\IL10N;
@@ -71,7 +70,7 @@ class TranslatedTemplate extends TemplateBase {
 	protected function findTemplate($theme, $app, $name) {
 		// Check if it is a app template or not.
 		if ($app !== '') {
-			$dirs = $this->getAppTemplateDirs($theme, $app, \OC::$SERVERROOT, OC_App::getAppPath($app));
+			$dirs = $this->getAppTemplateDirs($theme, $app, \OC::$SERVERROOT, \OC::$server->getAppManager()->getAppPath($app));
 		} else {
 			$dirs = $this->getCoreTemplateDirs($theme, \OC::$SERVERROOT);
 		}
