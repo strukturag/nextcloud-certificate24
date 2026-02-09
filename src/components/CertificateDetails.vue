@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 import { X509Certificate } from '@peculiar/x509'
 
 export default {
@@ -96,6 +98,7 @@ export default {
 	},
 
 	methods: {
+		t,
 	},
 }
 </script>

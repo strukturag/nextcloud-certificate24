@@ -21,7 +21,6 @@
 import Vue from 'vue'
 import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
-import { translate, translatePlural } from '@nextcloud/l10n'
 
 import Dashboard from './views/Dashboard.vue'
 
@@ -36,8 +35,6 @@ __webpack_nonce__ = btoa(getRequestToken())
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath('certificate24', '', 'js/')
 
-Vue.prototype.t = translate
-Vue.prototype.n = translatePlural
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 

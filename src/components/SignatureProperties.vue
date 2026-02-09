@@ -44,6 +44,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 export default {
 	name: 'SignatureProperties',
 
@@ -67,6 +69,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		formatLink(s) {
 			if (!s) {
 				return s

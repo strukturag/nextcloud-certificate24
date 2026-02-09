@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { t } from '@nextcloud/l10n'
+
 export default {
 	name: 'SignatureStatus',
 
@@ -64,6 +66,10 @@ export default {
 				return this.status
 			}
 		},
+	},
+
+	methods: {
+		t,
 	},
 }
 </script>

@@ -110,6 +110,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Download from 'vue-material-design-icons/Download.vue'
 import OpenInNew from 'vue-material-design-icons/OpenInNew.vue'
+import { t } from '@nextcloud/l10n'
 
 import FormattedDate from './FormattedDate.vue'
 import Recipient from './Recipient.vue'
@@ -165,6 +166,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		onHashChange() {
 			this.hash = location.hash
 			this.$nextTick(() => {

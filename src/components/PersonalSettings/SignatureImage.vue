@@ -94,6 +94,7 @@ import Upload from 'vue-material-design-icons/Upload.vue'
 import ContentSave from 'vue-material-design-icons/ContentSave.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 
 import { resetSignatureImage, uploadSignatureImage } from '../../services/apiservice.js'
 import externalComponent from '../../services/externalComponent.js'
@@ -136,6 +137,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		updateFiles(event) {
 			this.hasFile = !!event.target.files.length
 		},

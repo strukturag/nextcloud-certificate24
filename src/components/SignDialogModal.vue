@@ -68,6 +68,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
 import { loadState } from '@nextcloud/initial-state'
 import { generateUrl } from '@nextcloud/router'
+import { t } from '@nextcloud/l10n'
 
 import { signRequest, getSourceUrl } from '../services/apiservice.js'
 
@@ -140,6 +141,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		downloadSourceUrl(request) {
 			return getSourceUrl(request.request_id)
 		},

@@ -66,6 +66,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 
 export default {
@@ -93,6 +94,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		debounceUpdateMode: debounce(function() {
 			this.updateMode()
 		}, 500),

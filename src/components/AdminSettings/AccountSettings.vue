@@ -72,6 +72,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
+import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
 
 import { checkAccountSettings } from '../../services/apiservice.js'
@@ -117,6 +118,8 @@ export default {
 	},
 
 	methods: {
+		t,
+
 		debounceUpdateAccount: debounce(function() {
 			this.updateAccount()
 		}, 1000),
