@@ -43,7 +43,7 @@
 		"babel-loader-exclude-node-modules-except": "^1.2.1",
 		"babel-plugin-add-module-exports": "^1.0.4",
 		"patch-package": "^8.0.1",
-		"vue-loader": "^15.11.1",
+		"vue-loader": "^17.4.2",
 		"webpack-node-externals": "^3.0.0"
 	},
 	"browser": {
