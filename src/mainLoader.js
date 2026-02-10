@@ -61,13 +61,13 @@ registerFileAction({
 	displayName: () => t('certificate24', 'Request signature'),
 	iconSvgInline: () => Logo,
 	enabled: (context) => {
-		const nodes = context.nodes;
+		const nodes = context.nodes ? context.nodes : context
 		return (nodes.length === 1
 				&& nodes[0].mime === 'application/pdf'
-				&& (nodes[0].permissions & (Permission.READ | Permission.WRITE)) === (Permission.READ | Permission.WRITE))
+				&& (nodes[0].permissions & (Permission.READ | Permission.UPDATE)) === (Permission.READ | Permission.UPDATE))
 	},
 	exec: (context) => {
-		const nodes = context.nodes;
+		const nodes = context.nodes ? context.nodes : [context]
 		app.$emit('dialog:open', nodes[0])
 	},
 })
