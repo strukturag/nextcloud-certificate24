@@ -21,7 +21,7 @@
 import Vue from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
 import { Tooltip } from '@nextcloud/vue'
-import { FileAction, Permission, registerFileAction } from '@nextcloud/files'
+import { Permission, registerFileAction } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
 
 import '@nextcloud/dialogs/style.css'
@@ -48,24 +48,26 @@ const app = new Vue({
 	render: h => h(ShareDialogView),
 })
 
-app.$on('dialog:open', (model) => {
-	app.$data.fileModel = model
+app.$on('dialog:open', (node) => {
+	app.$data.fileModel = node
 })
 
 app.$on('dialog:closed', () => {
 	app.$data.fileModel = null
 })
 
-registerFileAction(new FileAction({
+registerFileAction({
 	id: 'certificate24-sign',
 	displayName: () => t('certificate24', 'Request signature'),
 	iconSvgInline: () => Logo,
-	enabled: (files, view) => {
-		return (files.length === 1
-				&& files[0].mime === 'application/pdf'
-				&& (files[0].permissions & (Permission.READ | Permission.WRITE)) === (Permission.READ | Permission.WRITE))
+	enabled: (context) => {
+		const nodes = context.nodes ? context.nodes : context
+		return (nodes.length === 1
+				&& nodes[0].mime === 'application/pdf'
+				&& (nodes[0].permissions & (Permission.READ | Permission.UPDATE)) === (Permission.READ | Permission.UPDATE))
 	},
-	exec: (file, view, dir) => {
-		app.$emit('dialog:open', file)
+	exec: (context) => {
+		const nodes = context.nodes ? context.nodes : [context]
+		app.$emit('dialog:open', nodes[0])
 	},
-}))
+})
