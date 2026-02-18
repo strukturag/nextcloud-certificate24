@@ -106,6 +106,7 @@ appstore:
 	--exclude=/build \
 	--exclude=/docker \
 	--exclude=docs \
+	--exclude=.codecov.yml \
 	--exclude=.dockerignore \
 	--exclude=.drone.jsonnet \
 	--exclude=.drone.yml \
@@ -120,7 +121,6 @@ appstore:
 	--exclude=.l10nignore \
 	--exclude=login.txt \
 	--exclude=*.code-workspace \
-	--exclude=*.patch \
 	--exclude=*.phar \
 	--exclude=*.sh \
 	--exclude=mkdocs.yml \
