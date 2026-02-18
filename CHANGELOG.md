@@ -2,6 +2,79 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.4.0 - 2026-02-18
+
+### Added
+- Support Nextcloud 33
+  [#565](https://github.com/strukturag/nextcloud-certificate24/pull/565)
+
+### Changed
+- CI: Simplify dependency installation for psalm.
+  [#566](https://github.com/strukturag/nextcloud-certificate24/pull/566)
+- Install vue-loader@legacy for Vue2 support.
+  [#575](https://github.com/strukturag/nextcloud-certificate24/pull/575)
+- Explicitly import from "@nextcloud/l10n" instead of using globals.
+  [#576](https://github.com/strukturag/nextcloud-certificate24/pull/576)
+- Remove use of Nextcloud globals
+  [#577](https://github.com/strukturag/nextcloud-certificate24/pull/577)
+- Fix file action registration for Nextcloud < 33.
+  [#589](https://github.com/strukturag/nextcloud-certificate24/pull/589)
+
+### Dependencies
+- Bump node-forge from 1.3.1 to 1.3.2
+  [#558](https://github.com/strukturag/nextcloud-certificate24/pull/558)
+- Bump js-yaml from 4.1.0 to 4.1.1
+  [#557](https://github.com/strukturag/nextcloud-certificate24/pull/557)
+- Bump nextcloud from 31-apache to 32-apache in /docker
+  [#544](https://github.com/strukturag/nextcloud-certificate24/pull/544)
+- Bump axios from 1.8.3 to 1.12.2
+  [#543](https://github.com/strukturag/nextcloud-certificate24/pull/543)
+- Bump @peculiar/x509 from 1.13.0 to 1.14.0
+  [#538](https://github.com/strukturag/nextcloud-certificate24/pull/538)
+- Bump @nextcloud/initial-state from 2.2.0 to 3.0.0
+  [#537](https://github.com/strukturag/nextcloud-certificate24/pull/537)
+- Bump lodash from 4.17.21 to 4.17.23
+  [#561](https://github.com/strukturag/nextcloud-certificate24/pull/561)
+- Bump webpack from 5.95.0 to 5.105.0
+  [#560](https://github.com/strukturag/nextcloud-certificate24/pull/560)
+- Bump qs and express
+  [#562](https://github.com/strukturag/nextcloud-certificate24/pull/562)
+- Bump mdast-util-to-hast from 13.0.2 to 13.2.1
+  [#563](https://github.com/strukturag/nextcloud-certificate24/pull/563)
+- Bump phpunit/phpunit from 9.6.19 to 9.6.33 in /vendor-bin/phpunit
+  [#564](https://github.com/strukturag/nextcloud-certificate24/pull/564)
+- Bump opis/json-schema from 2.4.1 to 2.6.0
+  [#551](https://github.com/strukturag/nextcloud-certificate24/pull/551)
+- Bump @nextcloud/vue from 8.23.1 to 8.33.0
+  [#555](https://github.com/strukturag/nextcloud-certificate24/pull/555)
+- Bump @babel/preset-typescript from 7.27.1 to 7.28.5
+  [#574](https://github.com/strukturag/nextcloud-certificate24/pull/574)
+- Bump @nextcloud/stylelint-config from 3.1.0 to 3.2.1
+  [#573](https://github.com/strukturag/nextcloud-certificate24/pull/573)
+- Bump @nextcloud/browserslist-config from 3.0.1 to 3.1.2
+  [#572](https://github.com/strukturag/nextcloud-certificate24/pull/572)
+- Bump @peculiar/x509 from 1.14.0 to 1.14.3
+  [#571](https://github.com/strukturag/nextcloud-certificate24/pull/571)
+- Bump @nextcloud/babel-config from 1.2.0 to 1.3.0
+  [#569](https://github.com/strukturag/nextcloud-certificate24/pull/569)
+- Bump debounce from 2.2.0 to 3.0.0
+  [#567](https://github.com/strukturag/nextcloud-certificate24/pull/567)
+- Bump @nextcloud/webpack-vue-config from 6.3.0 to 7.0.2
+  [#570](https://github.com/strukturag/nextcloud-certificate24/pull/570)
+- Bump qs and body-parser
+  [#578](https://github.com/strukturag/nextcloud-certificate24/pull/578)
+- Bump axios from 1.12.2 to 1.13.5
+  [#580](https://github.com/strukturag/nextcloud-certificate24/pull/580)
+- Bump qs from 6.14.1 to 6.14.2
+  [#588](https://github.com/strukturag/nextcloud-certificate24/pull/588)
+- Bump @nextcloud/files from 4.0.0-rc.2 to 4.0.0
+  [#585](https://github.com/strukturag/nextcloud-certificate24/pull/585)
+- Bump @nextcloud/sharing from 0.3.0 to 0.4.0
+  [#584](https://github.com/strukturag/nextcloud-certificate24/pull/584)
+- Bump bamarni/composer-bin-plugin from 1.8.2 to 1.9.1
+  [#581](https://github.com/strukturag/nextcloud-certificate24/pull/581)
+
+
 ## 0.3.8 - 2025-10-15
 
 ### Added
