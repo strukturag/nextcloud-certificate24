@@ -56,7 +56,7 @@ app.$on('dialog:closed', () => {
 	app.$data.fileModel = null
 })
 
-registerFileAction({
+const fileAction = {
 	id: 'certificate24-sign',
 	displayName: () => t('certificate24', 'Request signature'),
 	iconSvgInline: () => Logo,
@@ -70,4 +70,12 @@ registerFileAction({
 		const nodes = context.nodes ? context.nodes : [context]
 		app.$emit('dialog:open', nodes[0])
 	},
+}
+
+registerFileAction(fileAction)
+window.addEventListener('DOMContentLoaded', () => {
+	// Nextcloud < 33.
+	if (window._nc_fileactions) {
+		window._nc_fileactions.push(fileAction)
+	}
 })
