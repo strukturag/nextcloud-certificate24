@@ -33,18 +33,18 @@ const isEmpty = (obj) => {
 }
 
 const shareFile = async (file_id, recipients, options, metadata) => {
-	return axios.post(generateOcsUrl('apps/certificate24/api/v1/share'), {
+	const response = await axios.post(generateOcsUrl('apps/certificate24/api/v1/share'), {
 		file_id,
 		recipients,
 		options: !isEmpty(options) ? options : null,
 		metadata: !isEmpty(metadata) ? metadata : null,
-	}).then(() => {
-		if (isEmpty(metadata)) {
-			delete metadataCache[file_id]
-		} else {
-			metadataCache[file_id] = metadata
-		}
 	})
+	if (isEmpty(metadata)) {
+		delete metadataCache[file_id]
+	} else {
+		metadataCache[file_id] = metadata
+	}
+	return response
 }
 
 const getRequests = async (include_signed) => {
