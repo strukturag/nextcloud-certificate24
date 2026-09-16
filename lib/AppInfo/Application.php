@@ -39,7 +39,10 @@ use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\INavigationManager;
+use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\IUserSession;
+use OCP\Notification\IManager as INotificationManager;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'certificate24';
@@ -58,12 +61,13 @@ class Application extends App implements IBootstrap {
 
 		$server->get(INavigationManager::class)->add(function () use ($server) {
 			/** @var IUser $user */
-			$user = $server->getUserSession()->getUser();
+			$user = $server->get(IUserSession::class)->getUser();
+			$urlGenerator = $server->get(IURLGenerator::class);
 			return [
 				'id' => self::APP_ID,
 				'name' => $server->getL10N(self::APP_ID)->t('Certificate24'),
-				'href' => $server->getURLGenerator()->linkToRouteAbsolute(self::APP_ID . '.Page.index'),
-				'icon' => $server->getURLGenerator()->imagePath(self::APP_ID, 'app.svg'),
+				'href' => $urlGenerator->linkToRouteAbsolute(self::APP_ID . '.Page.index'),
+				'icon' => $urlGenerator->imagePath(self::APP_ID, 'app.svg'),
 				'order' => 3,
 				'type' => 'link',
 			];
@@ -79,7 +83,7 @@ class Application extends App implements IBootstrap {
 		DeleteListener::register($dispatcher);
 		Manager::register($dispatcher);
 
-		$manager = $server->getNotificationManager();
+		$manager = $server->get(INotificationManager::class);
 		$manager->registerNotifierService(Notifier::class);
 	}
 }
