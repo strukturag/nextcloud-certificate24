@@ -27,8 +27,10 @@ namespace OCA\Certificate24;
 use OC\Template\Base as TemplateBase;
 use OC\Template\TemplateFileLocator;
 use OC_Util;
+use OCP\App\IAppManager;
 use OCP\Defaults;
 use OCP\IL10N;
+use OCP\Server;
 use OCP\Util;
 
 // Expose functions "p", "print_unescaped", etc. in email templates.
@@ -49,11 +51,10 @@ class TranslatedTemplate extends TemplateBase {
 		$theme = OC_Util::getTheme();
 		[$path, $template] = $this->findTemplate($theme, $app, $name);
 
-		$requestToken = \OC::$server->getSession() ? Util::callRegister() : '';
-		$cspNonce = \OCP\Server::get(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)->getNonce();
+		$requestToken = Util::callRegister();
+		$cspNonce = Server::get(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)->getNonce();
 
-		/** @var Defaults $themeDefaults */
-		$themeDefaults = \OC::$server->query(Defaults::class);
+		$themeDefaults = Server::get(Defaults::class);
 		parent::__construct($template, $requestToken, $l10n, $themeDefaults, $cspNonce);
 	}
 
@@ -70,7 +71,7 @@ class TranslatedTemplate extends TemplateBase {
 	protected function findTemplate($theme, $app, $name) {
 		// Check if it is a app template or not.
 		if ($app !== '') {
-			$dirs = $this->getAppTemplateDirs($theme, $app, \OC::$SERVERROOT, \OC::$server->getAppManager()->getAppPath($app));
+			$dirs = $this->getAppTemplateDirs($theme, $app, \OC::$SERVERROOT, Server::get(IAppManager::class)->getAppPath($app));
 		} else {
 			$dirs = $this->getCoreTemplateDirs($theme, \OC::$SERVERROOT);
 		}

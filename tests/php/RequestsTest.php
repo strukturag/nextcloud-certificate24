@@ -34,6 +34,7 @@ use OCP\EventDispatcher\IWebhookCompatibleEvent;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
+use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
@@ -58,7 +59,7 @@ class RequestsTest extends TestCase {
 
 		$logger = $this->createMock(LoggerInterface::class);
 		$secureRandom = \OC::$server->query(ISecureRandom::class);
-		$db = \OC::$server->getDatabaseConnection();
+		$db = \OC::$server->get(IDBConnection::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$config = $this->createMock(Config::class);
 
