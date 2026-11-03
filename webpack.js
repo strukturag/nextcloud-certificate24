@@ -43,4 +43,11 @@ webpackConfig.module.rules = Object.values(webpackRules)
 
 webpackConfig.cache = true
 
+// vue-loader 15 imports a default export from each style block, but only
+// re-exports it for CSS modules. The import is unused for plain styles.
+webpackConfig.ignoreWarnings = [
+	...(webpackConfig.ignoreWarnings || []),
+	/export 'default' \(imported as 'style\d+'\) was not found .*type=style/,
+]
+
 module.exports = webpackConfig
