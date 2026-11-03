@@ -52,9 +52,9 @@
 						</NcListItemIcon>
 					</ul>
 				</div>
-				<div class="recipient_section">
+				<div v-if="!selfAdded" class="recipient_section">
 					<NcButton type="secondary"
-						:disabled="shareLoading || selfAdded"
+						:disabled="shareLoading"
 						@click="addSelf">
 						<template #icon>
 							<AccountPlus :size="20" />
