@@ -161,6 +161,16 @@
 						</template>
 						{{ t('certificate24', 'Select signature position') }}
 					</NcButton>
+					<NcButton type="secondary"
+						:disabled="selfSignLoading || !signaturePositions.length"
+						:title="t('certificate24', 'Sign yourself')"
+						@click="signYourself">
+						<template #icon>
+							<NcLoadingIcon v-show="selfSignLoading" :size="24" />
+							<Draw v-show="!selfSignLoading" />
+						</template>
+						{{ t('certificate24', 'Sign yourself') }}
+					</NcButton>
 					<NcButton type="primary"
 						:disabled="shareLoading || !recipients.length"
 						:title="t('certificate24', 'Request signature')"
@@ -178,6 +188,9 @@
 				:signature-positions="signaturePositions"
 				:recipients="recipients"
 				@close="closeSelectModal" />
+			<SignDialogModal v-if="selfSignRequest"
+				:request="selfSignRequest"
+				@close="onSelfSigned" />
 		</NcModal>
 	</div>
 </template>
@@ -185,6 +198,7 @@
 <script>
 import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import Draw from 'vue-material-design-icons/Draw.vue'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 import NcActions from '@nextcloud/vue/components/NcActions'
@@ -205,6 +219,7 @@ import { ShareType } from '@nextcloud/sharing'
 import { shareFile, search, getMetadata } from '../services/apiservice.js'
 import getVinegarApi from '../services/vinegarapi.js'
 import SelectorDialogModal from '../components/SelectorDialogModal.vue'
+import SignDialogModal from '../components/SignDialogModal.vue'
 import SearchResults from '../components/SearchResults.vue'
 
 export default {
@@ -213,6 +228,7 @@ export default {
 	components: {
 		AccountPlus,
 		Delete,
+		Draw,
 		FileSign,
 		Magnify,
 		NcActions,
@@ -224,6 +240,7 @@ export default {
 		NcListItemIcon,
 		NcLoadingIcon,
 		SelectorDialogModal,
+		SignDialogModal,
 		SearchResults,
 	},
 
@@ -248,6 +265,8 @@ export default {
 			settings: {},
 			signed_save_mode: null,
 			prevMetadata: {},
+			selfSignLoading: false,
+			selfSignRequest: null,
 		}
 	},
 
@@ -314,6 +333,8 @@ export default {
 			this.shareLoading = false
 			this.signaturePositions = []
 			this.recipients = []
+			this.selfSignLoading = false
+			this.selfSignRequest = null
 			this.clearError()
 			if (newValue) {
 				const metadata = await getMetadata(this.fileid)
@@ -652,40 +673,127 @@ export default {
 				this.closeModal()
 				showSuccess(t('certificate24', 'Requested signature.'))
 			} catch (error) {
-				this.shareLoading = false
 				console.error('Could not request signature', this.fileModel, error)
-				const response = error.response
-				const data = response.data.ocs?.data || {}
-				let errorMessage = ''
-				switch (data.error) {
-				case 'unknown_user':
-					errorMessage = t('certificate24', 'Unknown user.')
-					break
-				case 'invalid_email':
-					errorMessage = t('certificate24', 'Invalid email address.')
-					break
-				case 'error_connecting':
-					errorMessage = t('certificate24', 'Error connecting to Certificate24 service.')
-					break
-				case 'error_encrypted_file':
-					errorMessage = t('certificate24', 'The file is encrypted and can not be signed.')
-					break
-				case 'error_signed_file':
-					errorMessage = t('certificate24', 'The file is already signed and can not be signed again.')
-					break
-				default:
-					if (data.error) {
-						errorMessage = t('certificate24', 'Error while requesting signature ({error}).', {
-							error: data.error,
-						})
-					} else {
-						errorMessage = t('certificate24', 'Error while requesting signature.')
-					}
-				}
-				this.renderError(errorMessage)
+				this.renderShareError(error)
 			} finally {
 				this.shareLoading = false
 			}
+		},
+
+		renderShareError(error) {
+			const data = error.response?.data?.ocs?.data || {}
+			let errorMessage = ''
+			switch (data.error) {
+			case 'unknown_user':
+				errorMessage = t('certificate24', 'Unknown user.')
+				break
+			case 'invalid_email':
+				errorMessage = t('certificate24', 'Invalid email address.')
+				break
+			case 'error_connecting':
+				errorMessage = t('certificate24', 'Error connecting to Certificate24 service.')
+				break
+			case 'error_encrypted_file':
+				errorMessage = t('certificate24', 'The file is encrypted and can not be signed.')
+				break
+			case 'error_signed_file':
+				errorMessage = t('certificate24', 'The file is already signed and can not be signed again.')
+				break
+			default:
+				if (data.error) {
+					errorMessage = t('certificate24', 'Error while requesting signature ({error}).', {
+						error: data.error,
+					})
+				} else {
+					errorMessage = t('certificate24', 'Error while requesting signature.')
+				}
+			}
+			this.renderError(errorMessage)
+		},
+
+		async signYourself() {
+			if (!this.fileModel) {
+				showError(t('certificate24', 'No file selected.'))
+				return
+			}
+
+			const user = getCurrentUser()
+			if (!user) {
+				this.renderError(t('certificate24', 'Could not determine the current user.'))
+				return
+			}
+
+			let signaturePositions = this.signaturePositions
+			if (!signaturePositions || !signaturePositions.length) {
+				this.renderError(t('certificate24', 'Please create signature fields first.'))
+				return
+			}
+
+			let missingSignatures = true
+			signaturePositions = signaturePositions.map((e) => {
+				if (this.isSignatureField(e)) {
+					missingSignatures = false
+				}
+				if (!e.type) {
+					delete e.type
+				}
+				delete e.recipient_idx
+				return e
+			})
+			if (missingSignatures) {
+				this.renderError(t('certificate24', 'Please create signature fields first.'))
+				return
+			}
+
+			this.clearError()
+			this.selfSignLoading = true
+			try {
+				// Ensure the serverside API is available before creating the request.
+				await getVinegarApi()
+
+				const metadata = {
+					version: '1.0',
+					signature_fields: signaturePositions,
+				}
+				const options = {
+					signed_save_mode: this.signed_save_mode,
+				}
+				const recipients = [{
+					type: 'user',
+					value: user.uid,
+				}]
+				const response = await shareFile(this.fileid, recipients, options, metadata)
+				const requestId = response?.data?.ocs?.data?.request_id
+				if (!requestId) {
+					throw new Error('missing_request_id')
+				}
+
+				this.selfSignRequest = {
+					request_id: requestId,
+					filename: this.fileModel.basename || this.fileModel.name,
+					metadata,
+				}
+			} catch (error) {
+				console.error('Could not sign document', this.fileModel, error)
+				const msg = error.message || error
+				switch (msg) {
+				case 'client_unsupported':
+					showError(t('certificate24', 'The server requires a newer version of the app. Please contact your administrator.'))
+					break
+				case 'server_unsupported':
+					showError(t('certificate24', 'This app requires a newer version of the server. Please contact your administrator.'))
+					break
+				default:
+					this.renderShareError(error)
+				}
+			} finally {
+				this.selfSignLoading = false
+			}
+		},
+
+		onSelfSigned() {
+			this.selfSignRequest = null
+			this.closeModal()
 		},
 
 		openSelectModal() {

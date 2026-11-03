@@ -32,6 +32,7 @@ use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IUserSession;
 use OCP\Util;
 
 /**
@@ -41,13 +42,16 @@ class FilesLoader implements IEventListener {
 	protected IInitialState $initialState;
 	protected IAppManager $appManager;
 	protected Config $config;
+	protected IUserSession $userSession;
 
 	public function __construct(IInitialState $initialState,
 		IAppManager $appManager,
-		Config $config) {
+		Config $config,
+		IUserSession $userSession) {
 		$this->initialState = $initialState;
 		$this->appManager = $appManager;
 		$this->config = $config;
+		$this->userSession = $userSession;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
@@ -79,6 +83,16 @@ class FilesLoader implements IEventListener {
 			[
 				'signed_save_mode' => $this->config->getSignedSaveMode(),
 			]
+		);
+
+		$userSettings = [];
+		$user = $this->userSession->getUser();
+		if ($user && $this->config->getSignatureImage($user)) {
+			$userSettings['has-signature-image'] = true;
+		}
+		$this->initialState->provideInitialState(
+			'user-settings',
+			$userSettings
 		);
 	}
 
