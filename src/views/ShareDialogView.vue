@@ -53,6 +53,16 @@
 					</ul>
 				</div>
 				<div class="recipient_section">
+					<NcButton type="secondary"
+						:disabled="shareLoading || selfAdded"
+						@click="addSelf">
+						<template #icon>
+							<AccountPlus :size="20" />
+						</template>
+						{{ t('certificate24', 'Add myself') }}
+					</NcButton>
+				</div>
+				<div class="recipient_section">
 					<NcCheckboxRadioSwitch :checked.sync="recipient_type"
 						:disabled="shareLoading"
 						value="user"
@@ -173,6 +183,7 @@
 </template>
 
 <script>
+import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import FileSign from 'vue-material-design-icons/FileSign.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
@@ -185,6 +196,7 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NcListItemIcon from '@nextcloud/vue/components/NcListItemIcon'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import debounce from 'debounce'
+import { getCurrentUser } from '@nextcloud/auth'
 import { loadState } from '@nextcloud/initial-state'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { t, n } from '@nextcloud/l10n'
@@ -199,6 +211,7 @@ export default {
 	name: 'ShareDialogView',
 
 	components: {
+		AccountPlus,
 		Delete,
 		FileSign,
 		Magnify,
@@ -247,6 +260,15 @@ export default {
 		},
 		userSelected() {
 			return this.recipient_type === 'user'
+		},
+		selfAdded() {
+			const user = getCurrentUser()
+			if (!user) {
+				return true
+			}
+			return this.recipients.some((recipient) => {
+				return recipient.type === 'user' && recipient.value === user.uid
+			})
 		},
 		isSearchingUser() {
 			return this.user !== ''
@@ -491,6 +513,24 @@ export default {
 			this.user = ''
 			this.userResults = {}
 			this.noUserResults = false
+		},
+
+		addSelf() {
+			const user = getCurrentUser()
+			if (!user) {
+				return
+			}
+
+			const name = user.displayName || user.uid
+			this.addRecipient({
+				type: 'user',
+				value: user.uid,
+				display_name: name,
+				item: {
+					name,
+					label: name,
+				},
+			})
 		},
 
 		addEmail(item) {
