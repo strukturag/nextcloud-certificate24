@@ -130,7 +130,23 @@
 							@click="addEmail" />
 					</div>
 				</div>
-				<div>
+				<div v-if="canDownload(fileModel) || signaturePositions.length" class="signature_positions">
+					<NcButton v-if="canDownload(fileModel)"
+						type="secondary"
+						:disabled="selectModalLoading"
+						:title="t('certificate24', 'Select signature position')"
+						@click="openSelectModal">
+						<template #icon>
+							<NcLoadingIcon v-show="selectModalLoading" :size="24" />
+							<FileSign v-show="!selectModalLoading" />
+						</template>
+						{{ t('certificate24', 'Select signature position') }}
+					</NcButton>
+					<span v-if="signaturePositions.length">
+						{{ n('certificate24', '%n signature field positioned', '%n signature fields positioned', signaturePositions.length) }}
+					</span>
+				</div>
+				<div class="signed_save_mode">
 					<label>
 						{{ t('certificate24', 'Action to perform when the file was signed successfully:') }}
 						<select id="signed_save_mode" v-model="signed_save_mode">
@@ -146,21 +162,7 @@
 						</select>
 					</label>
 				</div>
-				<div v-if="signaturePositions && signaturePositions.length">
-					{{ n('certificate24', '%n signature field positioned', '%n signature fields positioned', signaturePositions.length) }}
-				</div>
 				<div class="buttons">
-					<NcButton v-if="canDownload(fileModel)"
-						type="secondary"
-						:disabled="selectModalLoading"
-						:title="t('certificate24', 'Select signature position')"
-						@click="openSelectModal">
-						<template #icon>
-							<NcLoadingIcon v-show="selectModalLoading" :size="24" />
-							<FileSign v-show="!selectModalLoading" />
-						</template>
-						{{ t('certificate24', 'Select signature position') }}
-					</NcButton>
 					<NcButton type="secondary"
 						:disabled="selfSignLoading || !signaturePositions.length"
 						:title="t('certificate24', 'Sign yourself')"
@@ -893,8 +895,22 @@ h1 {
 	overflow: hidden;
 }
 
+.signature_positions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-block: 1em;
+}
+
+.signed_save_mode {
+	margin-bottom: 1em;
+}
+
 .buttons {
 	display: flex;
-	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: flex-end;
 }
 </style>
