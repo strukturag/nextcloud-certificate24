@@ -84,6 +84,37 @@
 				{{ t('certificate24', 'Clear') }}
 			</NcButton>
 		</div>
+		<div>
+			<div>{{ t('certificate24', 'Create signature from text') }}</div>
+			<input v-model="textValue"
+				type="text"
+				class="text-input"
+				maxlength="50"
+				:disabled="loading"
+				:placeholder="t('certificate24', 'Your name or initials')"
+				:aria-label="t('certificate24', 'Signature text')">
+			<select v-model="textFont"
+				class="text-font"
+				:disabled="loading"
+				:aria-label="t('certificate24', 'Signature font')">
+				<option v-for="font in fonts" :key="font.value" :value="font.value">
+					{{ font.label }}
+				</option>
+			</select>
+			<div class="drawer text-preview">
+				<canvas ref="textCanvas" :width="600" :height="200" />
+			</div>
+		</div>
+		<div class="buttons">
+			<NcButton :disabled="loading || !hasText"
+				type="primary"
+				@click="saveTextSignature">
+				<template #icon>
+					<ContentSave :size="20" />
+				</template>
+				{{ t('certificate24', 'Save') }}
+			</NcButton>
+		</div>
 	</div>
 </template>
 
@@ -120,6 +151,14 @@ export default {
 			drawImage: null,
 			ts: 0,
 			settings: {},
+			textValue: '',
+			textFont: "'Segoe Script', 'Bradley Hand', cursive",
+			fonts: [
+				{ value: "'Segoe Script', 'Bradley Hand', cursive", label: t('certificate24', 'Handwriting') },
+				{ value: 'serif', label: t('certificate24', 'Serif') },
+				{ value: 'sans-serif', label: t('certificate24', 'Sans-serif') },
+				{ value: 'monospace', label: t('certificate24', 'Monospace') },
+			],
 		}
 	},
 
@@ -131,10 +170,26 @@ export default {
 			}
 			return url
 		},
+		hasText() {
+			return !!this.textValue.trim()
+		},
+	},
+
+	watch: {
+		textValue() {
+			this.renderTextSignature()
+		},
+		textFont() {
+			this.renderTextSignature()
+		},
 	},
 
 	beforeMount() {
 		this.settings = loadState('certificate24', 'settings')
+	},
+
+	mounted() {
+		this.renderTextSignature()
 	},
 
 	methods: {
@@ -228,6 +283,69 @@ export default {
 			}
 		},
 
+		renderTextSignature() {
+			const canvas = this.$refs.textCanvas
+			if (!canvas) {
+				return
+			}
+
+			const ctx = canvas.getContext('2d')
+			ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+			const text = this.textValue.trim()
+			if (!text) {
+				return
+			}
+
+			const padding = 20
+			const maxWidth = canvas.width - padding * 2
+			const maxHeight = canvas.height - padding * 2
+			let fontSize = maxHeight
+			ctx.fillStyle = '#000000'
+			ctx.textAlign = 'center'
+			ctx.textBaseline = 'middle'
+			do {
+				ctx.font = fontSize + 'px ' + this.textFont
+				if (ctx.measureText(text).width <= maxWidth) {
+					break
+				}
+				fontSize -= 2
+			} while (fontSize > 10)
+			ctx.font = fontSize + 'px ' + this.textFont
+			ctx.fillText(text, canvas.width / 2, canvas.height / 2)
+		},
+
+		async saveTextSignature() {
+			const canvas = this.$refs.textCanvas
+			if (!canvas) {
+				return
+			}
+
+			this.loading = true
+			try {
+				const blob = await new Promise((resolve) => {
+					canvas.toBlob(resolve, 'image/png')
+				})
+				await uploadSignatureImage(blob)
+				showSuccess(t('certificate24', 'Signature image uploaded.'))
+				this.ts = (new Date()).getTime()
+				this.settings['has-signature-image'] = true
+				this.textValue = ''
+				document.getElementById('app-content').scrollTop = 0
+			} catch (error) {
+				console.error('Could not upload signature image', error)
+				switch (error.response?.status) {
+				case 413:
+					showError(t('certificate24', 'The uploaded image is too large.'))
+					break
+				default:
+					showError(t('certificate24', 'Error while uploading signature image.'))
+				}
+			} finally {
+				this.loading = false
+			}
+		},
+
 		resetImage() {
 			confirmDialog(
 				t('certificate24', 'Do you really want to reset the signature image?'),
@@ -291,5 +409,26 @@ input[type=file] {
 	height: 400px;
 	margin-bottom: 1em;
 	background-color: white;
+}
+
+.text-input {
+	display: block;
+	width: 600px;
+	max-width: 100%;
+	margin: 0.5em 0;
+}
+
+.text-font {
+	display: block;
+	margin-bottom: 0.5em;
+}
+
+.text-preview {
+	height: 200px;
+
+	canvas {
+		width: 100%;
+		height: 100%;
+	}
 }
 </style>
