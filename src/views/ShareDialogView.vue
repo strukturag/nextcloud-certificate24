@@ -31,7 +31,7 @@
 				</div>
 				<div v-if="recipients.length > 0"
 					class="recipients_section">
-					<h2>{{ t('certificate24', 'Recipients') }}</h2>
+					<h4>{{ t('certificate24', 'Recipients') }}</h4>
 					<ul>
 						<NcListItemIcon v-for="recipient in recipients"
 							:key="recipient.type + '-' + recipient.value"
@@ -51,16 +51,6 @@
 							</NcActions>
 						</NcListItemIcon>
 					</ul>
-				</div>
-				<div v-if="!selfAdded" class="recipient_section">
-					<NcButton type="secondary"
-						:disabled="shareLoading"
-						@click="addSelf">
-						<template #icon>
-							<AccountPlus :size="20" />
-						</template>
-						{{ t('certificate24', 'Add myself') }}
-					</NcButton>
 				</div>
 				<div class="recipient_section">
 					<NcCheckboxRadioSwitch :checked.sync="recipient_type"
@@ -95,6 +85,16 @@
 							:selectable="true"
 							@click="addUser" />
 					</div>
+				</div>
+				<div v-if="!selfAdded" class="recipient_section">
+					<NcButton type="secondary"
+						:disabled="shareLoading"
+						@click="addSelf">
+						<template #icon>
+							<AccountPlus :size="20" />
+						</template>
+						{{ t('certificate24', 'Add myself') }}
+					</NcButton>
 				</div>
 				<div class="recipient_section">
 					<NcCheckboxRadioSwitch :checked.sync="recipient_type"
