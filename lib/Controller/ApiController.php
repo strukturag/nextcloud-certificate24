@@ -1254,7 +1254,7 @@ class ApiController extends OCSController {
 	 */
 	public function getFileMetadata(string $id): DataResponse {
 		$user = $this->userSession->getUser();
-		$files = $this->root->getUserFolder($user->getUID())->getById($id);
+		$files = $this->root->getUserFolder($user->getUID())->getById((int)$id);
 
 		if (empty($files)) {
 			return new DataResponse([
