@@ -2,6 +2,126 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.5.0 - 2026-11-03
+
+### Added
+- Add support for Nextcloud 34
+  [#641](https://github.com/strukturag/nextcloud-certificate24/pull/641)
+- Add support for Nextcloud 35
+  [#645](https://github.com/strukturag/nextcloud-certificate24/pull/645)
+- Add button to request signature from yourself
+  [#622](https://github.com/strukturag/nextcloud-certificate24/pull/622)
+- Allow signing a document yourself directly
+  [#621](https://github.com/strukturag/nextcloud-certificate24/pull/621)
+- Allow creating signature image from text
+  [#623](https://github.com/strukturag/nextcloud-certificate24/pull/623)
+
+### Changed
+- Use php8.1 for vendored dependencies.
+  [#637](https://github.com/strukturag/nextcloud-certificate24/pull/637)
+- Remove unused jquery dependency.
+  [#653](https://github.com/strukturag/nextcloud-certificate24/pull/653)
+- webpack: Silence warning from vue-loader 15.
+- Follow-up improvements to sign yourself features
+  [#663](https://github.com/strukturag/nextcloud-certificate24/pull/663)
+- Updates for file translationfiles/templates/certificate24.pot in fr_FR [Manual Sync]
+  [#664](https://github.com/strukturag/nextcloud-certificate24/pull/664)
+- Updates for file translationfiles/templates/certificate24.pot in de [Manual Sync]
+  [#665](https://github.com/strukturag/nextcloud-certificate24/pull/665)
+- Updates for file translationfiles/templates/certificate24.pot in de_DE [Manual Sync]
+  [#666](https://github.com/strukturag/nextcloud-certificate24/pull/666)
+
+### Dependencies
+- Bump qs and express
+  [#620](https://github.com/strukturag/nextcloud-certificate24/pull/620)
+- Bump webpack-dev-server from 5.2.2 to 5.2.4
+  [#618](https://github.com/strukturag/nextcloud-certificate24/pull/618)
+- Bump @babel/plugin-transform-modules-systemjs from 7.29.0 to 7.29.4
+  [#616](https://github.com/strukturag/nextcloud-certificate24/pull/616)
+- Bump postcss-selector-parser
+  [#627](https://github.com/strukturag/nextcloud-certificate24/pull/627)
+- Bump flatted from 3.3.3 to 3.4.2
+  [#599](https://github.com/strukturag/nextcloud-certificate24/pull/599)
+- Bump minimatch
+  [#595](https://github.com/strukturag/nextcloud-certificate24/pull/595)
+- Bump babel-loader-exclude-node-modules-except from 1.2.1 to 1.2.4
+  [#593](https://github.com/strukturag/nextcloud-certificate24/pull/593)
+- Bump shell-quote from 1.8.1 to 1.12.0
+  [#635](https://github.com/strukturag/nextcloud-certificate24/pull/635)
+- Bump fast-uri from 3.0.2 to 3.1.9
+  [#634](https://github.com/strukturag/nextcloud-certificate24/pull/634)
+- Bump proxy-addr from 2.0.7 to 2.0.8
+  [#632](https://github.com/strukturag/nextcloud-certificate24/pull/632)
+- Bump source-map-js from 1.2.1 to 1.2.2
+  [#631](https://github.com/strukturag/nextcloud-certificate24/pull/631)
+- Bump webpack-dev-middleware from 7.4.2 to 7.4.6
+  [#633](https://github.com/strukturag/nextcloud-certificate24/pull/633)
+- Bump dompurify from 3.3.1 to 3.4.17
+  [#630](https://github.com/strukturag/nextcloud-certificate24/pull/630)
+- Bump follow-redirects from 1.15.11 to 1.16.0
+  [#610](https://github.com/strukturag/nextcloud-certificate24/pull/610)
+- Bump lodash from 4.17.23 to 4.18.1
+  [#608](https://github.com/strukturag/nextcloud-certificate24/pull/608)
+- Bump fast-xml-parser from 4.4.1 to 4.5.6
+  [#607](https://github.com/strukturag/nextcloud-certificate24/pull/607)
+- Bump brace-expansion
+  [#605](https://github.com/strukturag/nextcloud-certificate24/pull/605)
+- Bump picomatch
+  [#600](https://github.com/strukturag/nextcloud-certificate24/pull/600)
+- Bump immutable from 4.3.7 to 4.3.8
+  [#597](https://github.com/strukturag/nextcloud-certificate24/pull/597)
+- Bump firebase/php-jwt from 6.11.1 to 7.2.1
+  [#636](https://github.com/strukturag/nextcloud-certificate24/pull/636)
+- Bump qs and express
+  [#626](https://github.com/strukturag/nextcloud-certificate24/pull/626)
+- Bump follow-redirects from 1.16.0 to 1.16.2
+  [#642](https://github.com/strukturag/nextcloud-certificate24/pull/642)
+- Bump compression from 1.8.1 to 1.8.2
+  [#640](https://github.com/strukturag/nextcloud-certificate24/pull/640)
+- Bump brace-expansion
+  [#639](https://github.com/strukturag/nextcloud-certificate24/pull/639)
+- Bump launch-editor from 2.9.1 to 2.14.2
+  [#638](https://github.com/strukturag/nextcloud-certificate24/pull/638)
+- Bump fast-xml-builder from 1.1.4 to 1.3.1
+  [#643](https://github.com/strukturag/nextcloud-certificate24/pull/643)
+- Bump moment from 2.30.1 to 2.31.0
+  [#644](https://github.com/strukturag/nextcloud-certificate24/pull/644)
+- Bump immutable from 4.3.8 to 4.3.9
+  [#646](https://github.com/strukturag/nextcloud-certificate24/pull/646)
+- Bump form-data from 4.0.5 to 4.0.6
+  [#647](https://github.com/strukturag/nextcloud-certificate24/pull/647)
+- Bump nanoid from 3.3.11 to 3.3.20
+  [#648](https://github.com/strukturag/nextcloud-certificate24/pull/648)
+- Bump serialize-javascript and terser-webpack-plugin
+  [#629](https://github.com/strukturag/nextcloud-certificate24/pull/629)
+- Bump axios from 1.13.5 to 1.21.0
+  [#628](https://github.com/strukturag/nextcloud-certificate24/pull/628)
+- Bump js-yaml from 4.1.1 to 4.3.2
+  [#649](https://github.com/strukturag/nextcloud-certificate24/pull/649)
+- Bump node from 22 to 26 in /docker
+  [#615](https://github.com/strukturag/nextcloud-certificate24/pull/615)
+- Bump baseline-browser-mapping from 2.9.19 to 2.11.35
+  [#650](https://github.com/strukturag/nextcloud-certificate24/pull/650)
+- Bump websocket-driver from 0.7.4 to 0.7.5
+  [#655](https://github.com/strukturag/nextcloud-certificate24/pull/655)
+- Bump webpack-dev-server from 5.2.4 to 5.2.7
+  [#654](https://github.com/strukturag/nextcloud-certificate24/pull/654)
+- Bump browserslist from 4.28.1 to 4.29.5
+  [#652](https://github.com/strukturag/nextcloud-certificate24/pull/652)
+- Bump http-proxy-middleware from 2.0.9 to 2.0.11
+  [#658](https://github.com/strukturag/nextcloud-certificate24/pull/658)
+- Bump ws from 8.18.0 to 8.22.1
+  [#659](https://github.com/strukturag/nextcloud-certificate24/pull/659)
+- Bump @babel/core from 7.29.0 to 7.29.7
+  [#660](https://github.com/strukturag/nextcloud-certificate24/pull/660)
+- Bump tmp from 0.2.5 to 0.2.7
+  [#661](https://github.com/strukturag/nextcloud-certificate24/pull/661)
+- Bump uuid and @nextcloud/webpack-vue-config
+  [#662](https://github.com/strukturag/nextcloud-certificate24/pull/662)
+- Bump nextcloud from 32-apache to 33-apache in /docker
+  [#594](https://github.com/strukturag/nextcloud-certificate24/pull/594)
+
+
 ## 0.4.0 - 2026-02-18
 
 ### Added
