@@ -39,7 +39,8 @@ use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\INavigationManager;
-use OCP\IUser;
+use OCP\IURLGenerator;
+use OCP\L10N\IFactory;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'certificate24';
@@ -51,19 +52,22 @@ class Application extends App implements IBootstrap {
 	public function register(IRegistrationContext $context): void {
 		$context->registerCapability(Capabilities::class);
 		$context->registerDashboardWidget(Certificate24Widget::class);
+		$context->registerNotifierService(Notifier::class);
 	}
 
 	public function boot(IBootContext $context): void {
 		$server = $context->getServerContainer();
 
 		$server->get(INavigationManager::class)->add(function () use ($server) {
-			/** @var IUser $user */
-			$user = $server->getUserSession()->getUser();
+			/** @var IURLGenerator $urlGenerator */
+			$urlGenerator = $server->get(IURLGenerator::class);
+			/** @var IFactory $factory */
+			$factory = $server->get(IFactory::class);
 			return [
 				'id' => self::APP_ID,
-				'name' => $server->getL10N(self::APP_ID)->t('Certificate24'),
-				'href' => $server->getURLGenerator()->linkToRouteAbsolute(self::APP_ID . '.Page.index'),
-				'icon' => $server->getURLGenerator()->imagePath(self::APP_ID, 'app.svg'),
+				'name' => $factory->get(self::APP_ID)->t('Certificate24'),
+				'href' => $urlGenerator->linkToRouteAbsolute(self::APP_ID . '.Page.index'),
+				'icon' => $urlGenerator->imagePath(self::APP_ID, 'app.svg'),
 				'order' => 3,
 				'type' => 'link',
 			];
@@ -78,8 +82,5 @@ class Application extends App implements IBootstrap {
 		NotificationListener::register($dispatcher);
 		DeleteListener::register($dispatcher);
 		Manager::register($dispatcher);
-
-		$manager = $server->getNotificationManager();
-		$manager->registerNotifierService(Notifier::class);
 	}
 }

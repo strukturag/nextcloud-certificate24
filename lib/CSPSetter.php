@@ -54,8 +54,8 @@ class CSPSetter implements IEventListener {
 		}
 
 		$csp = new ContentSecurityPolicy();
-		$csp->addAllowedChildSrcDomain('blob:');
-		$csp->addAllowedChildSrcDomain("'self'");
+		$csp->addAllowedFrameDomain('blob:');
+		$csp->addAllowedFrameDomain("'self'");
 		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain("'self'");
 		$csp->addAllowedScriptDomain('blob:');
@@ -66,7 +66,7 @@ class CSPSetter implements IEventListener {
 
 		$apiServer = $this->config->getApiServer();
 		if (!empty($apiServer)) {
-			$csp->addAllowedChildSrcDomain($apiServer);
+			$csp->addAllowedFrameDomain($apiServer);
 			$csp->addAllowedConnectDomain($apiServer);
 			$csp->addAllowedFontDomain($apiServer);
 			$csp->addAllowedScriptDomain($apiServer);
@@ -75,7 +75,7 @@ class CSPSetter implements IEventListener {
 
 		$webServer = $this->config->getWebServer();
 		if (!empty($webServer) && $apiServer !== $webServer) {
-			$csp->addAllowedChildSrcDomain($webServer);
+			$csp->addAllowedFrameDomain($webServer);
 			$csp->addAllowedConnectDomain($webServer);
 			$csp->addAllowedFontDomain($webServer);
 			$csp->addAllowedScriptDomain($webServer);
